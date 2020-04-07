@@ -12,12 +12,23 @@ import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
+    private var actionBarDrawerToggle: ActionBarDrawerToggle? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        setupBarAndNavigationView()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        actionBarDrawerToggle?.apply {
+            if (onOptionsItemSelected(item)) return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun setupBarAndNavigationView() {
         setupActionBarDrawerToggle()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setupNavigationView()
@@ -25,27 +36,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupActionBarDrawerToggle() {
         val drawerLayout = findViewById<DrawerLayout>(R.id.mainDrawerLayout)
-        actionBarDrawerToggle =
-            ActionBarDrawerToggle(
-                this,
-                drawerLayout,
-                R.string.open,
-                R.string.close
-            ).apply {
-                drawerLayout.addDrawerListener(this)
-                syncState()
-            }
+        actionBarDrawerToggle = ActionBarDrawerToggle(
+                this, drawerLayout, R.string.open, R.string.close).apply {
+            drawerLayout.addDrawerListener(this)
+            syncState()
+        }
     }
 
     private fun setupNavigationView() {
         val navigationView = findViewById<NavigationView>(R.id.navigation)
         navigationView.setNavigationItemSelectedListener(
-            MyNavigationItemSelectedListener(this)
+                MyNavigationItemSelectedListener(this)
         )
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (actionBarDrawerToggle.onOptionsItemSelected(item)) return true
-        return super.onOptionsItemSelected(item)
     }
 }
