@@ -10,7 +10,7 @@
     <item android:id="@+id/magneticFieldSensorMenuItem"
         android:icon="@drawable/ic_launcher_foreground"
         android:title="Magnetic field sensor"/>
-    <item android:id="@+id/statusMenuItem"
+    <item android:id="@+id/modulesStatusMenuItem"
         android:icon="@drawable/ic_launcher_foreground"
         android:title="Modules status"/>
     <item android:id="@+id/otherMenuItem"

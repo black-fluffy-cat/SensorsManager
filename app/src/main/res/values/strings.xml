@@ -3,4 +3,10 @@
     <string name="open">Open</string>
     <string name="close">Close</string>
     <string name="accelerometer">Accelerometer</string>
+    <string name="custom">Custom</string>
+    <string name="gyroscope">Gyroscope</string>
+    <string name="magnetic_field">Magnetic field</string>
+    <string name="modules">Modules</string>
+    <string name="other">Other</string>
+    <string name="settings">Settings</string>
 </resources>
