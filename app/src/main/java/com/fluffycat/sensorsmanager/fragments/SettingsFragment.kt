@@ -7,18 +7,18 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.fluffycat.sensorsmanager.R
 
-class AccelerometerFragment : Fragment() {
+class SettingsFragment : Fragment() {
 
     companion object {
-        const val TAG = "AccelerometerFragmentTAG"
+        const val TAG = "SettingsFragmentTAG"
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         setActivityTitle()
-        return inflater.inflate(R.layout.accelerometer_fragment, container, false)
+        return inflater.inflate(R.layout.settings_fragment, container, false)
     }
 
     private fun setActivityTitle() {
-        activity?.title = getString(R.string.accelerometer)
+        activity?.title = getString(R.string.settings)
     }
 }
