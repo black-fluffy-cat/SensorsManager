@@ -16,20 +16,19 @@ class AccelerometerSensorController(activity: Activity) : ISensorController {
     private val accelerometerChart: LineChart? = activity.findViewById(R.id.accelerometerChart)
     private var accelerometerListener: SensorEventListener? = null
 
-    //TODO activity or applicationContext ??
-    var sensorManager = activity.getSystemService(SENSOR_SERVICE) as SensorManager
+    private var sensorManager = activity.getSystemService(SENSOR_SERVICE) as SensorManager
 
     override fun startReceivingData() {
-        Log.d(tag, "startReceivingData")
         accelerometerChart?.let {
             accelerometerListener = AccelerometerListener(it)
             sensorManager.registerListener(accelerometerListener,
                     sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME)
+            Log.d(tag, "Started receiving data")
         }
     }
 
     override fun stopReceivingData() {
-        Log.d(tag, "stopReceivingData")
         sensorManager.unregisterListener(accelerometerListener)
+        Log.d(tag, "Stopped receiving data")
     }
 }
