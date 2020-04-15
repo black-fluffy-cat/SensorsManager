@@ -18,6 +18,7 @@ class MyNavigationItemSelectedListener(private val activity: AppCompatActivity,
             R.id.customMenuItem -> switchFragment(CustomFragment(), CustomFragment.TAG)
             R.id.gyroscopeMenuItem -> switchFragment(GyroscopeFragment(), GyroscopeFragment.TAG)
             R.id.magneticFieldSensorMenuItem -> switchFragment(MagneticFieldFragment(), MagneticFieldFragment.TAG)
+            R.id.lightSensorMenuItem -> switchFragment(LightFragment(), LightFragment.TAG)
             R.id.modulesStatusMenuItem -> switchFragment(ModulesStatusFragment(), ModulesStatusFragment.TAG)
             R.id.otherMenuItem -> switchFragment(OtherFragment(), OtherFragment.TAG)
             R.id.settingsMenuItem -> switchFragment(SettingsFragment(), SettingsFragment.TAG)
