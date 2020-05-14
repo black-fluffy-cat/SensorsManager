@@ -29,13 +29,11 @@ class GyroscopeFragment : Fragment() {
     private var lineData: LineData
 
     init {
-        // Create lineDataSets for 3 axis from sensor
         val lineDataSet1: LineDataSet = createDataSet(Color.GREEN, "$chartTitle X")
         val lineDataSet2: LineDataSet = createDataSet(Color.RED, "Y")
         val lineDataSet3: LineDataSet = createDataSet(Color.BLUE, "Z")
         lineData = LineData(lineDataSet1, lineDataSet2, lineDataSet3)
     }
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         setActivityTitle()
@@ -58,6 +56,12 @@ class GyroscopeFragment : Fragment() {
         gyroscopeChart.data = lineData
     }
 
+    private fun createDataSet(dataSetColor: Int, label: String) = LineDataSet(ArrayList(), label).apply {
+        setDrawCircles(false)
+        lineWidth = 3.1f
+        color = dataSetColor
+    }
+
     override fun onStart() {
         super.onStart()
         gyroscopeSensorController.startReceivingData()
@@ -66,12 +70,6 @@ class GyroscopeFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         gyroscopeSensorController.stopReceivingData()
-    }
-
-    private fun createDataSet(dataSetColor: Int, label: String) = LineDataSet(ArrayList(), label).apply {
-        setDrawCircles(false)
-        lineWidth = 3.1f
-        color = dataSetColor
     }
 
     private fun onDataChanged(event: SensorEvent) {

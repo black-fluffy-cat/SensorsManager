@@ -29,7 +29,6 @@ class MagneticFieldFragment : Fragment() {
     private var lineData: LineData
 
     init {
-        // Create lineDataSets for 3 axis from sensor
         val lineDataSet1: LineDataSet = createDataSet(Color.GREEN, "$chartTitle X")
         val lineDataSet2: LineDataSet = createDataSet(Color.RED, "Y")
         val lineDataSet3: LineDataSet = createDataSet(Color.BLUE, "Z")
@@ -40,13 +39,6 @@ class MagneticFieldFragment : Fragment() {
         setActivityTitle()
         return inflater.inflate(R.layout.magnetic_field_fragment, container, false)
     }
-
-    private fun createDataSet(dataSetColor: Int, label: String) = LineDataSet(ArrayList(), label).apply {
-        setDrawCircles(false)
-        lineWidth = 3.1f
-        color = dataSetColor
-    }
-
 
     private fun setActivityTitle() {
         activity?.title = getString(R.string.magnetic_field)
@@ -65,10 +57,15 @@ class MagneticFieldFragment : Fragment() {
         magneticFieldChart.data = lineData
     }
 
+    private fun createDataSet(dataSetColor: Int, label: String) = LineDataSet(ArrayList(), label).apply {
+        setDrawCircles(false)
+        lineWidth = 3.1f
+        color = dataSetColor
+    }
+
     override fun onStart() {
         super.onStart()
         magneticFieldSensorController.startReceivingData()
-
     }
 
     override fun onStop() {

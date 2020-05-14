@@ -34,7 +34,6 @@ class LightFragment : Fragment() {
         lineData = LineData(lineDataSet1)
     }
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         setActivityTitle()
         return inflater.inflate(R.layout.light_fragment, container, false)
@@ -42,35 +41,6 @@ class LightFragment : Fragment() {
 
     private fun setActivityTitle() {
         activity?.title = getString(R.string.light)
-    }
-
-    @Suppress("SameParameterValue")
-    private fun createDataSet(dataSetColor: Int, label: String) = LineDataSet(ArrayList(), label).apply {
-        setDrawCircles(false)
-        lineWidth = 3.1f
-        color = dataSetColor
-    }
-
-    private fun onDataChanged(event: SensorEvent) {
-        lineData.apply {
-            addEntry(Entry(getDataSetByIndex(0).entryCount.toFloat(), event.values[0]), 0)
-
-            notifyDataChanged()
-            lightChart.notifyDataSetChanged()
-            lightChart.setVisibleXRangeMaximum(100F)
-            lightChart.moveViewTo(entryCount.toFloat(), 0F, YAxis.AxisDependency.RIGHT)
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        lightSensorController.startReceivingData()
-
-    }
-
-    override fun onStop() {
-        super.onStop()
-        lightSensorController.stopReceivingData()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -85,8 +55,31 @@ class LightFragment : Fragment() {
         lightChart.data = lineData
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    @Suppress("SameParameterValue")
+    private fun createDataSet(dataSetColor: Int, label: String) = LineDataSet(ArrayList(), label).apply {
+        setDrawCircles(false)
+        lineWidth = 3.1f
+        color = dataSetColor
+    }
+
+    override fun onStart() {
+        super.onStart()
+        lightSensorController.startReceivingData()
+    }
+
+    override fun onStop() {
+        super.onStop()
         lightSensorController.stopReceivingData()
+    }
+
+    private fun onDataChanged(event: SensorEvent) {
+        lineData.apply {
+            addEntry(Entry(getDataSetByIndex(0).entryCount.toFloat(), event.values[0]), 0)
+
+            notifyDataChanged()
+            lightChart.notifyDataSetChanged()
+            lightChart.setVisibleXRangeMaximum(100F)
+            lightChart.moveViewTo(entryCount.toFloat(), 0F, YAxis.AxisDependency.RIGHT)
+        }
     }
 }

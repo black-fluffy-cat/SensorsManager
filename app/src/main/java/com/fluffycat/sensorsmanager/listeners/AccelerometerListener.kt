@@ -4,8 +4,7 @@ import android.hardware.Sensor
 import android.hardware.SensorManager
 import com.fluffycat.sensorsmanager.sensors.ISensorController
 
-class AccelerometerListener(dataCollector: ISensorController) :
-    MySensorListener(dataCollector) {
+class AccelerometerListener(dataCollector: ISensorController) : MySensorListener(dataCollector) {
 
     override fun registerListener(sensorManager: SensorManager) {
         sensorManager.registerListener(this,
