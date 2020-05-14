@@ -1,11 +1,14 @@
 package com.fluffycat.sensorsmanager.listeners
 
-import com.github.mikephil.charting.charts.LineChart
+import android.hardware.Sensor
+import android.hardware.SensorManager
+import com.fluffycat.sensorsmanager.sensors.ISensorController
 
-class AccelerometerListener(accelerometerChartView: LineChart) :
-    ThreeAxisSensorListener(accelerometerChartView, chartTitle) {
+class AccelerometerListener(dataCollector: ISensorController) :
+    MySensorListener(dataCollector) {
 
-    companion object {
-        const val chartTitle = "Accelerometer"
+    override fun registerListener(sensorManager: SensorManager) {
+        sensorManager.registerListener(this,
+                sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME)
     }
 }

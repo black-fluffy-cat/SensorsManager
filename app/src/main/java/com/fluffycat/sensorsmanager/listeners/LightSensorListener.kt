@@ -1,11 +1,14 @@
 package com.fluffycat.sensorsmanager.listeners
 
-import com.github.mikephil.charting.charts.LineChart
+import android.hardware.Sensor
+import android.hardware.SensorManager
+import com.fluffycat.sensorsmanager.sensors.ISensorController
 
-class LightSensorListener(magneticFieldChartView: LineChart) :
-    OneAxisSensorListener(magneticFieldChartView, chartTitle) {
+class LightSensorListener(dataCollector: ISensorController) :
+    MySensorListener(dataCollector) {
 
-    companion object {
-        const val chartTitle = "Light power"
+    override fun registerListener(sensorManager: SensorManager) {
+        sensorManager.registerListener(this,
+                sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT), SensorManager.SENSOR_DELAY_GAME)
     }
 }

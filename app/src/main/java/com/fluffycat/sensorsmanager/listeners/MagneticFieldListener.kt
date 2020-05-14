@@ -1,11 +1,14 @@
 package com.fluffycat.sensorsmanager.listeners
 
-import com.github.mikephil.charting.charts.LineChart
+import android.hardware.Sensor
+import android.hardware.SensorManager
+import com.fluffycat.sensorsmanager.sensors.ISensorController
 
-class MagneticFieldListener (magneticFieldChartView: LineChart) :
-    ThreeAxisSensorListener(magneticFieldChartView, chartTitle) {
+class MagneticFieldListener(dataCollector: ISensorController) :
+    MySensorListener(dataCollector) {
 
-    companion object {
-        const val chartTitle = "Magnetic field"
+    override fun registerListener(sensorManager: SensorManager) {
+        sensorManager.registerListener(this,
+                sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_GAME)
     }
 }
