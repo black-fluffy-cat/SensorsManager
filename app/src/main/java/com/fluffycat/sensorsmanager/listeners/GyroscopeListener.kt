@@ -1,11 +1,14 @@
 package com.fluffycat.sensorsmanager.listeners
 
-import com.github.mikephil.charting.charts.LineChart
+import android.hardware.Sensor
+import android.hardware.SensorManager
+import com.fluffycat.sensorsmanager.sensors.ISensorController
 
-class GyroscopeListener (gyroscopeChartView: LineChart) :
-    ThreeAxisSensorListener(gyroscopeChartView, chartTitle) {
+class GyroscopeListener(dataCollector: ISensorController) :
+    MySensorListener(dataCollector) {
 
-    companion object {
-        const val chartTitle = "Gyroscope"
+    override fun registerListener(sensorManager: SensorManager) {
+        sensorManager.registerListener(this,
+                sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_GAME)
     }
 }

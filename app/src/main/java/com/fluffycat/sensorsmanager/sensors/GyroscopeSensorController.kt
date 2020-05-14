@@ -1,34 +1,32 @@
 package com.fluffycat.sensorsmanager.sensors
 
-import android.app.Activity
 import android.content.Context
-import android.hardware.Sensor
+import android.hardware.SensorEvent
 import android.hardware.SensorManager
 import android.util.Log
-import com.fluffycat.sensorsmanager.R
+import androidx.lifecycle.MutableLiveData
 import com.fluffycat.sensorsmanager.listeners.GyroscopeListener
-import com.fluffycat.sensorsmanager.listeners.ThreeAxisSensorListener
+import com.fluffycat.sensorsmanager.listeners.MySensorListener
 import com.fluffycat.sensorsmanager.utils.tag
-import com.github.mikephil.charting.charts.LineChart
 
-class GyroscopeSensorController(activity: Activity) : ISensorController {
+class GyroscopeSensorController(context: Context) : ISensorController {
 
-    private val gyroscopeChart: LineChart? = activity.findViewById(R.id.gyroscopeChart)
-    private var gyroscopeListener: ThreeAxisSensorListener? = null
+    override val sensorCurrentData = MutableLiveData<SensorEvent>()
 
-    private var sensorManager = activity.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    private val gyroscopeListener: MySensorListener = GyroscopeListener(this)
 
     override fun startReceivingData() {
-        gyroscopeChart?.let {
-            gyroscopeListener = GyroscopeListener(it)
-            sensorManager.registerListener(gyroscopeListener,
-                    sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), SensorManager.SENSOR_DELAY_GAME)
-            Log.d(tag, "Started receiving data")
-        }
+        gyroscopeListener.registerListener(sensorManager)
+        Log.d(tag, "Started receiving data")
     }
 
     override fun stopReceivingData() {
         sensorManager.unregisterListener(gyroscopeListener)
         Log.d(tag, "Stopped receiving data")
+    }
+
+    override fun onSensorDataReceived(event: SensorEvent) {
+        sensorCurrentData.value = event
     }
 }

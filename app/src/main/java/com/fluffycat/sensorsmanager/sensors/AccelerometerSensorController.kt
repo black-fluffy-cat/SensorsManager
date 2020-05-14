@@ -1,34 +1,33 @@
 package com.fluffycat.sensorsmanager.sensors
 
-import android.app.Activity
+import android.content.Context
 import android.content.Context.SENSOR_SERVICE
-import android.hardware.Sensor
+import android.hardware.SensorEvent
 import android.hardware.SensorManager
 import android.util.Log
-import com.fluffycat.sensorsmanager.R
+import androidx.lifecycle.MutableLiveData
 import com.fluffycat.sensorsmanager.listeners.AccelerometerListener
-import com.fluffycat.sensorsmanager.listeners.ThreeAxisSensorListener
+import com.fluffycat.sensorsmanager.listeners.MySensorListener
 import com.fluffycat.sensorsmanager.utils.tag
-import com.github.mikephil.charting.charts.LineChart
 
-class AccelerometerSensorController(activity: Activity) : ISensorController {
+class AccelerometerSensorController(context: Context) : ISensorController {
 
-    private val accelerometerChart: LineChart? = activity.findViewById(R.id.accelerometerChart)
-    private var accelerometerListener: ThreeAxisSensorListener? = null
+    override val sensorCurrentData = MutableLiveData<SensorEvent>()
 
-    private var sensorManager = activity.getSystemService(SENSOR_SERVICE) as SensorManager
+    private val sensorManager = context.getSystemService(SENSOR_SERVICE) as SensorManager
+    private val accelerometerListener: MySensorListener = AccelerometerListener(this)
 
     override fun startReceivingData() {
-        accelerometerChart?.let {
-            accelerometerListener = AccelerometerListener(it)
-            sensorManager.registerListener(accelerometerListener,
-                    sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME)
-            Log.d(tag, "Started receiving data")
-        }
+        accelerometerListener.registerListener(sensorManager)
+        Log.d(tag, "Started receiving data")
     }
 
     override fun stopReceivingData() {
         sensorManager.unregisterListener(accelerometerListener)
         Log.d(tag, "Stopped receiving data")
+    }
+
+    override fun onSensorDataReceived(event: SensorEvent) {
+        sensorCurrentData.value = event
     }
 }

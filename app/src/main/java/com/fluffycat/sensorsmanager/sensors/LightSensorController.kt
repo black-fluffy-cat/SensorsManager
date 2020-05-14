@@ -1,34 +1,32 @@
 package com.fluffycat.sensorsmanager.sensors
 
-import android.app.Activity
 import android.content.Context
-import android.hardware.Sensor
+import android.hardware.SensorEvent
 import android.hardware.SensorManager
 import android.util.Log
-import com.fluffycat.sensorsmanager.R
+import androidx.lifecycle.MutableLiveData
 import com.fluffycat.sensorsmanager.listeners.LightSensorListener
-import com.fluffycat.sensorsmanager.listeners.OneAxisSensorListener
+import com.fluffycat.sensorsmanager.listeners.MySensorListener
 import com.fluffycat.sensorsmanager.utils.tag
-import com.github.mikephil.charting.charts.LineChart
 
-class LightSensorController(activity: Activity) : ISensorController {
+class LightSensorController(context: Context) : ISensorController {
 
-    private val lightSensorChart: LineChart? = activity.findViewById(R.id.lightChart)
-    private var lightSensorListener: OneAxisSensorListener? = null
+    override val sensorCurrentData = MutableLiveData<SensorEvent>()
 
-    private var sensorManager = activity.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    private val lightSensorListener: MySensorListener = LightSensorListener(this)
 
     override fun startReceivingData() {
-        lightSensorChart?.let {
-            lightSensorListener = LightSensorListener(it)
-            sensorManager.registerListener(lightSensorListener,
-                    sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT), SensorManager.SENSOR_DELAY_GAME)
-            Log.d(tag, "Started receiving data")
-        }
+        lightSensorListener.registerListener(sensorManager)
+        Log.d(tag, "Started receiving data")
     }
 
     override fun stopReceivingData() {
         sensorManager.unregisterListener(lightSensorListener)
         Log.d(tag, "Stopped receiving data")
+    }
+
+    override fun onSensorDataReceived(event: SensorEvent) {
+        sensorCurrentData.value = event
     }
 }
