@@ -29,7 +29,6 @@ class AccelerometerFragment : Fragment() {
     private var lineData: LineData
 
     init {
-        // Create lineDataSets for 3 axis from sensor
         val lineDataSet1: LineDataSet = createDataSet(Color.GREEN, "$chartTitle X")
         val lineDataSet2: LineDataSet = createDataSet(Color.RED, "Y")
         val lineDataSet3: LineDataSet = createDataSet(Color.BLUE, "Z")
@@ -67,7 +66,6 @@ class AccelerometerFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         accelerometerSensorController.startReceivingData()
-
     }
 
     override fun onStop() {
