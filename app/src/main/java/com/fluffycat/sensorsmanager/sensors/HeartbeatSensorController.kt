@@ -14,6 +14,7 @@ import com.fluffycat.sensorsmanager.utils.tag
 class HeartbeatSensorController(context: Context) : ISensorController {
 
     override val sensorCurrentData = MutableLiveData<SensorEvent>()
+    val additionalData = MutableLiveData<Int>()
 
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     private val heartbeatListener: MySensorListener = HeartbeatListener(this)
@@ -30,6 +31,10 @@ class HeartbeatSensorController(context: Context) : ISensorController {
 
     override fun onSensorDataReceived(event: SensorEvent) {
         sensorCurrentData.value = event
+    }
+
+    fun onAdditionalDataChanged(code: Int) {
+        additionalData.value = code
     }
 
     override fun getSensorInfo(): String {
