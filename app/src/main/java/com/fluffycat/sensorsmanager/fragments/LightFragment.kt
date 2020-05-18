@@ -74,8 +74,11 @@ class LightFragment : Fragment() {
     }
 
     private fun onDataChanged(event: SensorEvent) {
+        val value = event.values[0]
+        lightXValueInfoLabel.text = "Lux: $value"
+
         lineData.apply {
-            addEntry(Entry(getDataSetByIndex(0).entryCount.toFloat(), event.values[0]), 0)
+            addEntry(Entry(getDataSetByIndex(0).entryCount.toFloat(), value), 0)
 
             notifyDataChanged()
             lightChart.notifyDataSetChanged()
