@@ -10,3 +10,5 @@ fun showToast(context: Context, message: String) {
 }
 
 val Any.tag: String get() = this.javaClass.simpleName.take(LOG_TAG_MAX_LENGTH)
+
+fun getLicencesInfoString() = ""
