@@ -10,4 +10,5 @@ interface ISensorController {
     fun startReceivingData()
     fun stopReceivingData()
     fun onSensorDataReceived(event: SensorEvent)
+    fun getSensorInfo(): String
 }

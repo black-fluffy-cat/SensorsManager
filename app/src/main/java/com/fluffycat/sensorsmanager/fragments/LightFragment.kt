@@ -53,6 +53,7 @@ class LightFragment : Fragment() {
         })
 
         lightChart.data = lineData
+        lightSensorInfoLabel.text = lightSensorController.getSensorInfo()
     }
 
     @Suppress("SameParameterValue")

@@ -55,6 +55,7 @@ class MagneticFieldFragment : Fragment() {
         })
 
         magneticFieldChart.data = lineData
+        magneticFieldSensorInfoLabel.text = magneticFieldSensorController.getSensorInfo()
     }
 
     private fun createDataSet(dataSetColor: Int, label: String) = LineDataSet(ArrayList(), label).apply {

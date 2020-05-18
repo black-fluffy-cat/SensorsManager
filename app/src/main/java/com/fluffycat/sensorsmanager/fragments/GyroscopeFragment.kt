@@ -54,6 +54,7 @@ class GyroscopeFragment : Fragment() {
         })
 
         gyroscopeChart.data = lineData
+        gyroscopeSensorInfoLabel.text = gyroscopeSensorController.getSensorInfo()
     }
 
     private fun createDataSet(dataSetColor: Int, label: String) = LineDataSet(ArrayList(), label).apply {
