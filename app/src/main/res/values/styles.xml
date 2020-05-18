@@ -8,4 +8,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="DefaultBackground" parent="Theme.MaterialComponents">
+        <item name="android:background">@color/gray</item>
+    </style>
+
 </resources>
