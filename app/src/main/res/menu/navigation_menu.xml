@@ -2,12 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/accelerometerMenuItem"
+        android:icon="@drawable/ic_axis"
         android:title="Accelerometer"/>
     <item android:id="@+id/gyroscopeMenuItem"
+        android:icon="@drawable/ic_gyroscope"
         android:title="Gyroscope"/>
     <item android:id="@+id/magneticFieldSensorMenuItem"
+        android:icon="@drawable/ic_magnetic_field"
         android:title="Magnetic field sensor"/>
     <item android:id="@+id/lightSensorMenuItem"
+        android:icon="@drawable/ic_light"
         android:title="Light sensor"/>
 <!--    <item android:id="@+id/modulesStatusMenuItem"-->
 <!--        android:icon="@drawable/ic_launcher_foreground"-->
