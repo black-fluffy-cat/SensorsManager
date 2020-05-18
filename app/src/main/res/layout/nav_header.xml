@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:background="@color/colorPrimaryDark">
+
     <ImageView
         android:layout_width="180dp"
         android:layout_height="130dp"
