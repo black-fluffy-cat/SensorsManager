@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.fluffycat.sensorsmanager.R
+import com.fluffycat.sensorsmanager.utils.LogFlurryEvent
 import com.fluffycat.sensorsmanager.utils.getLicencesInfoString
 import com.fluffycat.sensorsmanager.utils.showToast
 import kotlinx.android.synthetic.main.settings_fragment.*
@@ -30,6 +31,7 @@ class SettingsFragment : Fragment() {
 
         licencesLabel.setOnClickListener {
             activity?.let { activity ->
+                LogFlurryEvent("Clicked licences info")
                 showToast(activity, getLicencesInfoString())
             }
         }
