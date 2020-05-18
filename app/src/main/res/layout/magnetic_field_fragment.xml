@@ -11,10 +11,49 @@
         android:id="@+id/magneticFieldChart"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/magneticFieldXValueInfoLabel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/magneticFieldFragmentScrollView"/>
+        app:layout_constraintVertical_weight="3" />
+
+    <TextView
+        android:id="@+id/magneticFieldXValueInfoLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/magneticFieldYValueInfoLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/magneticFieldChart"
+        tools:text="Example text" />
+
+    <TextView
+        android:id="@+id/magneticFieldYValueInfoLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/magneticFieldZValueInfoLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/magneticFieldXValueInfoLabel"
+        tools:text="Example text" />
+
+    <TextView
+        android:id="@+id/magneticFieldZValueInfoLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="16dp"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/magneticFieldFragmentScrollView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/magneticFieldYValueInfoLabel"
+        tools:text="Example text" />
 
     <ScrollView
         android:id="@+id/magneticFieldFragmentScrollView"
@@ -23,16 +62,38 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/magneticFieldChart" >
+        app:layout_constraintTop_toBottomOf="@+id/magneticFieldZValueInfoLabel"
+        app:layout_constraintVertical_weight="2">
 
-        <TextView
-            android:id="@+id/magneticFieldSensorInfoLabel"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/magneticFieldFragmentInnerConstraintLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:textSize="20sp"
-            tools:text="Example text">
-        </TextView>
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/magneticFieldSensorLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="@string/sensor_info"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/magneticFieldSensorInfoLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/magneticFieldSensorLabel"
+                tools:text="Example text" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
 
