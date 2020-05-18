@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.fluffycat.sensorsmanager.R
 import com.fluffycat.sensorsmanager.fragments.AccelerometerFragment
 import com.fluffycat.sensorsmanager.navigation_view.MyNavigationItemSelectedListener
+import com.github.mikephil.charting.utils.Utils
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.navigation.NavigationView
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        Utils.init(this) // For first chart to have proper lines size
         setupDrawerViewListener()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setupNavigationViewListener()
