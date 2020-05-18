@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import com.fluffycat.sensorsmanager.R
 import com.fluffycat.sensorsmanager.fragments.AccelerometerFragment
 import com.fluffycat.sensorsmanager.navigation_view.MyNavigationItemSelectedListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -29,12 +31,31 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setupNavigationViewListener()
         setCurrentFragment(savedInstanceState)
+
+        initAds()
     }
 
     private fun setCurrentFragment(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
             switchFragment(AccelerometerFragment(), AccelerometerFragment.TAG)
         }
+    }
+
+    private fun switchFragment(fragment: Fragment, tag: String) {
+        currentFragment = fragment.tag ?: ""
+        supportFragmentManager.beginTransaction().replace(R.id.navDrawerFragmentContainer, fragment, tag).commit()
+        title = tag
+        mainDrawerLayout.closeDrawer(navigation)
+    }
+
+    private fun initAds() {
+        MobileAds.initialize(this) { }
+        createAndLoadMainBannerAd()
+    }
+
+    private fun createAndLoadMainBannerAd() {
+        val adRequest = AdRequest.Builder().build()
+        adMainBannerView.loadAd(adRequest)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -49,13 +70,6 @@ class MainActivity : AppCompatActivity() {
                 currentFragment = it
             }
         }
-    }
-
-    private fun switchFragment(fragment: Fragment, tag: String) {
-        currentFragment = fragment.tag ?: ""
-        supportFragmentManager.beginTransaction().replace(R.id.navDrawerFragmentContainer, fragment, tag).commit()
-        title = tag
-        mainDrawerLayout.closeDrawer(navigation)
     }
 
     /** DrawerView code **/
