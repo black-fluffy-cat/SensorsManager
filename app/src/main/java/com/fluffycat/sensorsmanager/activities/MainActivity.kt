@@ -90,6 +90,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupNavigationViewListener() {
         val navigationView = findViewById<NavigationView>(R.id.navigation)
-        navigationView.setNavigationItemSelectedListener(MyNavigationItemSelectedListener(this, ::switchFragment))
+        navigationView.setNavigationItemSelectedListener(MyNavigationItemSelectedListener(::switchFragment))
     }
 }
