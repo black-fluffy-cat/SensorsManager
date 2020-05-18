@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import com.fluffycat.sensorsmanager.R
 import com.fluffycat.sensorsmanager.fragments.AccelerometerFragment
 import com.fluffycat.sensorsmanager.navigation_view.MyNavigationItemSelectedListener
+import com.fluffycat.sensorsmanager.utils.LogFlurryEvent
+import com.fluffycat.sensorsmanager.utils.tag
 import com.github.mikephil.charting.utils.Utils
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
@@ -35,6 +37,7 @@ class MainActivity : AppCompatActivity() {
         setCurrentFragment(savedInstanceState)
 
         initAds()
+        LogFlurryEvent("MainActivity onCreate")
     }
 
     private fun setCurrentFragment(savedInstanceState: Bundle?) {
@@ -44,6 +47,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun switchFragment(fragment: Fragment, tag: String) {
+        LogFlurryEvent("switchFragment to $tag")
         currentFragment = fragment.tag ?: ""
         supportFragmentManager.beginTransaction().replace(R.id.navDrawerFragmentContainer, fragment, tag).commit()
         title = tag
