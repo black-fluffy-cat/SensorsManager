@@ -55,6 +55,7 @@ class AccelerometerFragment : Fragment() {
         })
 
         accelerometerChart.data = lineData
+        accelerometerSensorInfoLabel.text = accelerometerSensorController.getSensorInfo()
     }
 
     private fun createDataSet(dataSetColor: Int, label: String) = LineDataSet(ArrayList(), label).apply {
