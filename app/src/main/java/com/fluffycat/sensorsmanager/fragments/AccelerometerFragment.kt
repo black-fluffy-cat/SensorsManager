@@ -10,15 +10,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.fluffycat.sensorsmanager.R
 import com.fluffycat.sensorsmanager.SensorsManagerApplication
+import com.fluffycat.sensorsmanager.converter.ValuesConverter
 import com.fluffycat.sensorsmanager.sensors.AccelerometerSensorController
 import com.fluffycat.sensorsmanager.sensors.ISensorController
+import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.android.synthetic.main.accelerometer_fragment.*
-import kotlin.math.roundToInt
-import kotlin.math.roundToLong
 
 class AccelerometerFragment : Fragment() {
 
@@ -29,6 +29,7 @@ class AccelerometerFragment : Fragment() {
 
     private lateinit var accelerometerSensorController: ISensorController
     private var lineData: LineData
+    private val valuesConverter: ValuesConverter = ValuesConverter()
 
     init {
         val lineDataSet1: LineDataSet = createDataSet(Color.GREEN, "$chartTitle X")
@@ -56,7 +57,12 @@ class AccelerometerFragment : Fragment() {
             onDataChanged(sensorEvent)
         })
 
-        accelerometerChart.data = lineData
+        accelerometerChart.apply {
+            data = lineData
+            val chartDescription = Description()
+            chartDescription.text = ""
+            accelerometerChart.description = chartDescription
+        }
         accelerometerSensorInfoLabel.text = accelerometerSensorController.getSensorInfo()
     }
 
@@ -77,13 +83,17 @@ class AccelerometerFragment : Fragment() {
     }
 
     private fun onDataChanged(event: SensorEvent) {
-        val xValue = event.values[0]
-        val yValue = event.values[1]
-        val zValue = event.values[2]
+        val xValue = valuesConverter.roundValue(event.values[0])
+        val yValue = valuesConverter.roundValue(event.values[1])
+        val zValue = valuesConverter.roundValue(event.values[2])
 
-        accelerometerXValueInfoLabel.text = "X: ${((xValue * 1000).roundToInt()) / 1000f}"
-        accelerometerYValueInfoLabel.text = "Y: ${((yValue * 1000).roundToInt()) / 1000f}"
-        accelerometerZValueInfoLabel.text = "Z: ${((zValue * 1000).roundToInt()) / 1000f}"
+        val xLabelText = "X: ${valuesConverter.convertDistanceValueToString(xValue)}"
+        val yLabelText = "Y: ${valuesConverter.convertDistanceValueToString(yValue)}"
+        val zLabelText = "Z: ${valuesConverter.convertDistanceValueToString(zValue)}"
+
+        accelerometerXValueInfoLabel.text = xLabelText
+        accelerometerYValueInfoLabel.text = yLabelText
+        accelerometerZValueInfoLabel.text = zLabelText
 
         lineData.apply {
             addEntry(Entry(getDataSetByIndex(0).entryCount.toFloat(), xValue), 0)
