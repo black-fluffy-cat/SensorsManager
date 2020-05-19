@@ -57,12 +57,8 @@ class AccelerometerFragment : Fragment() {
             onDataChanged(sensorEvent)
         })
 
-        accelerometerChart.apply {
-            data = lineData
-            val chartDescription = Description()
-            chartDescription.text = ""
-            accelerometerChart.description = chartDescription
-        }
+        accelerometerChart.data = lineData
+        accelerometerChart.description = Description().apply { text = "" }
         accelerometerSensorInfoLabel.text = accelerometerSensorController.getSensorInfo()
     }
 
@@ -96,9 +92,9 @@ class AccelerometerFragment : Fragment() {
         accelerometerZValueInfoLabel.text = zLabelText
 
         lineData.apply {
-            addEntry(Entry(getDataSetByIndex(0).entryCount.toFloat(), xValue), 0)
-            addEntry(Entry(getDataSetByIndex(1).entryCount.toFloat(), yValue), 1)
-            addEntry(Entry(getDataSetByIndex(2).entryCount.toFloat(), zValue), 2)
+            addEntry(Entry(getDataSetByIndex(0).entryCount.toFloat(), valuesConverter.convertDistanceValueToChosenUnit(xValue)), 0)
+            addEntry(Entry(getDataSetByIndex(1).entryCount.toFloat(), valuesConverter.convertDistanceValueToChosenUnit(yValue)), 1)
+            addEntry(Entry(getDataSetByIndex(2).entryCount.toFloat(), valuesConverter.convertDistanceValueToChosenUnit(zValue)), 2)
 
             notifyDataChanged()
             accelerometerChart.notifyDataSetChanged()

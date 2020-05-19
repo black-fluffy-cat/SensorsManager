@@ -24,12 +24,24 @@
         android:id="@+id/licencesLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="29dp"
+        android:layout_marginTop="32dp"
         android:text="Licences info"
         android:textColor="@color/colorAccent2"
         android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="@+id/settingsFragmentText"
         app:layout_constraintStart_toStartOf="@+id/settingsFragmentText"
         app:layout_constraintTop_toBottomOf="@+id/settingsFragmentText" />
+
+    <TextView
+        android:id="@+id/chooseDistanceUnitLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Choose distance unit"
+        android:textColor="@color/colorAccent2"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="@+id/licencesLabel"
+        app:layout_constraintStart_toStartOf="@+id/licencesLabel"
+        app:layout_constraintTop_toBottomOf="@+id/licencesLabel" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
