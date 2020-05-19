@@ -41,6 +41,20 @@ class ValuesConverter(private val preferencesManager: PreferencesManager =
         }
     }
 
+    fun convertAngleValueToChosenUnit(angleInDegrees: Float): Float {
+        return when {
+            preferencesManager.readChosenAngleUnit() == ANGLE_DEGREE_VALUE -> {
+                angleInDegrees
+            }
+            preferencesManager.readChosenAngleUnit() == ANGLE_RAD_VALUE -> {
+                convertDegreesToRadians(angleInDegrees)
+            }
+            else -> {
+                angleInDegrees
+            }
+        }
+    }
+
     fun convertTemperatureValueToString(temperatureInCelsius: Float): String {
         return when {
             preferencesManager.readChosenTemperatureUnit() == TEMPERATURE_CELSIUS_VALUE -> {
@@ -58,6 +72,23 @@ class ValuesConverter(private val preferencesManager: PreferencesManager =
         }
     }
 
+    fun convertTemperatureValueToChosenUnit(temperatureInCelsius: Float): Float {
+        return when {
+            preferencesManager.readChosenTemperatureUnit() == TEMPERATURE_CELSIUS_VALUE -> {
+                temperatureInCelsius
+            }
+            preferencesManager.readChosenTemperatureUnit() == TEMPERATURE_KELVIN_VALUE -> {
+                convertCelsiusToKelvin(temperatureInCelsius)
+            }
+            preferencesManager.readChosenTemperatureUnit() == TEMPERATURE_FAHRENHEIT_VALUE -> {
+                convertCelsiusToFahrenheit(temperatureInCelsius)
+            }
+            else -> {
+                temperatureInCelsius
+            }
+        }
+    }
+
     fun convertDistanceValueToString(distanceInMeters: Float): String {
         return when {
             preferencesManager.readChosenDistanceUnit() == DISTANCE_METERS_VALUE -> {
@@ -68,6 +99,20 @@ class ValuesConverter(private val preferencesManager: PreferencesManager =
             }
             else -> {
                 "$distanceInMeters m"
+            }
+        }
+    }
+
+    fun convertDistanceValueToChosenUnit(distanceInMeters: Float): Float {
+        return when {
+            preferencesManager.readChosenDistanceUnit() == DISTANCE_METERS_VALUE -> {
+                distanceInMeters
+            }
+            preferencesManager.readChosenDistanceUnit() == DISTANCE_FEET_VALUE -> {
+                convertMetersToFeet(distanceInMeters)
+            }
+            else -> {
+                distanceInMeters
             }
         }
     }
