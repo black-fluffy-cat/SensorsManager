@@ -3,6 +3,7 @@ package com.fluffycat.sensorsmanager
 import android.app.Application
 import android.content.Context
 import android.util.Log
+import com.fluffycat.sensorsmanager.preferences.PreferencesManager
 import com.fluffycat.sensorsmanager.utils.tag
 import com.flurry.android.FlurryAgent
 import com.flurry.android.FlurryPerformance
@@ -14,6 +15,8 @@ class SensorsManagerApplication : Application() {
             private set
         fun getContext(): Context = instance.applicationContext
     }
+
+    val preferencesManager by lazy { PreferencesManager() }
 
     override fun onCreate() {
         super.onCreate()
