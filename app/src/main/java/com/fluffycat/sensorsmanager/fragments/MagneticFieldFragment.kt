@@ -10,15 +10,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.fluffycat.sensorsmanager.R
 import com.fluffycat.sensorsmanager.SensorsManagerApplication
+import com.fluffycat.sensorsmanager.converter.ValuesConverter
 import com.fluffycat.sensorsmanager.sensors.ISensorController
 import com.fluffycat.sensorsmanager.sensors.MagneticFieldSensorController
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import kotlinx.android.synthetic.main.accelerometer_fragment.*
 import kotlinx.android.synthetic.main.magnetic_field_fragment.*
-import kotlin.math.roundToInt
 
 class MagneticFieldFragment : Fragment() {
 
@@ -29,6 +28,7 @@ class MagneticFieldFragment : Fragment() {
 
     private lateinit var magneticFieldSensorController: ISensorController
     private var lineData: LineData
+    private val valuesConverter: ValuesConverter = ValuesConverter()
 
     init {
         val lineDataSet1: LineDataSet = createDataSet(Color.GREEN, "$chartTitle X")
@@ -77,18 +77,26 @@ class MagneticFieldFragment : Fragment() {
     }
 
     private fun onDataChanged(event: SensorEvent) {
-        val xValue = event.values[0]
-        val yValue = event.values[1]
-        val zValue = event.values[2]
+        val xValue = valuesConverter.roundValue(event.values[0])
+        val yValue = valuesConverter.roundValue(event.values[1])
+        val zValue = valuesConverter.roundValue(event.values[2])
 
-        magneticFieldXValueInfoLabel.text = "X: ${((xValue * 1000).roundToInt()) / 1000f}"
-        magneticFieldYValueInfoLabel.text = "Y: ${((yValue * 1000).roundToInt()) / 1000f}"
-        magneticFieldZValueInfoLabel.text = "Z: ${((zValue * 1000).roundToInt()) / 1000f}"
+        val convertedXValue = valuesConverter.convertDistanceValueToChosenUnit(xValue)
+        val convertedYValue = valuesConverter.convertDistanceValueToChosenUnit(yValue)
+        val convertedZValue = valuesConverter.convertDistanceValueToChosenUnit(zValue)
+
+        val xLabelText = "X: ${valuesConverter.convertDistanceValueToString(xValue)}"
+        val yLabelText = "Y: ${valuesConverter.convertDistanceValueToString(yValue)}"
+        val zLabelText = "Z: ${valuesConverter.convertDistanceValueToString(zValue)}"
+
+        magneticFieldXValueInfoLabel.text = xLabelText
+        magneticFieldYValueInfoLabel.text = yLabelText
+        magneticFieldZValueInfoLabel.text = zLabelText
 
         lineData.apply {
-            addEntry(Entry(getDataSetByIndex(0).entryCount.toFloat(), xValue), 0)
-            addEntry(Entry(getDataSetByIndex(1).entryCount.toFloat(), yValue), 1)
-            addEntry(Entry(getDataSetByIndex(2).entryCount.toFloat(), zValue), 2)
+            addEntry(Entry(getDataSetByIndex(0).entryCount.toFloat(), convertedXValue), 0)
+            addEntry(Entry(getDataSetByIndex(1).entryCount.toFloat(), convertedYValue), 1)
+            addEntry(Entry(getDataSetByIndex(2).entryCount.toFloat(), convertedZValue), 2)
 
             notifyDataChanged()
             magneticFieldChart.notifyDataSetChanged()
