@@ -8,114 +8,63 @@ import kotlin.math.roundToInt
 class ValuesConverter(private val preferencesManager: PreferencesManager =
                           SensorsManagerApplication.instance.preferencesManager) {
 
-    fun getCurrentChosenAngleUnitString(): String = when (preferencesManager.readChosenAngleUnit()) {
+    fun getCurrentChosenAngleUnitSymbol(): String = when (preferencesManager.readChosenAngleUnit()) {
         ANGLE_DEGREE_VALUE -> "°"
         ANGLE_RAD_VALUE -> "rad"
         else -> "°"
     }
 
-    fun getCurrentChosenTemperatureUnitString(): String = when (preferencesManager.readChosenTemperatureUnit()) {
+    fun getCurrentChosenTemperatureUnitSymbol(): String = when (preferencesManager.readChosenTemperatureUnit()) {
         TEMPERATURE_CELSIUS_VALUE -> "°C"
         TEMPERATURE_KELVIN_VALUE -> "K"
         TEMPERATURE_FAHRENHEIT_VALUE -> "°F"
         else -> "°C"
     }
 
-    fun getCurrentChosenDistanceUnitString(): String = when (preferencesManager.readChosenDistanceUnit()) {
+    fun getCurrentChosenDistanceUnitSymbol(): String = when (preferencesManager.readChosenDistanceUnit()) {
         DISTANCE_METERS_VALUE -> "m"
         DISTANCE_FEET_VALUE -> "ft"
         else -> "m"
     }
 
-    fun convertAngleValueToString(angleInDegrees: Float): String {
-        return when {
-            preferencesManager.readChosenAngleUnit() == ANGLE_DEGREE_VALUE -> {
-                "$angleInDegrees°"
-            }
-            preferencesManager.readChosenAngleUnit() == ANGLE_RAD_VALUE -> {
-                "${convertDegreesToRadians(angleInDegrees)} rad"
-            }
-            else -> {
-                "$angleInDegrees°"
-            }
-        }
+    fun convertAngleValueToStringWithSymbol(angleInDegrees: Float): String {
+        val convertedAngleValue = convertAngleValueToChosenUnit(angleInDegrees)
+        val unitSymbol = getCurrentChosenAngleUnitSymbol()
+        return "$convertedAngleValue $unitSymbol"
     }
 
-    fun convertAngleValueToChosenUnit(angleInDegrees: Float): Float {
-        return when {
-            preferencesManager.readChosenAngleUnit() == ANGLE_DEGREE_VALUE -> {
-                angleInDegrees
-            }
-            preferencesManager.readChosenAngleUnit() == ANGLE_RAD_VALUE -> {
-                convertDegreesToRadians(angleInDegrees)
-            }
-            else -> {
-                angleInDegrees
-            }
-        }
+    fun convertAngleValueToChosenUnit(angleInDegrees: Float): Float = when (preferencesManager.readChosenAngleUnit()) {
+        ANGLE_DEGREE_VALUE -> angleInDegrees
+        ANGLE_RAD_VALUE -> convertDegreesToRadians(angleInDegrees)
+        else -> angleInDegrees
     }
 
-    fun convertTemperatureValueToString(temperatureInCelsius: Float): String {
-        return when {
-            preferencesManager.readChosenTemperatureUnit() == TEMPERATURE_CELSIUS_VALUE -> {
-                "$temperatureInCelsius °C"
-            }
-            preferencesManager.readChosenTemperatureUnit() == TEMPERATURE_KELVIN_VALUE -> {
-                "${convertCelsiusToKelvin(temperatureInCelsius)} K"
-            }
-            preferencesManager.readChosenTemperatureUnit() == TEMPERATURE_FAHRENHEIT_VALUE -> {
-                "${convertCelsiusToFahrenheit(temperatureInCelsius)} °F"
-            }
-            else -> {
-                "$temperatureInCelsius °C"
-            }
-        }
+    fun convertTemperatureValueToStringWithSymbol(temperatureInCelsius: Float): String {
+        val convertedTemperatureValue = convertTemperatureValueToChosenUnit(temperatureInCelsius)
+        val unitSymbol = getCurrentChosenTemperatureUnitSymbol()
+        return "$convertedTemperatureValue $unitSymbol"
     }
 
-    fun convertTemperatureValueToChosenUnit(temperatureInCelsius: Float): Float {
-        return when {
-            preferencesManager.readChosenTemperatureUnit() == TEMPERATURE_CELSIUS_VALUE -> {
-                temperatureInCelsius
-            }
-            preferencesManager.readChosenTemperatureUnit() == TEMPERATURE_KELVIN_VALUE -> {
-                convertCelsiusToKelvin(temperatureInCelsius)
-            }
-            preferencesManager.readChosenTemperatureUnit() == TEMPERATURE_FAHRENHEIT_VALUE -> {
-                convertCelsiusToFahrenheit(temperatureInCelsius)
-            }
-            else -> {
-                temperatureInCelsius
-            }
+    fun convertTemperatureValueToChosenUnit(temperatureInCelsius: Float): Float =
+        when (preferencesManager.readChosenTemperatureUnit()) {
+            TEMPERATURE_CELSIUS_VALUE -> temperatureInCelsius
+            TEMPERATURE_KELVIN_VALUE -> convertCelsiusToKelvin(temperatureInCelsius)
+            TEMPERATURE_FAHRENHEIT_VALUE -> convertCelsiusToFahrenheit(temperatureInCelsius)
+            else -> temperatureInCelsius
         }
+
+    fun convertDistanceValueToStringWithSymbol(distanceInMeters: Float): String {
+        val convertedDistanceValue = convertDistanceValueToChosenUnit(distanceInMeters)
+        val unitSymbol = getCurrentChosenDistanceUnitSymbol()
+        return "$convertedDistanceValue $unitSymbol"
     }
 
-    fun convertDistanceValueToString(distanceInMeters: Float): String {
-        return when {
-            preferencesManager.readChosenDistanceUnit() == DISTANCE_METERS_VALUE -> {
-                "$distanceInMeters m"
-            }
-            preferencesManager.readChosenDistanceUnit() == DISTANCE_FEET_VALUE -> {
-                convertMetersToFeet(distanceInMeters).toString() + " ft"
-            }
-            else -> {
-                "$distanceInMeters m"
-            }
+    fun convertDistanceValueToChosenUnit(distanceInMeters: Float): Float =
+        when (preferencesManager.readChosenDistanceUnit()) {
+            DISTANCE_METERS_VALUE -> distanceInMeters
+            DISTANCE_FEET_VALUE -> convertMetersToFeet(distanceInMeters)
+            else -> distanceInMeters
         }
-    }
-
-    fun convertDistanceValueToChosenUnit(distanceInMeters: Float): Float {
-        return when {
-            preferencesManager.readChosenDistanceUnit() == DISTANCE_METERS_VALUE -> {
-                distanceInMeters
-            }
-            preferencesManager.readChosenDistanceUnit() == DISTANCE_FEET_VALUE -> {
-                convertMetersToFeet(distanceInMeters)
-            }
-            else -> {
-                distanceInMeters
-            }
-        }
-    }
 
     fun roundValue(value: Float, decimalPlaces: Int = 3): Float {
         val decimalHelperValue = 10.0.pow(decimalPlaces)
