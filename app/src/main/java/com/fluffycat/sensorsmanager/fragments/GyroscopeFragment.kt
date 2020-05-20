@@ -80,6 +80,7 @@ class GyroscopeFragment : Fragment() {
         val yValue = valuesConverter.roundValue(event.values[1])
         val zValue = valuesConverter.roundValue(event.values[2])
 
+        // TODO For sure gyroscope returns meters?
         val convertedXValue = valuesConverter.convertDistanceValueToChosenUnit(xValue)
         val convertedYValue = valuesConverter.convertDistanceValueToChosenUnit(yValue)
         val convertedZValue = valuesConverter.convertDistanceValueToChosenUnit(zValue)
