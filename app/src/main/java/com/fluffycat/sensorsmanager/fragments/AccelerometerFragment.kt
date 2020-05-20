@@ -83,6 +83,10 @@ class AccelerometerFragment : Fragment() {
         val yValue = valuesConverter.roundValue(event.values[1])
         val zValue = valuesConverter.roundValue(event.values[2])
 
+        val convertedXValue = valuesConverter.convertDistanceValueToChosenUnit(xValue)
+        val convertedYValue = valuesConverter.convertDistanceValueToChosenUnit(yValue)
+        val convertedZValue = valuesConverter.convertDistanceValueToChosenUnit(zValue)
+
         val xLabelText = "X: ${valuesConverter.convertDistanceValueToString(xValue)}"
         val yLabelText = "Y: ${valuesConverter.convertDistanceValueToString(yValue)}"
         val zLabelText = "Z: ${valuesConverter.convertDistanceValueToString(zValue)}"
@@ -92,9 +96,9 @@ class AccelerometerFragment : Fragment() {
         accelerometerZValueInfoLabel.text = zLabelText
 
         lineData.apply {
-            addEntry(Entry(getDataSetByIndex(0).entryCount.toFloat(), valuesConverter.convertDistanceValueToChosenUnit(xValue)), 0)
-            addEntry(Entry(getDataSetByIndex(1).entryCount.toFloat(), valuesConverter.convertDistanceValueToChosenUnit(yValue)), 1)
-            addEntry(Entry(getDataSetByIndex(2).entryCount.toFloat(), valuesConverter.convertDistanceValueToChosenUnit(zValue)), 2)
+            addEntry(Entry(getDataSetByIndex(0).entryCount.toFloat(), convertedXValue), 0)
+            addEntry(Entry(getDataSetByIndex(1).entryCount.toFloat(), convertedYValue), 1)
+            addEntry(Entry(getDataSetByIndex(2).entryCount.toFloat(), convertedZValue), 2)
 
             notifyDataChanged()
             accelerometerChart.notifyDataSetChanged()
