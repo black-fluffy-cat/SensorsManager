@@ -31,7 +31,7 @@ class PreferencesManager {
         getSharedPreferences().edit().putInt(CHOSEN_ANGLE_UNIT_KEY, value).apply()
     }
 
-    fun readChosenAngleUnit(): Int = getSharedPreferences().getInt(CHOSEN_ANGLE_UNIT_KEY, ANGLE_DEGREE_VALUE)
+    fun readChosenAngleUnit(): Int = getSharedPreferences().getInt(CHOSEN_ANGLE_UNIT_KEY, ANGLE_RAD_VALUE)
 
     fun saveChosenTemperatureUnit(value: Int) {
         getSharedPreferences().edit().putInt(CHOSEN_TEMPERATURE_UNIT_KEY, value).apply()

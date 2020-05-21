@@ -81,23 +81,18 @@ class MagneticFieldFragment : Fragment() {
         val yValue = valuesConverter.roundValue(event.values[1])
         val zValue = valuesConverter.roundValue(event.values[2])
 
-        // TODO For sure magnetic field returns meters?
-        val convertedXValue = valuesConverter.convertDistanceValueToChosenUnit(xValue)
-        val convertedYValue = valuesConverter.convertDistanceValueToChosenUnit(yValue)
-        val convertedZValue = valuesConverter.convertDistanceValueToChosenUnit(zValue)
-
-        val xLabelText = "X: ${valuesConverter.convertDistanceValueToStringWithSymbol(xValue)}"
-        val yLabelText = "Y: ${valuesConverter.convertDistanceValueToStringWithSymbol(yValue)}"
-        val zLabelText = "Z: ${valuesConverter.convertDistanceValueToStringWithSymbol(zValue)}"
+        val xLabelText = "X: ${valuesConverter.convertMagneticFieldValueToStringWithSymbol(xValue)}"
+        val yLabelText = "Y: ${valuesConverter.convertMagneticFieldValueToStringWithSymbol(yValue)}"
+        val zLabelText = "Z: ${valuesConverter.convertMagneticFieldValueToStringWithSymbol(zValue)}"
 
         magneticFieldXValueInfoLabel.text = xLabelText
         magneticFieldYValueInfoLabel.text = yLabelText
         magneticFieldZValueInfoLabel.text = zLabelText
 
         lineData.apply {
-            addEntry(Entry(getDataSetByIndex(0).entryCount.toFloat(), convertedXValue), 0)
-            addEntry(Entry(getDataSetByIndex(1).entryCount.toFloat(), convertedYValue), 1)
-            addEntry(Entry(getDataSetByIndex(2).entryCount.toFloat(), convertedZValue), 2)
+            addEntry(Entry(getDataSetByIndex(0).entryCount.toFloat(), xValue), 0)
+            addEntry(Entry(getDataSetByIndex(1).entryCount.toFloat(), yValue), 1)
+            addEntry(Entry(getDataSetByIndex(2).entryCount.toFloat(), zValue), 2)
 
             notifyDataChanged()
             magneticFieldChart.notifyDataSetChanged()

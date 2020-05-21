@@ -11,7 +11,7 @@ class ValuesConverter(private val preferencesManager: PreferencesManager =
     fun getCurrentChosenAngleUnitSymbol(): String = when (preferencesManager.readChosenAngleUnit()) {
         ANGLE_DEGREE_VALUE -> "°"
         ANGLE_RAD_VALUE -> "rad"
-        else -> "°"
+        else -> "rad"
     }
 
     fun getCurrentChosenTemperatureUnitSymbol(): String = when (preferencesManager.readChosenTemperatureUnit()) {
@@ -27,16 +27,24 @@ class ValuesConverter(private val preferencesManager: PreferencesManager =
         else -> "m"
     }
 
+    fun getMagneticFieldUnitSymbol(): String = "μT"
+
+    fun convertMagneticFieldValueToStringWithSymbol(magneticFieldInMicroTesla: Float) =
+        magneticFieldInMicroTesla.toString() + " " + getMagneticFieldUnitSymbol()
+
     fun convertAngleValueToStringWithSymbol(angleInDegrees: Float): String {
         val convertedAngleValue = convertAngleValueToChosenUnit(angleInDegrees)
         val unitSymbol = getCurrentChosenAngleUnitSymbol()
         return "$convertedAngleValue $unitSymbol"
     }
 
-    fun convertAngleValueToChosenUnit(angleInDegrees: Float): Float = when (preferencesManager.readChosenAngleUnit()) {
-        ANGLE_DEGREE_VALUE -> angleInDegrees
-        ANGLE_RAD_VALUE -> convertDegreesToRadians(angleInDegrees)
-        else -> angleInDegrees
+    fun convertAngularVelocityValueToStringWithSymbol(angularVelocityInDegrees: Float): String =
+        convertAngleValueToStringWithSymbol(angularVelocityInDegrees) + "/s"
+
+    fun convertAngleValueToChosenUnit(angleInRadians: Float): Float = when (preferencesManager.readChosenAngleUnit()) {
+        ANGLE_DEGREE_VALUE -> convertRadiansToDegrees(angleInRadians)
+        ANGLE_RAD_VALUE -> angleInRadians
+        else -> angleInRadians
     }
 
     fun convertTemperatureValueToStringWithSymbol(temperatureInCelsius: Float): String {
@@ -59,6 +67,9 @@ class ValuesConverter(private val preferencesManager: PreferencesManager =
         return "$convertedDistanceValue $unitSymbol"
     }
 
+    fun convertAccelerationValueToStringWithSymbol(accelerationInMeters: Float): String =
+        convertDistanceValueToStringWithSymbol(accelerationInMeters) + "/s²"
+
     fun convertDistanceValueToChosenUnit(distanceInMeters: Float): Float =
         when (preferencesManager.readChosenDistanceUnit()) {
             DISTANCE_METERS_VALUE -> distanceInMeters
@@ -72,8 +83,8 @@ class ValuesConverter(private val preferencesManager: PreferencesManager =
     }
 
     // TODO Check what types sensors does return (float -> double)
-    private fun convertDegreesToRadians(angleInDegrees: Float): Float =
-        Math.toRadians(angleInDegrees.toDouble()).toFloat()
+    private fun convertRadiansToDegrees(angleInDegrees: Float): Float =
+        Math.toDegrees(angleInDegrees.toDouble()).toFloat()
 
     // TODO Check what types sensors does return (float -> double)
     private fun convertCelsiusToKelvin(temperatureInCelsius: Float): Float = (temperatureInCelsius + 273.15).toFloat()

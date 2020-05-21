@@ -87,9 +87,9 @@ class AccelerometerFragment : Fragment() {
         val convertedYValue = valuesConverter.convertDistanceValueToChosenUnit(yValue)
         val convertedZValue = valuesConverter.convertDistanceValueToChosenUnit(zValue)
 
-        val xLabelText = "X: ${valuesConverter.convertDistanceValueToStringWithSymbol(xValue)}"
-        val yLabelText = "Y: ${valuesConverter.convertDistanceValueToStringWithSymbol(yValue)}"
-        val zLabelText = "Z: ${valuesConverter.convertDistanceValueToStringWithSymbol(zValue)}"
+        val xLabelText = "X: ${valuesConverter.convertAccelerationValueToStringWithSymbol(xValue)}"
+        val yLabelText = "Y: ${valuesConverter.convertAccelerationValueToStringWithSymbol(yValue)}"
+        val zLabelText = "Z: ${valuesConverter.convertAccelerationValueToStringWithSymbol(zValue)}"
 
         accelerometerXValueInfoLabel.text = xLabelText
         accelerometerYValueInfoLabel.text = yLabelText
