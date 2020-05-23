@@ -5,6 +5,7 @@ import android.widget.Toast
 import com.flurry.android.FlurryAgent
 
 const val HEART_RATE_REQUEST_CODE = 1
+const val REQUEST_RECORD_AUDIO_REQUEST_CODE = 2
 
 private const val LOG_TAG_MAX_LENGTH = 23
 
