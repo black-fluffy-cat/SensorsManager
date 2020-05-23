@@ -50,7 +50,6 @@ class MainActivity : AppCompatActivity() {
         LogFlurryEvent("switchFragment to $tag")
         currentFragment = fragment.tag ?: ""
         supportFragmentManager.beginTransaction().replace(R.id.navDrawerFragmentContainer, fragment, tag).commit()
-        title = tag
         mainDrawerLayout.closeDrawer(mainActivityNavigationView)
     }
 
