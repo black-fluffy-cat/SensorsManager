@@ -7,8 +7,7 @@ import android.hardware.SensorManager
 import android.os.Build
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.fluffycat.sensorsmanager.listeners.LightSensorListener
-import com.fluffycat.sensorsmanager.listeners.MySensorListener
+import com.fluffycat.sensorsmanager.listeners.UniversalSensorListener
 import com.fluffycat.sensorsmanager.utils.tag
 
 class LightSensorController(context: Context) : ISensorController {
@@ -16,10 +15,11 @@ class LightSensorController(context: Context) : ISensorController {
     override val sensorCurrentData = MutableLiveData<SensorEvent>()
 
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    private val lightSensorListener: MySensorListener = LightSensorListener(this)
+    private val lightSensorListener: UniversalSensorListener = UniversalSensorListener(this)
 
     override fun startReceivingData() {
-        lightSensorListener.registerListener(sensorManager)
+        sensorManager.registerListener(lightSensorListener, sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT),
+                SensorManager.SENSOR_DELAY_GAME)
         Log.d(tag, "Started receiving data")
     }
 
