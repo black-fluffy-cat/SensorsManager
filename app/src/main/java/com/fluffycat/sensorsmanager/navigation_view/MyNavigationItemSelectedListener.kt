@@ -17,6 +17,8 @@ class MyNavigationItemSelectedListener(private val switchFragment: (fragment: Fr
             R.id.lightSensorMenuItem -> switchFragment(LightFragment(), LightFragment.TAG)
             R.id.heartbeatSensorMenuItem -> switchFragment(HeartbeatFragment(), HeartbeatFragment.TAG)
             R.id.microphoneMenuItem -> switchFragment(MicrophoneFragment(), MicrophoneFragment.TAG)
+            R.id.linearAccelerationSensorMenuItem -> switchFragment(LinearAccelerationFragment(),
+                    LinearAccelerationFragment.TAG)
             R.id.proximitySensorMenuItem -> switchFragment(ProximityFragment(), ProximityFragment.TAG)
             R.id.rotationVectorMenuItem -> switchFragment(RotationVectorFragment(), RotationVectorFragment.TAG)
             R.id.settingsMenuItem -> switchFragment(SettingsFragment(), SettingsFragment.TAG)

@@ -118,6 +118,9 @@ class MainActivity : AppCompatActivity() {
         if (!HeartbeatSensorController.doesSensorExist()) {
             mainActivityNavigationView.menu.removeItem(R.id.heartbeatSensorMenuItem)
         }
+        if (!LinearAccelerationSensorController.doesSensorExist()) {
+            mainActivityNavigationView.menu.removeItem(R.id.linearAccelerationSensorMenuItem)
+        }
         if (!LightSensorController.doesSensorExist()) {
             mainActivityNavigationView.menu.removeItem(R.id.lightSensorMenuItem)
         }

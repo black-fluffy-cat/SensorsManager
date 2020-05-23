@@ -17,6 +17,8 @@
         android:title="Heartbeat sensor"/>
     <item android:id="@+id/microphoneMenuItem"
         android:title="Microphone"/>
+    <item android:id="@+id/linearAccelerationSensorMenuItem"
+        android:title="Linear acceleration"/>
     <item android:id="@+id/proximitySensorMenuItem"
         android:title="Proximity sensor"/>
     <item android:id="@+id/rotationVectorMenuItem"
