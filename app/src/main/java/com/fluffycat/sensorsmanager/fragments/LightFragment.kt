@@ -30,7 +30,7 @@ class LightFragment : Fragment() {
     private var lineData: LineData
 
     init {
-        val lineDataSet1: LineDataSet = createDataSet(Color.CYAN, chartTitle)
+        val lineDataSet1: LineDataSet = createDataSet(Color.YELLOW, chartTitle)
         lineData = LineData(lineDataSet1)
     }
 
