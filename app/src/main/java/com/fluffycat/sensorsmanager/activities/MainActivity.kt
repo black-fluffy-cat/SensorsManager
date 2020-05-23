@@ -127,6 +127,9 @@ class MainActivity : AppCompatActivity() {
         if (!RotationVectorController.doesSensorExist()) {
             mainActivityNavigationView.menu.removeItem(R.id.rotationVectorMenuItem)
         }
+        if (!ProximitySensorController.doesSensorExist()) {
+            mainActivityNavigationView.menu.removeItem(R.id.proximitySensorMenuItem)
+        }
 
         setupNavigationViewListener()
     }
