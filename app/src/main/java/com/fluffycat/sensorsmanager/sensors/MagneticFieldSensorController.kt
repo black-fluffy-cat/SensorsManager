@@ -7,8 +7,7 @@ import android.hardware.SensorManager
 import android.os.Build
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.fluffycat.sensorsmanager.listeners.MagneticFieldListener
-import com.fluffycat.sensorsmanager.listeners.MySensorListener
+import com.fluffycat.sensorsmanager.listeners.UniversalSensorListener
 import com.fluffycat.sensorsmanager.utils.tag
 
 class MagneticFieldSensorController(context: Context) : ISensorController {
@@ -16,10 +15,11 @@ class MagneticFieldSensorController(context: Context) : ISensorController {
     override val sensorCurrentData = MutableLiveData<SensorEvent>()
 
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    private val magneticFieldListener: MySensorListener = MagneticFieldListener(this)
+    private val magneticFieldListener: UniversalSensorListener = UniversalSensorListener(this)
 
     override fun startReceivingData() {
-        magneticFieldListener.registerListener(sensorManager)
+        sensorManager.registerListener(magneticFieldListener,
+                sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_GAME)
         Log.d(tag, "Started receiving data")
     }
 

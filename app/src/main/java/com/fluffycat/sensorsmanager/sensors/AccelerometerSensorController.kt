@@ -8,8 +8,7 @@ import android.hardware.SensorManager
 import android.os.Build
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.fluffycat.sensorsmanager.listeners.AccelerometerListener
-import com.fluffycat.sensorsmanager.listeners.MySensorListener
+import com.fluffycat.sensorsmanager.listeners.UniversalSensorListener
 import com.fluffycat.sensorsmanager.utils.tag
 
 class AccelerometerSensorController(context: Context) : ISensorController {
@@ -17,10 +16,11 @@ class AccelerometerSensorController(context: Context) : ISensorController {
     override val sensorCurrentData = MutableLiveData<SensorEvent>()
 
     private val sensorManager = context.getSystemService(SENSOR_SERVICE) as SensorManager
-    private val accelerometerListener: MySensorListener = AccelerometerListener(this)
+    private val accelerometerListener: UniversalSensorListener = UniversalSensorListener(this)
 
     override fun startReceivingData() {
-        accelerometerListener.registerListener(sensorManager)
+        sensorManager.registerListener(accelerometerListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_GAME)
         Log.d(tag, "Started receiving data")
     }
 

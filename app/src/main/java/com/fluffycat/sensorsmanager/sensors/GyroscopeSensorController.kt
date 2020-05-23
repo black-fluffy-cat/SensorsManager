@@ -7,8 +7,7 @@ import android.hardware.SensorManager
 import android.os.Build
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.fluffycat.sensorsmanager.listeners.GyroscopeListener
-import com.fluffycat.sensorsmanager.listeners.MySensorListener
+import com.fluffycat.sensorsmanager.listeners.UniversalSensorListener
 import com.fluffycat.sensorsmanager.utils.tag
 
 class GyroscopeSensorController(context: Context) : ISensorController {
@@ -16,10 +15,11 @@ class GyroscopeSensorController(context: Context) : ISensorController {
     override val sensorCurrentData = MutableLiveData<SensorEvent>()
 
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    private val gyroscopeListener: MySensorListener = GyroscopeListener(this)
+    private val gyroscopeListener: UniversalSensorListener = UniversalSensorListener(this)
 
     override fun startReceivingData() {
-        gyroscopeListener.registerListener(sensorManager)
+        sensorManager.registerListener(gyroscopeListener, sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE),
+                SensorManager.SENSOR_DELAY_GAME)
         Log.d(tag, "Started receiving data")
     }
 
