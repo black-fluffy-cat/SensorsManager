@@ -14,7 +14,7 @@ abstract class BaseSensorController(context: Context, private val sensorType: In
     override val sensorCurrentData = MutableLiveData<SensorEvent>()
 
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    private val sensorListener: UniversalSensorListener = UniversalSensorListener(this)
+    private val sensorListener: UniversalSensorListener by lazy { UniversalSensorListener(this) }
 
     override fun startReceivingData() {
         sensorManager.registerListener(sensorListener, sensorManager.getDefaultSensor(sensorType),
