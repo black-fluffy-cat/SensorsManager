@@ -124,6 +124,9 @@ class MainActivity : AppCompatActivity() {
         if (!MagneticFieldSensorController.doesSensorExist()) {
             mainActivityNavigationView.menu.removeItem(R.id.magneticFieldSensorMenuItem)
         }
+        if (!RotationVectorController.doesSensorExist()) {
+            mainActivityNavigationView.menu.removeItem(R.id.rotationVectorMenuItem)
+        }
 
         setupNavigationViewListener()
     }
