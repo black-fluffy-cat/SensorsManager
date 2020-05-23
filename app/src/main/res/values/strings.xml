@@ -12,4 +12,5 @@
     <string name="light">Light</string>
     <string name="sensor_info">Sensor info:</string>
     <string name="heartbeat">Heartbeat</string>
+    <string name="microphone">Microphone</string>
 </resources>
