@@ -3,13 +3,18 @@ package com.fluffycat.sensorsmanager.sensors
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorManager
+import android.os.Build
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.fluffycat.sensorsmanager.listeners.HeartbeatListener
 import com.fluffycat.sensorsmanager.listeners.UniversalSensorListener
 import com.fluffycat.sensorsmanager.utils.tag
 
-private const val HEART_RATE_SENSOR_TYPE = Sensor.TYPE_HEART_RATE
+private val HEART_RATE_SENSOR_TYPE = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+    Sensor.TYPE_HEART_RATE
+} else {
+    -1
+}
 
 class HeartbeatSensorController(context: Context) : BaseSensorController(context, HEART_RATE_SENSOR_TYPE) {
 
