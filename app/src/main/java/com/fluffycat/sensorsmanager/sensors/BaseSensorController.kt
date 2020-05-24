@@ -17,9 +17,13 @@ abstract class BaseSensorController(context: Context, private val sensorType: In
     private val sensorListener: UniversalSensorListener by lazy { UniversalSensorListener(this) }
 
     override fun startReceivingData() {
-        sensorManager.registerListener(sensorListener, sensorManager.getDefaultSensor(sensorType),
+        val registerStatus = sensorManager.registerListener(sensorListener, sensorManager.getDefaultSensor(sensorType),
                 SensorManager.SENSOR_DELAY_GAME)
-        Log.d(tag, "Started receiving data")
+        if (registerStatus) {
+            Log.d(tag, "Started receiving data")
+        } else {
+            Log.d(tag, "Registering sensor failed")
+        }
     }
 
     override fun stopReceivingData() {

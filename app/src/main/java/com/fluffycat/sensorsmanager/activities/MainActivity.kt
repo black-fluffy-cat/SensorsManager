@@ -1,6 +1,7 @@
 package com.fluffycat.sensorsmanager.activities
 
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +12,7 @@ import com.fluffycat.sensorsmanager.fragments.AccelerometerFragment
 import com.fluffycat.sensorsmanager.navigation_view.MyNavigationItemSelectedListener
 import com.fluffycat.sensorsmanager.sensors.*
 import com.fluffycat.sensorsmanager.utils.LogFlurryEvent
+import com.fluffycat.sensorsmanager.utils.tag
 import com.github.mikephil.charting.utils.Utils
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
@@ -108,27 +110,35 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNavigationView() {
+        Log.d(tag, "AccelerometerSensorController.doesSensorExist() == ${AccelerometerSensorController.doesSensorExist()}")
         if (!AccelerometerSensorController.doesSensorExist()) {
             mainActivityNavigationView.menu.removeItem(R.id.accelerometerMenuItem)
         }
+        Log.d(tag, "GyroscopeSensorController.doesSensorExist() == ${GyroscopeSensorController.doesSensorExist()}")
         if (!GyroscopeSensorController.doesSensorExist()) {
             mainActivityNavigationView.menu.removeItem(R.id.gyroscopeMenuItem)
         }
+        Log.d(tag, "HeartbeatSensorController.doesSensorExist() == ${HeartbeatSensorController.doesSensorExist()}")
         if (!HeartbeatSensorController.doesSensorExist()) {
             mainActivityNavigationView.menu.removeItem(R.id.heartbeatSensorMenuItem)
         }
+        Log.d(tag, "LinearAccelerationSensorController.doesSensorExist() == ${LinearAccelerationSensorController.doesSensorExist()}")
         if (!LinearAccelerationSensorController.doesSensorExist()) {
             mainActivityNavigationView.menu.removeItem(R.id.linearAccelerationSensorMenuItem)
         }
+        Log.d(tag, "LightSensorController.doesSensorExist() == ${LightSensorController.doesSensorExist()}")
         if (!LightSensorController.doesSensorExist()) {
             mainActivityNavigationView.menu.removeItem(R.id.lightSensorMenuItem)
         }
+        Log.d(tag, "MagneticFieldSensorController.doesSensorExist() == ${MagneticFieldSensorController.doesSensorExist()}")
         if (!MagneticFieldSensorController.doesSensorExist()) {
             mainActivityNavigationView.menu.removeItem(R.id.magneticFieldSensorMenuItem)
         }
+        Log.d(tag, "RotationVectorController.doesSensorExist() == ${RotationVectorController.doesSensorExist()}")
         if (!RotationVectorController.doesSensorExist()) {
             mainActivityNavigationView.menu.removeItem(R.id.rotationVectorMenuItem)
         }
+        Log.d(tag, "ProximitySensorController.doesSensorExist() == ${ProximitySensorController.doesSensorExist()}")
         if (!ProximitySensorController.doesSensorExist()) {
             mainActivityNavigationView.menu.removeItem(R.id.proximitySensorMenuItem)
         }
