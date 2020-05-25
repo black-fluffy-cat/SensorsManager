@@ -7,6 +7,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.fluffycat.sensorsmanager.BuildConfig
 import com.fluffycat.sensorsmanager.R
 import com.fluffycat.sensorsmanager.fragments.AccelerometerFragment
 import com.fluffycat.sensorsmanager.navigation_view.MyNavigationItemSelectedListener
@@ -14,7 +15,9 @@ import com.fluffycat.sensorsmanager.sensors.*
 import com.fluffycat.sensorsmanager.utils.LogFlurryEvent
 import com.fluffycat.sensorsmanager.utils.tag
 import com.github.mikephil.charting.utils.Utils
+import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.InterstitialAd
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -27,18 +30,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private var currentFragment: String = ""
+    private lateinit var adRequest: AdRequest
+    private lateinit var mInterstitialAd: InterstitialAd
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        initAds()
         Utils.init(this) // For first chart to have proper lines size
         setupDrawerViewListener()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setupNavigationView()
         setCurrentFragment(savedInstanceState)
 
-        initAds()
         LogFlurryEvent("MainActivity onCreate")
     }
 
@@ -57,13 +62,35 @@ class MainActivity : AppCompatActivity() {
 
     private fun initAds() {
         MobileAds.initialize(this) { }
+
+        adRequest = AdRequest.Builder().build()
         createAndLoadMainBannerAd()
+        createAndLoadMainInterstitialAd()
     }
 
     private fun createAndLoadMainBannerAd() {
-        val adRequest = AdRequest.Builder().build()
         adMainBannerView.loadAd(adRequest)
     }
+
+    private fun createAndLoadMainInterstitialAd() {
+        mInterstitialAd = InterstitialAd(this).apply {
+            adListener = object : AdListener() {
+                override fun onAdClosed() {
+                    loadAd(adRequest)
+                }
+            }
+            adUnitId = getIntersitialAdUnitId(BuildConfig.DEBUG)
+            loadAd(adRequest)
+        }
+    }
+
+    @Suppress("SameParameterValue")
+    private fun getIntersitialAdUnitId(isDebug: Boolean): String =
+        if (isDebug) {
+            "ca-app-pub-3940256099942544/1033173712"
+        } else {
+            "ca-app-pub-7809340407306359/4753873001"
+        }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -110,7 +137,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNavigationView() {
-        Log.d(tag, "AccelerometerSensorController.doesSensorExist() == ${AccelerometerSensorController.doesSensorExist()}")
+        Log.d(tag,
+                "AccelerometerSensorController.doesSensorExist() == ${AccelerometerSensorController.doesSensorExist()}")
         if (!AccelerometerSensorController.doesSensorExist()) {
             mainActivityNavigationView.menu.removeItem(R.id.accelerometerMenuItem)
         }
@@ -122,7 +150,8 @@ class MainActivity : AppCompatActivity() {
         if (!HeartbeatSensorController.doesSensorExist()) {
             mainActivityNavigationView.menu.removeItem(R.id.heartbeatSensorMenuItem)
         }
-        Log.d(tag, "LinearAccelerationSensorController.doesSensorExist() == ${LinearAccelerationSensorController.doesSensorExist()}")
+        Log.d(tag,
+                "LinearAccelerationSensorController.doesSensorExist() == ${LinearAccelerationSensorController.doesSensorExist()}")
         if (!LinearAccelerationSensorController.doesSensorExist()) {
             mainActivityNavigationView.menu.removeItem(R.id.linearAccelerationSensorMenuItem)
         }
@@ -130,7 +159,8 @@ class MainActivity : AppCompatActivity() {
         if (!LightSensorController.doesSensorExist()) {
             mainActivityNavigationView.menu.removeItem(R.id.lightSensorMenuItem)
         }
-        Log.d(tag, "MagneticFieldSensorController.doesSensorExist() == ${MagneticFieldSensorController.doesSensorExist()}")
+        Log.d(tag,
+                "MagneticFieldSensorController.doesSensorExist() == ${MagneticFieldSensorController.doesSensorExist()}")
         if (!MagneticFieldSensorController.doesSensorExist()) {
             mainActivityNavigationView.menu.removeItem(R.id.magneticFieldSensorMenuItem)
         }
@@ -148,6 +178,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupNavigationViewListener() {
         val navigationView = findViewById<NavigationView>(R.id.mainActivityNavigationView)
-        navigationView.setNavigationItemSelectedListener(MyNavigationItemSelectedListener(::switchFragment))
+        navigationView.setNavigationItemSelectedListener(
+                MyNavigationItemSelectedListener(::switchFragment, mInterstitialAd))
     }
 }
