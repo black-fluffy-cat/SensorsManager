@@ -4,8 +4,6 @@ import android.hardware.SensorEvent
 import android.os.Bundle
 import android.view.View
 import com.fluffycat.sensorsmanager.R
-import com.fluffycat.sensorsmanager.SensorsManagerApplication
-import com.fluffycat.sensorsmanager.sensors.ISensorController
 import com.fluffycat.sensorsmanager.sensors.LinearAccelerationSensorController
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.YAxis
@@ -14,18 +12,16 @@ import kotlinx.android.synthetic.main.linear_acceleration_fragment.*
 
 class LinearAccelerationFragment : BaseChartFragment() {
 
-    override val fragmentTitle = getString(R.string.linearAcceleration)
-    override val chartTitle = getString(R.string.linearAcceleration)
     override val layoutResource = R.layout.linear_acceleration_fragment
-    override var sensorController: ISensorController =
-        LinearAccelerationSensorController(context ?: SensorsManagerApplication.getContext())
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+        sensorController = LinearAccelerationSensorController(sensorManager)
         linearAccelerationChart.data = lineData
         linearAccelerationChart.description = Description().apply { text = "" }
         linearAccelerationSensorInfoLabel.text = sensorController.getSensorInfo()
+        fragmentTitle = getString(R.string.linearAcceleration)
+        chartTitle = getString(R.string.linearAcceleration)
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onDataChanged(event: SensorEvent) {
@@ -41,9 +37,9 @@ class LinearAccelerationFragment : BaseChartFragment() {
             forEach { valuesConverter.convertAccelerationValueToStringWithSymbol(it) }
         }
 
-        linearAccelerationXValueInfoLabel.text = "X: ${labelTexts[0]}"
-        linearAccelerationYValueInfoLabel.text = "Y: ${labelTexts[1]}"
-        linearAccelerationZValueInfoLabel.text = "Z: ${labelTexts[2]}"
+        linearAccelerationXValueInfoLabel.text = getString(R.string.xChartLabel, labelTexts[0])
+        linearAccelerationYValueInfoLabel.text = getString(R.string.yChartLabel, labelTexts[1])
+        linearAccelerationZValueInfoLabel.text = getString(R.string.zChartLabel, labelTexts[2])
 
         lineData.apply {
             convertedValues.sliceArray(IntRange(0, 2)).forEachIndexed { index, value ->

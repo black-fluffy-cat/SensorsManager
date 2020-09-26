@@ -4,8 +4,6 @@ import android.hardware.SensorEvent
 import android.os.Bundle
 import android.view.View
 import com.fluffycat.sensorsmanager.R
-import com.fluffycat.sensorsmanager.SensorsManagerApplication
-import com.fluffycat.sensorsmanager.sensors.ISensorController
 import com.fluffycat.sensorsmanager.sensors.RotationVectorController
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
@@ -13,15 +11,15 @@ import kotlinx.android.synthetic.main.rotation_vector_fragment.*
 
 class RotationVectorFragment : BaseChartFragment() {
 
-    override val fragmentTitle = getString(R.string.rotationVector)
-    override val chartTitle = getString(R.string.rotationVector)
     override val layoutResource = R.layout.rotation_vector_fragment
-    override var sensorController: ISensorController =
-        RotationVectorController(context ?: SensorsManagerApplication.getContext())
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        sensorController = RotationVectorController(sensorManager)
         rotationVectorChart.data = lineData
         rotationVectorSensorInfoLabel.text = sensorController.getSensorInfo()
+        fragmentTitle = getString(R.string.rotationVector)
+        chartTitle = getString(R.string.rotationVector)
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onDataChanged(event: SensorEvent) {
@@ -29,13 +27,9 @@ class RotationVectorFragment : BaseChartFragment() {
             forEach { valuesConverter.roundValue(it) }
         }
 
-        val xLabelText = "X: ${roundedValues[0]}"
-        val yLabelText = "Y: ${roundedValues[1]}"
-        val zLabelText = "Z: ${roundedValues[2]}"
-
-        rotationVectorXValueInfoLabel.text = xLabelText
-        rotationVectorYValueInfoLabel.text = yLabelText
-        rotationVectorZValueInfoLabel.text = zLabelText
+        rotationVectorXValueInfoLabel.text = getString(R.string.xChartLabel, roundedValues[0])
+        rotationVectorYValueInfoLabel.text = getString(R.string.yChartLabel, roundedValues[1])
+        rotationVectorZValueInfoLabel.text = getString(R.string.zChartLabel, roundedValues[2])
 
         lineData.apply {
             roundedValues.sliceArray(IntRange(0, 2)).forEachIndexed { index, value ->

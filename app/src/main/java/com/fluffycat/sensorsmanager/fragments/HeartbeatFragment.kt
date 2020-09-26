@@ -1,6 +1,7 @@
 package com.fluffycat.sensorsmanager.fragments
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.hardware.SensorEvent
@@ -15,7 +16,6 @@ import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.fluffycat.sensorsmanager.R
-import com.fluffycat.sensorsmanager.SensorsManagerApplication
 import com.fluffycat.sensorsmanager.sensors.HeartbeatSensorController
 import com.fluffycat.sensorsmanager.utils.HEART_RATE_REQUEST_CODE
 import com.github.mikephil.charting.components.YAxis
@@ -58,7 +58,7 @@ class HeartbeatFragment : Fragment() {
                     HEART_RATE_REQUEST_CODE)
         }
 
-        heartbeatSensorController = HeartbeatSensorController(context ?: SensorsManagerApplication.getContext())
+        heartbeatSensorController = HeartbeatSensorController(context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager?)
 
         // TODO Can I observe it here and forget about it?
         heartbeatSensorController.sensorCurrentData.observe(this, Observer { sensorEvent ->

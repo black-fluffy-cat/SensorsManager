@@ -1,6 +1,7 @@
 package com.fluffycat.sensorsmanager.utils
 
 import android.content.Context
+import android.hardware.SensorManager
 import android.widget.Toast
 import com.flurry.android.FlurryAgent
 
@@ -21,3 +22,6 @@ fun getLicencesInfoString() =
 fun LogFlurryEvent(message: String) {
     FlurryAgent.logEvent(message)
 }
+
+fun doesSensorExist(context: Context, sensorType: Int): Boolean =
+    (context.getSystemService(Context.SENSOR_SERVICE) as SensorManager).getDefaultSensor(sensorType) != null
