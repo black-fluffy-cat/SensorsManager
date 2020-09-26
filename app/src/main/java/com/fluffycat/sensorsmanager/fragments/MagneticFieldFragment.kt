@@ -1,98 +1,52 @@
 package com.fluffycat.sensorsmanager.fragments
 
-import android.graphics.Color
 import android.hardware.SensorEvent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import com.fluffycat.sensorsmanager.R
 import com.fluffycat.sensorsmanager.SensorsManagerApplication
-import com.fluffycat.sensorsmanager.converter.ValuesConverter
 import com.fluffycat.sensorsmanager.sensors.ISensorController
 import com.fluffycat.sensorsmanager.sensors.MagneticFieldSensorController
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.android.synthetic.main.magnetic_field_fragment.*
 
-class MagneticFieldFragment : Fragment() {
+class MagneticFieldFragment : BaseChartFragment() {
 
-    companion object {
-        const val TAG = "MagneticFieldTAG"
-        const val chartTitle = "Magnetic field"
-    }
-
-    private lateinit var magneticFieldSensorController: ISensorController
-    private var lineData: LineData
-    private val valuesConverter: ValuesConverter = ValuesConverter()
-
-    init {
-        val lineDataSet1: LineDataSet = createDataSet(Color.GREEN, "$chartTitle X")
-        val lineDataSet2: LineDataSet = createDataSet(Color.RED, "Y")
-        val lineDataSet3: LineDataSet = createDataSet(Color.BLUE, "Z")
-        lineData = LineData(lineDataSet1, lineDataSet2, lineDataSet3)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        setActivityTitle()
-        return inflater.inflate(R.layout.magnetic_field_fragment, container, false)
-    }
-
-    private fun setActivityTitle() {
-        activity?.title = getString(R.string.magnetic_field)
-    }
+    override val fragmentTitle = getString(R.string.magnetic_field)
+    override val chartTitle = getString(R.string.magnetic_field)
+    override val layoutResource = R.layout.magnetic_field_fragment
+    override var sensorController: ISensorController =
+        MagneticFieldSensorController(context ?: SensorsManagerApplication.getContext())
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        magneticFieldSensorController =
-            MagneticFieldSensorController(context ?: SensorsManagerApplication.getContext())
-
-        // TODO Can I observe it here and forget about it?
-        magneticFieldSensorController.sensorCurrentData.observe(this, Observer { sensorEvent ->
-            onDataChanged(sensorEvent)
-        })
 
         magneticFieldChart.data = lineData
-        magneticFieldSensorInfoLabel.text = magneticFieldSensorController.getSensorInfo()
+        magneticFieldSensorInfoLabel.text = sensorController.getSensorInfo()
     }
 
-    private fun createDataSet(dataSetColor: Int, label: String) = LineDataSet(ArrayList(), label).apply {
-        setDrawCircles(false)
-        lineWidth = 3.1f
-        color = dataSetColor
-    }
+    override fun onDataChanged(event: SensorEvent) {
+        val roundedValues = event.values.copyOf().apply {
+            forEach { valuesConverter.roundValue(it) }
+        }
 
-    override fun onStart() {
-        super.onStart()
-        magneticFieldSensorController.startReceivingData()
-    }
+        val convertedValues = roundedValues.copyOf().apply {
+            forEach { valuesConverter.convertMagneticFieldValueToStringWithSymbol(it) }
+        }
 
-    override fun onStop() {
-        super.onStop()
-        magneticFieldSensorController.stopReceivingData()
-    }
+        val labelTexts = roundedValues.copyOf().apply {
+            forEach { valuesConverter.convertMagneticFieldValueToStringWithSymbol(it) }
+        }
 
-    private fun onDataChanged(event: SensorEvent) {
-        val xValue = valuesConverter.roundValue(event.values[0])
-        val yValue = valuesConverter.roundValue(event.values[1])
-        val zValue = valuesConverter.roundValue(event.values[2])
-
-        val xLabelText = "X: ${valuesConverter.convertMagneticFieldValueToStringWithSymbol(xValue)}"
-        val yLabelText = "Y: ${valuesConverter.convertMagneticFieldValueToStringWithSymbol(yValue)}"
-        val zLabelText = "Z: ${valuesConverter.convertMagneticFieldValueToStringWithSymbol(zValue)}"
-
-        magneticFieldXValueInfoLabel.text = xLabelText
-        magneticFieldYValueInfoLabel.text = yLabelText
-        magneticFieldZValueInfoLabel.text = zLabelText
+        magneticFieldXValueInfoLabel.text = "X: ${labelTexts[0]}"
+        magneticFieldYValueInfoLabel.text = "Y: ${labelTexts[1]}"
+        magneticFieldZValueInfoLabel.text = "Z: ${labelTexts[2]}"
 
         lineData.apply {
-            addEntry(Entry(getDataSetByIndex(0).entryCount.toFloat(), xValue), 0)
-            addEntry(Entry(getDataSetByIndex(1).entryCount.toFloat(), yValue), 1)
-            addEntry(Entry(getDataSetByIndex(2).entryCount.toFloat(), zValue), 2)
+            convertedValues.sliceArray(IntRange(0, 2)).forEachIndexed { index, value ->
+                addEntry(Entry(getDataSetByIndex(index).entryCount.toFloat(), value), index)
+            }
 
             notifyDataChanged()
             magneticFieldChart.notifyDataSetChanged()
