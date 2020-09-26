@@ -1,6 +1,5 @@
 package com.fluffycat.sensorsmanager.sensors
 
-import android.content.Context
 import android.hardware.SensorEvent
 import android.hardware.SensorManager
 import android.os.Build
@@ -9,25 +8,24 @@ import androidx.lifecycle.MutableLiveData
 import com.fluffycat.sensorsmanager.listeners.UniversalSensorListener
 import com.fluffycat.sensorsmanager.utils.tag
 
-abstract class BaseSensorController(context: Context, private val sensorType: Int) : ISensorController {
+abstract class BaseSensorController(private val sensorManager: SensorManager?, private val sensorType: Int) : ISensorController {
 
     override val sensorCurrentData = MutableLiveData<SensorEvent>()
+    protected open val sensorListener: UniversalSensorListener by lazy { UniversalSensorListener(this) }
 
-    private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    private val sensorListener: UniversalSensorListener by lazy { UniversalSensorListener(this) }
-
+    // TODO return that registering failed
     override fun startReceivingData() {
-        val registerStatus = sensorManager.registerListener(sensorListener, sensorManager.getDefaultSensor(sensorType),
+        val registerStatus = sensorManager?.registerListener(sensorListener, sensorManager.getDefaultSensor(sensorType),
                 SensorManager.SENSOR_DELAY_GAME)
-        if (registerStatus) {
+        if (registerStatus == true) {
             Log.d(tag, "Started receiving data")
         } else {
-            Log.d(tag, "Registering sensor failed")
+            Log.d(tag, "Registering sensor failed, sensorManager: $sensorManager, registerStatus: $registerStatus")
         }
     }
 
     override fun stopReceivingData() {
-        sensorManager.unregisterListener(sensorListener)
+        sensorManager?.unregisterListener(sensorListener)
         Log.d(tag, "Stopped receiving data")
     }
 
@@ -35,8 +33,9 @@ abstract class BaseSensorController(context: Context, private val sensorType: In
         sensorCurrentData.value = event
     }
 
+
     override fun getSensorInfo(): String {
-        val sensor = sensorManager.getDefaultSensor(sensorType)
+        val sensor = sensorManager?.getDefaultSensor(sensorType)
         var infoString = ""
         sensor?.apply {
             infoString += "$name\n"

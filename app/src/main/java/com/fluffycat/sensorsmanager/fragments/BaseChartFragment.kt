@@ -1,8 +1,11 @@
 package com.fluffycat.sensorsmanager.fragments
 
+import android.content.Context
 import android.graphics.Color
 import android.hardware.SensorEvent
+import android.hardware.SensorManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,22 +18,26 @@ import com.github.mikephil.charting.data.LineDataSet
 
 abstract class BaseChartFragment : Fragment() {
 
-    protected abstract val fragmentTitle: String
-    protected abstract val chartTitle: String
-    protected abstract var sensorController: ISensorController
+    protected var fragmentTitle: String = ""
+    protected var chartTitle: String = ""
+    protected lateinit var sensorController: ISensorController
     protected abstract val layoutResource: Int
 
+    protected var sensorManager: SensorManager? = null
+
     protected val valuesConverter = ValuesConverter()
-    protected val lineData: LineData = createLineData()
+    protected lateinit var lineData: LineData
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         setActivityTitle()
+        lineData = createLineData()
+        sensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager?
+        Log.d("ABAB", "context: $context, smanager: $sensorManager")
         return inflater.inflate(layoutResource, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         // TODO Can I observe it here and forget about it?
         sensorController.sensorCurrentData.observe(this, Observer { sensorEvent ->
             onDataChanged(sensorEvent)

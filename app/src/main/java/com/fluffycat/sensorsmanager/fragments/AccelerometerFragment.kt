@@ -4,9 +4,7 @@ import android.hardware.SensorEvent
 import android.os.Bundle
 import android.view.View
 import com.fluffycat.sensorsmanager.R
-import com.fluffycat.sensorsmanager.SensorsManagerApplication
 import com.fluffycat.sensorsmanager.sensors.AccelerometerSensorController
-import com.fluffycat.sensorsmanager.sensors.ISensorController
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
@@ -14,17 +12,17 @@ import kotlinx.android.synthetic.main.accelerometer_fragment.*
 
 class AccelerometerFragment : BaseChartFragment() {
 
-    override val fragmentTitle = getString(R.string.accelerometer)
-    override val chartTitle = getString(R.string.accelerometer)
     override val layoutResource = R.layout.accelerometer_fragment
-    override var sensorController: ISensorController =
-        AccelerometerSensorController(context ?: SensorsManagerApplication.getContext())
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        sensorController = AccelerometerSensorController(sensorManager)
         accelerometerChart.data = lineData
         accelerometerChart.description = Description().apply { text = "" }
         accelerometerSensorInfoLabel.text = sensorController.getSensorInfo()
+
+        fragmentTitle = getString(R.string.accelerometer)
+        chartTitle = getString(R.string.accelerometer)
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onDataChanged(event: SensorEvent) {
@@ -40,9 +38,9 @@ class AccelerometerFragment : BaseChartFragment() {
             forEach { valuesConverter.convertAccelerationValueToStringWithSymbol(it) }
         }
 
-        accelerometerXValueInfoLabel.text = "X: ${labelTexts[0]}"
-        accelerometerYValueInfoLabel.text = "Y: ${labelTexts[1]}"
-        accelerometerZValueInfoLabel.text = "Z: ${labelTexts[2]}"
+        accelerometerXValueInfoLabel.text = getString(R.string.xChartLabel, labelTexts[0])
+        accelerometerYValueInfoLabel.text = getString(R.string.yChartLabel, labelTexts[1])
+        accelerometerZValueInfoLabel.text = getString(R.string.zChartLabel, labelTexts[2])
 
         lineData.apply {
             convertedValues.sliceArray(IntRange(0, 2)).forEachIndexed { index, value ->

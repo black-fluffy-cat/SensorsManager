@@ -4,8 +4,6 @@ import android.hardware.SensorEvent
 import android.os.Bundle
 import android.view.View
 import com.fluffycat.sensorsmanager.R
-import com.fluffycat.sensorsmanager.SensorsManagerApplication
-import com.fluffycat.sensorsmanager.sensors.ISensorController
 import com.fluffycat.sensorsmanager.sensors.MagneticFieldSensorController
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
@@ -13,17 +11,15 @@ import kotlinx.android.synthetic.main.magnetic_field_fragment.*
 
 class MagneticFieldFragment : BaseChartFragment() {
 
-    override val fragmentTitle = getString(R.string.magnetic_field)
-    override val chartTitle = getString(R.string.magnetic_field)
     override val layoutResource = R.layout.magnetic_field_fragment
-    override var sensorController: ISensorController =
-        MagneticFieldSensorController(context ?: SensorsManagerApplication.getContext())
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+        sensorController = MagneticFieldSensorController(sensorManager)
         magneticFieldChart.data = lineData
         magneticFieldSensorInfoLabel.text = sensorController.getSensorInfo()
+        fragmentTitle = getString(R.string.magnetic_field)
+        chartTitle = getString(R.string.magnetic_field)
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onDataChanged(event: SensorEvent) {
@@ -39,9 +35,9 @@ class MagneticFieldFragment : BaseChartFragment() {
             forEach { valuesConverter.convertMagneticFieldValueToStringWithSymbol(it) }
         }
 
-        magneticFieldXValueInfoLabel.text = "X: ${labelTexts[0]}"
-        magneticFieldYValueInfoLabel.text = "Y: ${labelTexts[1]}"
-        magneticFieldZValueInfoLabel.text = "Z: ${labelTexts[2]}"
+        magneticFieldXValueInfoLabel.text = getString(R.string.xChartLabel, labelTexts[0])
+        magneticFieldYValueInfoLabel.text = getString(R.string.yChartLabel, labelTexts[1])
+        magneticFieldZValueInfoLabel.text = getString(R.string.zChartLabel, labelTexts[2])
 
         lineData.apply {
             convertedValues.sliceArray(IntRange(0, 2)).forEachIndexed { index, value ->
