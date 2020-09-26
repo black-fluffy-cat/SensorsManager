@@ -12,7 +12,7 @@ import com.google.android.material.navigation.NavigationView
 private const val CLICKS_BEFORE_AD = 3
 
 class MyNavigationItemSelectedListener(
-        private val switchFragment: (fragment: Fragment, tag: String) -> Unit,
+        private val switchFragment: (fragment: Fragment) -> Unit,
         private val mInterstitialAd: InterstitialAd) :
     NavigationView.OnNavigationItemSelectedListener {
 
@@ -20,21 +20,20 @@ class MyNavigationItemSelectedListener(
 
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
-            R.id.accelerometerMenuItem -> switchFragment(AccelerometerFragment(), AccelerometerFragment.TAG)
-            R.id.gyroscopeMenuItem -> switchFragment(GyroscopeFragment(), GyroscopeFragment.TAG)
-            R.id.magneticFieldSensorMenuItem -> switchFragment(MagneticFieldFragment(), MagneticFieldFragment.TAG)
-            R.id.lightSensorMenuItem -> switchFragment(LightFragment(), LightFragment.TAG)
-            R.id.heartbeatSensorMenuItem -> switchFragment(HeartbeatFragment(), HeartbeatFragment.TAG)
-//            R.id.microphoneMenuItem -> switchFragment(MicrophoneFragment(), MicrophoneFragment.TAG)
-            R.id.linearAccelerationSensorMenuItem -> switchFragment(LinearAccelerationFragment(),
-                    LinearAccelerationFragment.TAG)
-            R.id.proximitySensorMenuItem -> switchFragment(ProximityFragment(), ProximityFragment.TAG)
-            R.id.rotationVectorMenuItem -> switchFragment(RotationVectorFragment(), RotationVectorFragment.TAG)
-            R.id.settingsMenuItem -> switchFragment(SettingsFragment(), SettingsFragment.TAG)
-//            R.id.modulesStatusMenuItem -> switchFragment(ModulesStatusFragment(), ModulesStatusFragment.TAG)
-//            R.id.otherMenuItem -> switchFragment(OtherFragment(), OtherFragment.TAG)
-//            R.id.customMenuItem -> switchFragment(CustomFragment(), CustomFragment.TAG)
-//            else -> switchFragment(ExampleFragment(menuTitle), ExampleFragment.TAG)
+            R.id.accelerometerMenuItem -> switchFragment(AccelerometerFragment())
+            R.id.gyroscopeMenuItem -> switchFragment(GyroscopeFragment())
+            R.id.magneticFieldSensorMenuItem -> switchFragment(MagneticFieldFragment())
+            R.id.lightSensorMenuItem -> switchFragment(LightFragment())
+            R.id.heartbeatSensorMenuItem -> switchFragment(HeartbeatFragment())
+//            R.id.microphoneMenuItem -> switchFragment(MicrophoneFragment)
+            R.id.linearAccelerationSensorMenuItem -> switchFragment(LinearAccelerationFragment())
+            R.id.proximitySensorMenuItem -> switchFragment(ProximityFragment())
+            R.id.rotationVectorMenuItem -> switchFragment(RotationVectorFragment())
+            R.id.settingsMenuItem -> switchFragment(SettingsFragment())
+//            R.id.modulesStatusMenuItem -> switchFragment(ModulesStatusFragment)
+//            R.id.otherMenuItem -> switchFragment(OtherFragment)
+//            R.id.customMenuItem -> switchFragment(CustomFragment)
+//            else -> switchFragment(ExampleFragment(menuTitle)
         }
 
         if (++menuClicks == CLICKS_BEFORE_AD) {
