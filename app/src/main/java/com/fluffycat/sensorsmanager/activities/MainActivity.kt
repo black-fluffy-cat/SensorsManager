@@ -49,11 +49,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun setCurrentFragment(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
-            switchFragment(AccelerometerFragment(), AccelerometerFragment.TAG)
+            switchFragment(AccelerometerFragment())
         }
     }
 
-    private fun switchFragment(fragment: Fragment, tag: String) {
+    private fun switchFragment(fragment: Fragment) {
+        val tag: String = fragment::class.java.simpleName
         LogFlurryEvent("switchFragment to $tag")
         currentFragment = fragment.tag ?: ""
         supportFragmentManager.beginTransaction().replace(R.id.navDrawerFragmentContainer, fragment, tag).commit()
