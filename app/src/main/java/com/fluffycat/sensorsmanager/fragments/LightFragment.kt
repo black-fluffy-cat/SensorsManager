@@ -28,7 +28,7 @@ class LightFragment : BaseChartFragment() {
 
     override fun onDataChanged(event: SensorEvent) {
         val value = event.values[0]
-        lightXValueInfoLabel.text = getString(R.string.lightChartLabel, value)
+        lightXValueInfoLabel.text = getString(R.string.lightChartLabel, value.toString())
 
         lineData.apply {
             addEntry(Entry(getDataSetByIndex(0).entryCount.toFloat(), value), 0)

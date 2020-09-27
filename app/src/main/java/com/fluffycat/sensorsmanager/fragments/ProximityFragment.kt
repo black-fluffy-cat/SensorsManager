@@ -25,7 +25,7 @@ class ProximityFragment : BaseChartFragment() {
 
     override fun onDataChanged(event: SensorEvent) {
         val value = event.values[0]
-        proximityXValueInfoLabel.text = getString(R.string.distanceChartLabel, value)
+        proximityXValueInfoLabel.text = getString(R.string.distanceChartLabel, value.toString())
 
         lineData.apply {
             addEntry(Entry(getDataSetByIndex(0).entryCount.toFloat(), value), 0)

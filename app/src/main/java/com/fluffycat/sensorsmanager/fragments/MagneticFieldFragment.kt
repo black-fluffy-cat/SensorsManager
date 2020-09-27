@@ -24,15 +24,11 @@ class MagneticFieldFragment : BaseChartFragment() {
 
     override fun onDataChanged(event: SensorEvent) {
         val roundedValues = event.values.copyOf().apply {
-            forEach { valuesConverter.roundValue(it) }
+            forEachIndexed { index, element -> this[index] = valuesConverter.roundValue(element) }
         }
 
-        val convertedValues = roundedValues.copyOf().apply {
-            forEach { valuesConverter.convertMagneticFieldValueToStringWithSymbol(it) }
-        }
-
-        val labelTexts = roundedValues.copyOf().apply {
-            forEach { valuesConverter.convertMagneticFieldValueToStringWithSymbol(it) }
+        val labelTexts = mutableListOf<String>().apply {
+            roundedValues.forEach { this.add(valuesConverter.convertMagneticFieldValueToStringWithSymbol(it)) }
         }
 
         magneticFieldXValueInfoLabel.text = getString(R.string.xChartLabel, labelTexts[0])
@@ -40,7 +36,7 @@ class MagneticFieldFragment : BaseChartFragment() {
         magneticFieldZValueInfoLabel.text = getString(R.string.zChartLabel, labelTexts[2])
 
         lineData.apply {
-            convertedValues.sliceArray(IntRange(0, 2)).forEachIndexed { index, value ->
+            roundedValues.sliceArray(IntRange(0, 2)).forEachIndexed { index, value ->
                 addEntry(Entry(getDataSetByIndex(index).entryCount.toFloat(), value), index)
             }
 
