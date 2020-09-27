@@ -25,16 +25,16 @@ class LinearAccelerationFragment : BaseChartFragment() {
     }
 
     override fun onDataChanged(event: SensorEvent) {
-        val roundedValues = event.values.copyOf().apply {
-            forEach { valuesConverter.roundValue(it) }
+        val convertedValues = event.values.copyOf().apply {
+            forEachIndexed { index, element -> this[index] = valuesConverter.convertDistanceValueToChosenUnit(element) }
         }
 
-        val convertedValues = roundedValues.copyOf().apply {
-            forEach { valuesConverter.convertDistanceValueToChosenUnit(it) }
+        val roundedValues = convertedValues.copyOf().apply {
+            forEachIndexed { index, element -> this[index] = valuesConverter.roundValue(element) }
         }
 
-        val labelTexts = roundedValues.copyOf().apply {
-            forEach { valuesConverter.convertAccelerationValueToStringWithSymbol(it) }
+        val labelTexts = mutableListOf<String>().apply {
+            roundedValues.forEach { this.add(valuesConverter.convertAccelerationValueToStringWithSymbol(it)) }
         }
 
         linearAccelerationXValueInfoLabel.text = getString(R.string.xChartLabel, labelTexts[0])

@@ -17,10 +17,10 @@
     <string name="proximity">Proximity</string>
     <string name="linearAcceleration">Linear acceleration</string>
 
-    <string name="xChartLabel">X: %1$f</string>
-    <string name="yChartLabel">Y: %1$f</string>
-    <string name="zChartLabel">Z: %1$f</string>
-    <string name="lightChartLabel">Lux: %1$f</string>
-    <string name="distanceChartLabel">Distance: %1$f</string>
+    <string name="xChartLabel">X: %1$s</string>
+    <string name="yChartLabel">Y: %1$s</string>
+    <string name="zChartLabel">Z: %1$s</string>
+    <string name="lightChartLabel">Lux: %1$s</string>
+    <string name="distanceChartLabel">Distance: %1$s</string>
 
 </resources>

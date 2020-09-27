@@ -24,12 +24,12 @@ class RotationVectorFragment : BaseChartFragment() {
 
     override fun onDataChanged(event: SensorEvent) {
         val roundedValues = event.values.copyOf().apply {
-            forEach { valuesConverter.roundValue(it) }
+            forEachIndexed { index, element -> this[index] = valuesConverter.roundValue(element) }
         }
 
-        rotationVectorXValueInfoLabel.text = getString(R.string.xChartLabel, roundedValues[0])
-        rotationVectorYValueInfoLabel.text = getString(R.string.yChartLabel, roundedValues[1])
-        rotationVectorZValueInfoLabel.text = getString(R.string.zChartLabel, roundedValues[2])
+        rotationVectorXValueInfoLabel.text = getString(R.string.xChartLabel, roundedValues[0].toString())
+        rotationVectorYValueInfoLabel.text = getString(R.string.yChartLabel, roundedValues[1].toString())
+        rotationVectorZValueInfoLabel.text = getString(R.string.zChartLabel, roundedValues[2].toString())
 
         lineData.apply {
             roundedValues.sliceArray(IntRange(0, 2)).forEachIndexed { index, value ->

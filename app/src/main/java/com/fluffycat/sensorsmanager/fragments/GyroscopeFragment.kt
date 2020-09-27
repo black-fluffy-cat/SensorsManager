@@ -23,15 +23,16 @@ class GyroscopeFragment : BaseChartFragment() {
     }
 
     override fun onDataChanged(event: SensorEvent) {
-        val roundedValues = event.values.copyOf().apply {
-            forEach { valuesConverter.roundValue(it) }
+        val convertedValues = event.values.copyOf().apply {
+            forEachIndexed { index, element -> this[index] = valuesConverter.convertAngleValueToChosenUnit(element) }
         }
 
-        val convertedValues = roundedValues.copyOf().apply {
-            forEach { valuesConverter.convertAngleValueToChosenUnit(it) }
+        val roundedValues = convertedValues.copyOf().apply {
+            forEachIndexed { index, element -> this[index] = valuesConverter.roundValue(element) }
         }
-        val labelTexts = roundedValues.copyOf().apply {
-            forEach { valuesConverter.convertAngularVelocityValueToStringWithSymbol(it) }
+
+        val labelTexts = mutableListOf<String>().apply {
+            roundedValues.forEach { this.add(valuesConverter.convertAngularVelocityValueToStringWithSymbol(it)) }
         }
 
         gyroscopeXValueInfoLabel.text = getString(R.string.xChartLabel, labelTexts[0])
