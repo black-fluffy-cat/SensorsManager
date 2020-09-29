@@ -7,16 +7,12 @@ import com.fluffycat.sensorsmanager.R
 import com.fluffycat.sensorsmanager.sensors.GyroscopeSensorController
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
-import kotlinx.android.synthetic.main.gyroscope_fragment.*
+import kotlinx.android.synthetic.main.chart_fragment.*
 
 class GyroscopeFragment : BaseChartFragment() {
 
-    override val layoutResource = R.layout.gyroscope_fragment
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         sensorController = GyroscopeSensorController(sensorManager)
-        gyroscopeChart.data = lineData
-        gyroscopeSensorInfoLabel.text = sensorController.getSensorInfo()
         fragmentTitle = getString(R.string.gyroscope)
         chartTitle = getString(R.string.gyroscope)
         super.onViewCreated(view, savedInstanceState)
@@ -35,9 +31,9 @@ class GyroscopeFragment : BaseChartFragment() {
             roundedValues.forEach { this.add(valuesConverter.convertAngularVelocityValueToStringWithSymbol(it)) }
         }
 
-        gyroscopeXValueInfoLabel.text = getString(R.string.xChartLabel, labelTexts[0])
-        gyroscopeYValueInfoLabel.text = getString(R.string.yChartLabel, labelTexts[1])
-        gyroscopeZValueInfoLabel.text = getString(R.string.zChartLabel, labelTexts[2])
+        mainChartXValueInfoLabel.text = getString(R.string.xChartLabel, labelTexts[0])
+        mainChartYValueInfoLabel.text = getString(R.string.yChartLabel, labelTexts[1])
+        mainChartZValueInfoLabel.text = getString(R.string.zChartLabel, labelTexts[2])
 
         lineData.apply {
             convertedValues.sliceArray(IntRange(0, 2)).forEachIndexed { index, value ->
@@ -45,9 +41,9 @@ class GyroscopeFragment : BaseChartFragment() {
             }
 
             notifyDataChanged()
-            gyroscopeChart.notifyDataSetChanged()
-            gyroscopeChart.setVisibleXRangeMaximum(500F)
-            gyroscopeChart.moveViewTo(entryCount.toFloat(), 0F, YAxis.AxisDependency.RIGHT)
+            mainChart.notifyDataSetChanged()
+            mainChart.setVisibleXRangeMaximum(500F)
+            mainChart.moveViewTo(entryCount.toFloat(), 0F, YAxis.AxisDependency.RIGHT)
         }
     }
 }
