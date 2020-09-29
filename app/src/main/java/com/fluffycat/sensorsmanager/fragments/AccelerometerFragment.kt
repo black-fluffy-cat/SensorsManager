@@ -5,21 +5,14 @@ import android.os.Bundle
 import android.view.View
 import com.fluffycat.sensorsmanager.R
 import com.fluffycat.sensorsmanager.sensors.AccelerometerSensorController
-import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
-import kotlinx.android.synthetic.main.accelerometer_fragment.*
+import kotlinx.android.synthetic.main.chart_fragment.*
 
 class AccelerometerFragment : BaseChartFragment() {
 
-    override val layoutResource = R.layout.accelerometer_fragment
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         sensorController = AccelerometerSensorController(sensorManager)
-        accelerometerChart.data = lineData
-        accelerometerChart.description = Description().apply { text = "" }
-        accelerometerSensorInfoLabel.text = sensorController.getSensorInfo()
-
         fragmentTitle = getString(R.string.accelerometer)
         chartTitle = getString(R.string.accelerometer)
         super.onViewCreated(view, savedInstanceState)
@@ -38,9 +31,9 @@ class AccelerometerFragment : BaseChartFragment() {
             roundedValues.forEach { this.add(valuesConverter.convertAccelerationValueToStringWithSymbol(it)) }
         }
 
-        accelerometerXValueInfoLabel.text = getString(R.string.xChartLabel, labelTexts[0])
-        accelerometerYValueInfoLabel.text = getString(R.string.yChartLabel, labelTexts[1])
-        accelerometerZValueInfoLabel.text = getString(R.string.zChartLabel, labelTexts[2])
+        mainChartXValueInfoLabel.text = getString(R.string.xChartLabel, labelTexts[0])
+        mainChartYValueInfoLabel.text = getString(R.string.yChartLabel, labelTexts[1])
+        mainChartZValueInfoLabel.text = getString(R.string.zChartLabel, labelTexts[2])
 
         lineData.apply {
             convertedValues.sliceArray(IntRange(0, 2)).forEachIndexed { index, value ->
@@ -48,9 +41,9 @@ class AccelerometerFragment : BaseChartFragment() {
             }
 
             notifyDataChanged()
-            accelerometerChart.notifyDataSetChanged()
-            accelerometerChart.setVisibleXRangeMaximum(500F)
-            accelerometerChart.moveViewTo(entryCount.toFloat(), 0F, YAxis.AxisDependency.RIGHT)
+            mainChart.notifyDataSetChanged()
+            mainChart.setVisibleXRangeMaximum(500F)
+            mainChart.moveViewTo(entryCount.toFloat(), 0F, YAxis.AxisDependency.RIGHT)
         }
     }
 }

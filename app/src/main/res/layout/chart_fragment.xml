@@ -2,61 +2,61 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/accelerometerFragmentLayout"
+    android:id="@+id/mainChartFragmentLayout"
     style="@style/DefaultBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/accelerometerChart"
+        android:id="@+id/mainChart"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/accelerometerXValueInfoLabel"
+        app:layout_constraintBottom_toTopOf="@+id/mainChartXValueInfoLabel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_weight="3" />
 
     <TextView
-        android:id="@+id/accelerometerXValueInfoLabel"
+        android:id="@+id/mainChartXValueInfoLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/accelerometerYValueInfoLabel"
+        app:layout_constraintBottom_toTopOf="@+id/mainChartYValueInfoLabel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/accelerometerChart"
+        app:layout_constraintTop_toBottomOf="@+id/mainChart"
         tools:text="Example text" />
 
     <TextView
-        android:id="@+id/accelerometerYValueInfoLabel"
+        android:id="@+id/mainChartYValueInfoLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/accelerometerZValueInfoLabel"
+        app:layout_constraintBottom_toTopOf="@+id/mainChartZValueInfoLabel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/accelerometerXValueInfoLabel"
+        app:layout_constraintTop_toBottomOf="@+id/mainChartXValueInfoLabel"
         tools:text="Example text" />
 
     <TextView
-        android:id="@+id/accelerometerZValueInfoLabel"
+        android:id="@+id/mainChartZValueInfoLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="16dp"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/accelerometerSensorLabel"
+        app:layout_constraintBottom_toTopOf="@+id/mainChartSensorLabel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/accelerometerYValueInfoLabel"
+        app:layout_constraintTop_toBottomOf="@+id/mainChartYValueInfoLabel"
         tools:text="Example text" />
 
     <TextView
-        android:id="@+id/accelerometerSensorLabel"
+        android:id="@+id/mainChartSensorLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="8dp"
@@ -64,28 +64,28 @@
         android:paddingEnd="8dp"
         android:text="@string/sensor_info"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/accelerometerFragmentScrollView"
+        app:layout_constraintBottom_toTopOf="@+id/mainChartFragmentScrollView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/accelerometerZValueInfoLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/mainChartZValueInfoLabel" />
 
     <ScrollView
-        android:id="@+id/accelerometerFragmentScrollView"
+        android:id="@+id/mainChartFragmentScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/accelerometerSensorLabel"
+        app:layout_constraintTop_toBottomOf="@+id/mainChartSensorLabel"
         app:layout_constraintVertical_weight="2">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/accelerometerFragmentInnerConstraintLayout"
+            android:id="@+id/mainChartFragmentInnerConstraintLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/accelerometerSensorInfoLabel"
+                android:id="@+id/mainChartSensorInfoLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="8dp"
