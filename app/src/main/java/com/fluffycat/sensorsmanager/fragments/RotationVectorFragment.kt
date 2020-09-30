@@ -4,13 +4,14 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import com.fluffycat.sensorsmanager.R
-import com.fluffycat.sensorsmanager.sensors.RotationVectorController
+import com.fluffycat.sensorsmanager.sensors.ROTATION_VECTOR_SENSOR_TYPE
+import com.fluffycat.sensorsmanager.sensors.SensorController
 import com.github.mikephil.charting.data.LineData
 
 class RotationVectorFragment : BaseChartFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        sensorController = RotationVectorController(sensorManager)
+        sensorController = SensorController(sensorManager, ROTATION_VECTOR_SENSOR_TYPE)
         fragmentTitle = getString(R.string.rotationVector)
         chartTitle = getString(R.string.rotationVector)
         super.onViewCreated(view, savedInstanceState)
