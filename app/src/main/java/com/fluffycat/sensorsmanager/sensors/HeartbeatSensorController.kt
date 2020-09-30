@@ -14,7 +14,7 @@ val HEART_RATE_SENSOR_TYPE = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KI
 }
 
 class HeartbeatSensorController(sensorManager: SensorManager?) :
-    BaseSensorController(sensorManager, HEART_RATE_SENSOR_TYPE) {
+    SensorController(sensorManager, HEART_RATE_SENSOR_TYPE) {
 
     val additionalData = MutableLiveData<Int>()
 
