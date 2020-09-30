@@ -15,6 +15,8 @@ import com.fluffycat.sensorsmanager.R
 import com.fluffycat.sensorsmanager.converter.ValuesConverter
 import com.fluffycat.sensorsmanager.sensors.ISensorController
 import com.github.mikephil.charting.components.Description
+import com.github.mikephil.charting.components.YAxis
+import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.android.synthetic.main.chart_fragment.*
@@ -28,8 +30,8 @@ abstract class BaseChartFragment : Fragment() {
 
     protected var sensorManager: SensorManager? = null
 
-    protected val valuesConverter = ValuesConverter()
-    protected lateinit var lineData: LineData
+    private val valuesConverter = ValuesConverter()
+    private lateinit var lineData: LineData
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         lineData = createLineData()
@@ -50,8 +52,6 @@ abstract class BaseChartFragment : Fragment() {
             onDataChanged(sensorEvent)
         })
     }
-
-    protected abstract fun onDataChanged(event: SensorEvent)
 
     override fun onStart() {
         super.onStart()
@@ -78,5 +78,42 @@ abstract class BaseChartFragment : Fragment() {
         setDrawCircles(false)
         lineWidth = 3.1f
         color = dataSetColor
+    }
+
+    open fun onDataChanged(event: SensorEvent) {
+        val convertedValues = event.values.copyOf().apply {
+            forEachIndexed { index, element -> this[index] = valuesConverter.convertDistanceValueToChosenUnit(element) }
+        }
+
+        val roundedValues = convertedValues.copyOf().apply {
+            forEachIndexed { index, element -> this[index] = valuesConverter.roundValue(element) }
+        }
+
+        val labelTexts = mutableListOf<String>().apply {
+            roundedValues.forEach { this.add(valuesConverter.convertAccelerationValueToStringWithSymbol(it)) }
+        }
+
+        labelTexts.getOrNull(0)?.let { text ->
+            mainChartXValueInfoLabel.text = getString(R.string.xChartLabel, text)
+        }
+
+        labelTexts.getOrNull(1)?.let { text ->
+            mainChartYValueInfoLabel.text = getString(R.string.yChartLabel, text)
+        }
+
+        labelTexts.getOrNull(2)?.let { text ->
+            mainChartZValueInfoLabel.text = getString(R.string.zChartLabel, text)
+        }
+
+        lineData.apply {
+            convertedValues.sliceArray(IntRange(0, event.values.size - 1)).forEachIndexed { index, value ->
+                addEntry(Entry(getDataSetByIndex(index).entryCount.toFloat(), value), index)
+            }
+
+            notifyDataChanged()
+            mainChart.notifyDataSetChanged()
+            mainChart.setVisibleXRangeMaximum(500F)
+            mainChart.moveViewTo(entryCount.toFloat(), 0F, YAxis.AxisDependency.RIGHT)
+        }
     }
 }
