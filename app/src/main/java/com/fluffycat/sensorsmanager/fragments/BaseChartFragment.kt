@@ -82,28 +82,20 @@ abstract class BaseChartFragment : Fragment() {
 
     open fun onDataChanged(event: SensorEvent) {
         val convertedValues = event.values.copyOf().apply {
-            forEachIndexed { index, element -> this[index] = valuesConverter.convertDistanceValueToChosenUnit(element) }
+            forEachIndexed { index, value ->
+                this[index] = valuesConverter.convertValueToChosenUnit(value, event.sensor)
+            }
         }
 
         val roundedValues = convertedValues.copyOf().apply {
-            forEachIndexed { index, element -> this[index] = valuesConverter.roundValue(element) }
+            forEachIndexed { index, value -> this[index] = valuesConverter.roundValue(value) }
         }
 
         val labelTexts = mutableListOf<String>().apply {
-            roundedValues.forEach { this.add(valuesConverter.convertAccelerationValueToStringWithSymbol(it)) }
+            roundedValues.forEach { this.add(valuesConverter.convertValueToStringWithSymbol(it, event.sensor)) }
         }
 
-        labelTexts.getOrNull(0)?.let { text ->
-            mainChartXValueInfoLabel.text = getString(R.string.xChartLabel, text)
-        }
-
-        labelTexts.getOrNull(1)?.let { text ->
-            mainChartYValueInfoLabel.text = getString(R.string.yChartLabel, text)
-        }
-
-        labelTexts.getOrNull(2)?.let { text ->
-            mainChartZValueInfoLabel.text = getString(R.string.zChartLabel, text)
-        }
+        setupLabelsTexts(labelTexts)
 
         lineData.apply {
             convertedValues.sliceArray(IntRange(0, event.values.size - 1)).forEachIndexed { index, value ->
@@ -114,6 +106,20 @@ abstract class BaseChartFragment : Fragment() {
             mainChart.notifyDataSetChanged()
             mainChart.setVisibleXRangeMaximum(500F)
             mainChart.moveViewTo(entryCount.toFloat(), 0F, YAxis.AxisDependency.RIGHT)
+        }
+    }
+
+    private fun setupLabelsTexts(labelTexts: MutableList<String>) {
+        labelTexts.getOrNull(0)?.let { text ->
+            mainChartXValueInfoLabel.text = getString(R.string.xChartLabel, text)
+        }
+
+        labelTexts.getOrNull(1)?.let { text ->
+            mainChartYValueInfoLabel.text = getString(R.string.yChartLabel, text)
+        }
+
+        labelTexts.getOrNull(2)?.let { text ->
+            mainChartZValueInfoLabel.text = getString(R.string.zChartLabel, text)
         }
     }
 }
