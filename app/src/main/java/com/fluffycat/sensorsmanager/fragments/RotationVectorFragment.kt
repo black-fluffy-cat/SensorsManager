@@ -1,13 +1,11 @@
 package com.fluffycat.sensorsmanager.fragments
 
-import android.hardware.SensorEvent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import com.fluffycat.sensorsmanager.R
 import com.fluffycat.sensorsmanager.sensors.RotationVectorController
-import com.github.mikephil.charting.components.YAxis
-import com.github.mikephil.charting.data.Entry
-import kotlinx.android.synthetic.main.chart_fragment.*
+import com.github.mikephil.charting.data.LineData
 
 class RotationVectorFragment : BaseChartFragment() {
 
@@ -18,24 +16,12 @@ class RotationVectorFragment : BaseChartFragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
-    override fun onDataChanged(event: SensorEvent) {
-        val roundedValues = event.values.copyOf().apply {
-            forEachIndexed { index, element -> this[index] = valuesConverter.roundValue(element) }
-        }
-
-        mainChartXValueInfoLabel.text = getString(R.string.xChartLabel, roundedValues[0].toString())
-        mainChartYValueInfoLabel.text = getString(R.string.yChartLabel, roundedValues[1].toString())
-        mainChartZValueInfoLabel.text = getString(R.string.zChartLabel, roundedValues[2].toString())
-
-        lineData.apply {
-            roundedValues.sliceArray(IntRange(0, 2)).forEachIndexed { index, value ->
-                addEntry(Entry(getDataSetByIndex(index).entryCount.toFloat(), value), index)
-            }
-
-            notifyDataChanged()
-            mainChart.notifyDataSetChanged()
-            mainChart.setVisibleXRangeMaximum(500F)
-            mainChart.moveViewTo(entryCount.toFloat(), 0F, YAxis.AxisDependency.RIGHT)
-        }
+    override fun createLineData(): LineData {
+        val lineDataSet1 = createDataSet(Color.GREEN, "$chartTitle X")
+        val lineDataSet2 = createDataSet(Color.RED, "Y")
+        val lineDataSet3 = createDataSet(Color.BLUE, "Z")
+        val lineDataSet4= createDataSet(Color.MAGENTA, "A1")
+        val lineDataSet5 = createDataSet(Color.CYAN, "A2")
+        return LineData(lineDataSet1, lineDataSet2, lineDataSet3, lineDataSet4, lineDataSet5)
     }
 }
