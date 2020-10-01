@@ -10,10 +10,6 @@ import kotlinx.android.synthetic.main.example_fragment.*
 
 class ExampleFragment(private val textToWrite: String) : Fragment() {
 
-    companion object {
-        const val TAG = "ExampleFragmentTAG"
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.example_fragment, container, false)
     }
