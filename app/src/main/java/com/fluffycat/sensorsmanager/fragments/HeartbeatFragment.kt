@@ -58,18 +58,20 @@ class HeartbeatFragment : Fragment() {
                     HEART_RATE_REQUEST_CODE)
         }
 
-        heartbeatSensorController = HeartbeatSensorController(context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager?)
+        (context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager?)?.let { sensorManager ->
+            heartbeatSensorController = HeartbeatSensorController(sensorManager)
 
-        // TODO Can I observe it here and forget about it?
-        heartbeatSensorController.sensorCurrentData.observe(this, Observer { sensorEvent ->
-            onDataChanged(sensorEvent)
-        })
+            // TODO Can I observe it here and forget about it?
+            heartbeatSensorController.sensorCurrentData.observe(this, Observer { sensorEvent ->
+                onDataChanged(sensorEvent)
+            })
 
-        heartbeatSensorController.additionalData.observe(this, Observer { additionalCode ->
-            onAdditionalDataChanged(additionalCode)
-        })
+            heartbeatSensorController.additionalData.observe(this, Observer { additionalCode ->
+                onAdditionalDataChanged(additionalCode)
+            })
 
-        heartbeatChart.data = lineData
+            heartbeatChart.data = lineData
+        }
     }
 
     @Suppress("SameParameterValue")

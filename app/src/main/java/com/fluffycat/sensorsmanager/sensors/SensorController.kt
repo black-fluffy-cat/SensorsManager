@@ -8,16 +8,16 @@ import androidx.lifecycle.MutableLiveData
 import com.fluffycat.sensorsmanager.listeners.UniversalSensorListener
 import com.fluffycat.sensorsmanager.utils.tag
 
-open class SensorController(private val sensorManager: SensorManager?, private val sensorType: Int) : ISensorController {
+open class SensorController(private val sensorManager: SensorManager, private val sensorType: Int) : ISensorController {
 
     override val sensorCurrentData = MutableLiveData<SensorEvent>()
     protected open val sensorListener: UniversalSensorListener by lazy { UniversalSensorListener(this) }
 
     // TODO return that registering failed
     override fun startReceivingData() {
-        val registerStatus = sensorManager?.registerListener(sensorListener, sensorManager.getDefaultSensor(sensorType),
-                SensorManager.SENSOR_DELAY_GAME)
-        if (registerStatus == true) {
+        val sensor = sensorManager.getDefaultSensor(sensorType)
+        val registerStatus = sensorManager.registerListener(sensorListener, sensor, SensorManager.SENSOR_DELAY_GAME)
+        if (registerStatus) {
             Log.d(tag, "Started receiving data")
         } else {
             Log.d(tag, "Registering sensor failed, sensorManager: $sensorManager, registerStatus: $registerStatus")
@@ -25,7 +25,7 @@ open class SensorController(private val sensorManager: SensorManager?, private v
     }
 
     override fun stopReceivingData() {
-        sensorManager?.unregisterListener(sensorListener)
+        sensorManager.unregisterListener(sensorListener)
         Log.d(tag, "Stopped receiving data")
     }
 
@@ -35,7 +35,7 @@ open class SensorController(private val sensorManager: SensorManager?, private v
 
 
     override fun getSensorInfo(): String {
-        val sensor = sensorManager?.getDefaultSensor(sensorType)
+        val sensor = sensorManager.getDefaultSensor(sensorType)
         var infoString = ""
         sensor?.apply {
             infoString += "$name\n"
