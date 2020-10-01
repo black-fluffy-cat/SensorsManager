@@ -56,9 +56,10 @@ class MyNavigationItemSelectedListener(
 
     private fun createProperFragment(itemId: Int): Fragment = when (itemId) {
         R.id.accelerometerMenuItem, R.id.gyroscopeMenuItem, R.id.magneticFieldSensorMenuItem,
-        R.id.lightSensorMenuItem, R.id.heartbeatSensorMenuItem, R.id.linearAccelerationSensorMenuItem,
+        R.id.lightSensorMenuItem, R.id.linearAccelerationSensorMenuItem,
         R.id.proximitySensorMenuItem -> BaseChartFragment()
         R.id.rotationVectorMenuItem -> RotationVectorFragment()
+        R.id.heartbeatSensorMenuItem -> HeartbeatFragment()
         R.id.settingsMenuItem -> SettingsFragment()
         else -> ExampleFragment("Example")
     }

@@ -11,6 +11,8 @@ import kotlin.math.max
 class MicrophoneController : ISensorController {
 
     override val sensorCurrentData = MutableLiveData<SensorEvent>()
+    override val additionalData = MutableLiveData<Int>()
+
     val microphoneCurrentData = MutableLiveData<Double>()
 
     private var threadMicReader: ThreadMicReader? = null
@@ -26,6 +28,10 @@ class MicrophoneController : ISensorController {
     }
 
     override fun onSensorDataReceived(event: SensorEvent) {
+        // empty
+    }
+
+    override fun onAdditionalDataChanged(accuracy: Int) {
         // empty
     }
 
