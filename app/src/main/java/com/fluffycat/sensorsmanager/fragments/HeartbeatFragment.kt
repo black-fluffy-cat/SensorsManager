@@ -20,44 +20,30 @@ class HeartbeatFragment : BaseChartFragment() {
 
     override val layoutResource: Int = R.layout.heartbeat_fragment
 
-    private fun setActivityTitle() {
-        activity?.title = getString(R.string.heartbeat)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if ((checkSelfPermission(activity!!, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED)
             && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
             requestPermissions(arrayOf(Manifest.permission.BODY_SENSORS), HEART_RATE_REQUEST_CODE)
         }
 
-        setActivityTitle()
-        heartbeatChart.data = lineData
-
         sensorController?.additionalData?.observe(this, Observer { additionalCode ->
             onAdditionalDataChanged(additionalCode)
         })
 
-        // TODO Can I observe it here and forget about it?
-        sensorController?.sensorCurrentData?.observe(this, Observer { sensorEvent ->
-            onDataChanged(sensorEvent)
-        })
+        super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun setupView() {
+        arguments?.getInt(SENSOR_TYPE_ARG_NAME, 0)?.let { sensorType ->
+            val fragmentTitle = getFragmentTitle(sensorType)
+            setActivityTitle(fragmentTitle)
+        }
+        heartbeatChart.data = lineData
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == HEART_RATE_REQUEST_CODE && grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
             sensorController?.startReceivingData()
-        }
-    }
-
-    private fun onAdditionalDataChanged(additionalCode: Int) {
-        Log.d(tag, "additionalCode: $additionalCode")
-        when (additionalCode) {
-            SensorManager.SENSOR_STATUS_UNRELIABLE -> {
-                heartbeatFragmentAdditionalText.text = "Please put your finger on the sensor and wait for measurement"
-            }
-            else -> {
-                heartbeatFragmentAdditionalText.text = ""
-            }
         }
     }
 
@@ -70,6 +56,18 @@ class HeartbeatFragment : BaseChartFragment() {
             heartbeatChart.notifyDataSetChanged()
             heartbeatChart.setVisibleXRangeMaximum(100F)
             heartbeatChart.moveViewTo(entryCount.toFloat(), 0F, YAxis.AxisDependency.RIGHT)
+        }
+    }
+
+    private fun onAdditionalDataChanged(additionalCode: Int) {
+        Log.d(tag, "additionalCode: $additionalCode")
+        when (additionalCode) {
+            SensorManager.SENSOR_STATUS_UNRELIABLE -> {
+                heartbeatFragmentAdditionalText.text = "Please put your finger on the sensor and wait for measurement"
+            }
+            else -> {
+                heartbeatFragmentAdditionalText.text = ""
+            }
         }
     }
 }

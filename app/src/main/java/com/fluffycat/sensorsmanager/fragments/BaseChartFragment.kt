@@ -25,41 +25,24 @@ const val SENSOR_TYPE_ARG_NAME = "sensorType"
 
 open class BaseChartFragment : Fragment() {
 
-    private var fragmentTitle: String = ""
-    private var chartTitle: String = ""
+    private val valuesConverter = ValuesConverter()
+
     protected var sensorController: ISensorController? = null
     protected open val layoutResource = R.layout.chart_fragment
-
-    private val valuesConverter = ValuesConverter()
     protected lateinit var lineData: LineData
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        lineData = createLineData()
         val sensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager?
         val sensorType = arguments?.getInt(SENSOR_TYPE_ARG_NAME, 0)
         if (sensorType != null && sensorManager != null) {
-            fragmentTitle = getFragmentTitle(sensorType)
-            chartTitle = getChartTitle(sensorType)
             sensorController = SensorController(sensorManager, sensorType)
-        } else {
-            // TODO error, return
+            lineData = createLineData()
         }
         Log.d("ABAB", "context: $context, smanager: $sensorManager")
         return inflater.inflate(layoutResource, container, false)
     }
 
-    private fun getChartTitle(sensorType: Int): String = when (sensorType) {
-        ACCELEROMETER_SENSOR_TYPE -> getString(R.string.accelerometer)
-        GYROSCOPE_SENSOR_TYPE -> getString(R.string.gyroscope)
-        LIGHT_SENSOR_TYPE -> "Light power"
-        LINEAR_ACCELERATION_SENSOR_TYPE -> getString(R.string.linearAcceleration)
-        MAGNETIC_FIELD_SENSOR_TYPE -> getString(R.string.magnetic_field)
-        PROXIMITY_SENSOR_TYPE -> getString(R.string.proximity)
-        HEART_RATE_SENSOR_TYPE -> "Heartbeat rate"
-        else -> ""
-    }
-
-    private fun getFragmentTitle(sensorType: Int): String = when (sensorType) {
+    protected fun getFragmentTitle(sensorType: Int): String = when (sensorType) {
         ACCELEROMETER_SENSOR_TYPE -> getString(R.string.accelerometer)
         GYROSCOPE_SENSOR_TYPE -> getString(R.string.gyroscope)
         LIGHT_SENSOR_TYPE -> getString(R.string.light)
@@ -72,15 +55,22 @@ open class BaseChartFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setActivityTitle()
-        mainChart.data = lineData
-        mainChart.description = Description().apply { text = "" }
-        mainChartSensorInfoLabel.text = sensorController?.getSensorInfo()
+        setupView()
 
         // TODO Can I observe it here and forget about it?
         sensorController?.sensorCurrentData?.observe(this, Observer { sensorEvent ->
             onDataChanged(sensorEvent)
         })
+    }
+
+    protected open fun setupView() {
+        arguments?.getInt(SENSOR_TYPE_ARG_NAME, 0)?.let { sensorType ->
+            val fragmentTitle = getFragmentTitle(sensorType)
+            setActivityTitle(fragmentTitle)
+        }
+        mainChart.data = lineData
+        mainChart.description = Description().apply { text = "" }
+        mainChartSensorInfoLabel.text = sensorController?.getSensorInfo()
     }
 
     override fun onStart() {
@@ -94,13 +84,13 @@ open class BaseChartFragment : Fragment() {
     }
 
     protected open fun createLineData(): LineData {
-        val lineDataSet1 = createDataSet(Color.GREEN, "$chartTitle X")
+        val lineDataSet1 = createDataSet(Color.GREEN, "X")
         val lineDataSet2 = createDataSet(Color.RED, "Y")
         val lineDataSet3 = createDataSet(Color.BLUE, "Z")
         return LineData(lineDataSet1, lineDataSet2, lineDataSet3)
     }
 
-    private fun setActivityTitle() {
+    protected fun setActivityTitle(fragmentTitle: String) {
         activity?.title = fragmentTitle
     }
 
