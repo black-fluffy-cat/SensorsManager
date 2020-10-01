@@ -11,6 +11,8 @@ import com.fluffycat.sensorsmanager.utils.tag
 open class SensorController(private val sensorManager: SensorManager, private val sensorType: Int) : ISensorController {
 
     override val sensorCurrentData = MutableLiveData<SensorEvent>()
+    override val additionalData = MutableLiveData<Int>()
+
     protected open val sensorListener: UniversalSensorListener by lazy { UniversalSensorListener(this) }
 
     // TODO return that registering failed
@@ -33,6 +35,9 @@ open class SensorController(private val sensorManager: SensorManager, private va
         sensorCurrentData.value = event
     }
 
+    override fun onAdditionalDataChanged(accuracy: Int) {
+        additionalData.value = accuracy
+    }
 
     override fun getSensorInfo(): String {
         val sensor = sensorManager.getDefaultSensor(sensorType)

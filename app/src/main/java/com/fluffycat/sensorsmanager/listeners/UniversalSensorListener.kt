@@ -15,6 +15,6 @@ open class UniversalSensorListener(private val dataCollector: ISensorController)
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        // empty
+        dataCollector.onAdditionalDataChanged(accuracy)
     }
 }

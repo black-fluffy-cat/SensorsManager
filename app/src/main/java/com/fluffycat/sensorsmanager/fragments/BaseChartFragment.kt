@@ -27,11 +27,11 @@ open class BaseChartFragment : Fragment() {
 
     private var fragmentTitle: String = ""
     private var chartTitle: String = ""
-    private var sensorController: ISensorController? = null
-    private val layoutResource = R.layout.chart_fragment
+    protected var sensorController: ISensorController? = null
+    protected open val layoutResource = R.layout.chart_fragment
 
     private val valuesConverter = ValuesConverter()
-    private lateinit var lineData: LineData
+    protected lateinit var lineData: LineData
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         lineData = createLineData()
@@ -55,6 +55,7 @@ open class BaseChartFragment : Fragment() {
         LINEAR_ACCELERATION_SENSOR_TYPE -> getString(R.string.linearAcceleration)
         MAGNETIC_FIELD_SENSOR_TYPE -> getString(R.string.magnetic_field)
         PROXIMITY_SENSOR_TYPE -> getString(R.string.proximity)
+        HEART_RATE_SENSOR_TYPE -> "Heartbeat rate"
         else -> ""
     }
 
@@ -65,6 +66,7 @@ open class BaseChartFragment : Fragment() {
         LINEAR_ACCELERATION_SENSOR_TYPE -> getString(R.string.linearAcceleration)
         MAGNETIC_FIELD_SENSOR_TYPE -> getString(R.string.magnetic_field)
         PROXIMITY_SENSOR_TYPE -> getString(R.string.proximity)
+        HEART_RATE_SENSOR_TYPE -> getString(R.string.heartbeat)
         else -> ""
     }
 
@@ -139,15 +141,15 @@ open class BaseChartFragment : Fragment() {
 
     private fun setupLabelsTexts(labelTexts: MutableList<String>) {
         labelTexts.getOrNull(0)?.let { text ->
-            mainChartXValueInfoLabel.text = getString(R.string.xChartLabel, text)
+            mainChartXValueInfoLabel?.text = getString(R.string.xChartLabel, text)
         }
 
         labelTexts.getOrNull(1)?.let { text ->
-            mainChartYValueInfoLabel.text = getString(R.string.yChartLabel, text)
+            mainChartYValueInfoLabel?.text = getString(R.string.yChartLabel, text)
         }
 
         labelTexts.getOrNull(2)?.let { text ->
-            mainChartZValueInfoLabel.text = getString(R.string.zChartLabel, text)
+            mainChartZValueInfoLabel?.text = getString(R.string.zChartLabel, text)
         }
     }
 }
