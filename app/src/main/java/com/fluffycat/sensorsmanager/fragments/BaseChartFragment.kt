@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.fluffycat.sensorsmanager.R
 import com.fluffycat.sensorsmanager.converter.ValuesConverter
-import com.fluffycat.sensorsmanager.sensors.ISensorController
+import com.fluffycat.sensorsmanager.sensors.*
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
@@ -21,23 +21,51 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.android.synthetic.main.chart_fragment.*
 
-abstract class BaseChartFragment : Fragment() {
+const val SENSOR_TYPE_ARG_NAME = "sensorType"
 
-    protected var fragmentTitle: String = ""
-    protected var chartTitle: String = ""
-    protected lateinit var sensorController: ISensorController
+open class BaseChartFragment : Fragment() {
+
+    private var fragmentTitle: String = ""
+    private var chartTitle: String = ""
+    private var sensorController: ISensorController? = null
     private val layoutResource = R.layout.chart_fragment
-
-    protected var sensorManager: SensorManager? = null
 
     private val valuesConverter = ValuesConverter()
     private lateinit var lineData: LineData
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         lineData = createLineData()
-        sensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager?
+        val sensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager?
+        val sensorType = arguments?.getInt(SENSOR_TYPE_ARG_NAME, 0)
+        if (sensorType != null && sensorManager != null) {
+            fragmentTitle = getFragmentTitle(sensorType)
+            chartTitle = getChartTitle(sensorType)
+            sensorController = SensorController(sensorManager, sensorType)
+        } else {
+            // TODO error, return
+        }
         Log.d("ABAB", "context: $context, smanager: $sensorManager")
         return inflater.inflate(layoutResource, container, false)
+    }
+
+    private fun getChartTitle(sensorType: Int): String = when (sensorType) {
+        ACCELEROMETER_SENSOR_TYPE -> getString(R.string.accelerometer)
+        GYROSCOPE_SENSOR_TYPE -> getString(R.string.gyroscope)
+        LIGHT_SENSOR_TYPE -> "Light power"
+        LINEAR_ACCELERATION_SENSOR_TYPE -> getString(R.string.linearAcceleration)
+        MAGNETIC_FIELD_SENSOR_TYPE -> getString(R.string.magnetic_field)
+        PROXIMITY_SENSOR_TYPE -> getString(R.string.proximity)
+        else -> ""
+    }
+
+    private fun getFragmentTitle(sensorType: Int): String = when (sensorType) {
+        ACCELEROMETER_SENSOR_TYPE -> getString(R.string.accelerometer)
+        GYROSCOPE_SENSOR_TYPE -> getString(R.string.gyroscope)
+        LIGHT_SENSOR_TYPE -> getString(R.string.light)
+        LINEAR_ACCELERATION_SENSOR_TYPE -> getString(R.string.linearAcceleration)
+        MAGNETIC_FIELD_SENSOR_TYPE -> getString(R.string.magnetic_field)
+        PROXIMITY_SENSOR_TYPE -> getString(R.string.proximity)
+        else -> ""
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -45,22 +73,22 @@ abstract class BaseChartFragment : Fragment() {
         setActivityTitle()
         mainChart.data = lineData
         mainChart.description = Description().apply { text = "" }
-        mainChartSensorInfoLabel.text = sensorController.getSensorInfo()
+        mainChartSensorInfoLabel.text = sensorController?.getSensorInfo()
 
         // TODO Can I observe it here and forget about it?
-        sensorController.sensorCurrentData.observe(this, Observer { sensorEvent ->
+        sensorController?.sensorCurrentData?.observe(this, Observer { sensorEvent ->
             onDataChanged(sensorEvent)
         })
     }
 
     override fun onStart() {
         super.onStart()
-        sensorController.startReceivingData()
+        sensorController?.startReceivingData()
     }
 
     override fun onStop() {
         super.onStop()
-        sensorController.stopReceivingData()
+        sensorController?.stopReceivingData()
     }
 
     protected open fun createLineData(): LineData {

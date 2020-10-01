@@ -8,7 +8,8 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.fluffycat.sensorsmanager.BuildConfig
 import com.fluffycat.sensorsmanager.R
-import com.fluffycat.sensorsmanager.fragments.AccelerometerFragment
+import com.fluffycat.sensorsmanager.fragments.BaseChartFragment
+import com.fluffycat.sensorsmanager.fragments.SENSOR_TYPE_ARG_NAME
 import com.fluffycat.sensorsmanager.navigation_view.MyNavigationItemSelectedListener
 import com.fluffycat.sensorsmanager.sensors.*
 import com.fluffycat.sensorsmanager.utils.LogFlurryEvent
@@ -48,7 +49,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun setCurrentFragment(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
-            switchFragment(AccelerometerFragment())
+            val fragment = BaseChartFragment()
+            val args = Bundle()
+            args.putInt(SENSOR_TYPE_ARG_NAME, ACCELEROMETER_SENSOR_TYPE)
+            fragment.arguments = args
+            switchFragment(fragment)
         }
     }
 
