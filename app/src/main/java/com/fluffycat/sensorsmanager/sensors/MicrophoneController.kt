@@ -17,9 +17,10 @@ class MicrophoneController : ISensorController {
 
     private var threadMicReader: ThreadMicReader? = null
 
-    override fun startReceivingData() {
+    override fun startReceivingData(): Boolean {
         threadMicReader?.interrupt()
         threadMicReader = ThreadMicReader(this).also { threadMicReader -> threadMicReader.start() }
+        return true
     }
 
     override fun stopReceivingData() {

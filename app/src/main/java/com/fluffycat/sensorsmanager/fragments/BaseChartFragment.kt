@@ -37,12 +37,14 @@ open class BaseChartFragment : Fragment() {
         if (sensorType != null && sensorManager != null) {
             sensorController = SensorController(sensorManager, sensorType)
             lineData = createLineData()
+        } else {
+            onSensorError()
         }
         Log.d("ABAB", "context: $context, smanager: $sensorManager")
         return inflater.inflate(layoutResource, container, false)
     }
 
-    protected fun getFragmentTitle(sensorType: Int): String = when (sensorType) {
+    private fun getFragmentTitle(sensorType: Int): String = when (sensorType) {
         ACCELEROMETER_SENSOR_TYPE -> getString(R.string.accelerometer)
         GYROSCOPE_SENSOR_TYPE -> getString(R.string.gyroscope)
         LIGHT_SENSOR_TYPE -> getString(R.string.light)
@@ -55,6 +57,7 @@ open class BaseChartFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setActivityTitle()
         setupView()
 
         // TODO Can I observe it here and forget about it?
@@ -64,18 +67,22 @@ open class BaseChartFragment : Fragment() {
     }
 
     protected open fun setupView() {
-        arguments?.getInt(SENSOR_TYPE_ARG_NAME, 0)?.let { sensorType ->
-            val fragmentTitle = getFragmentTitle(sensorType)
-            setActivityTitle(fragmentTitle)
-        }
         mainChart.data = lineData
         mainChart.description = Description().apply { text = "" }
         mainChartSensorInfoLabel.text = sensorController?.getSensorInfo()
     }
 
+    private fun onSensorError() {
+        mainChart.description = Description().apply { text = "Sensor error occurred" }
+        mainChartSensorInfoLabel.text = getString(R.string.error)
+    }
+
     override fun onStart() {
         super.onStart()
-        sensorController?.startReceivingData()
+        val registeringSuccessful = sensorController?.startReceivingData()
+        if (registeringSuccessful != true) {
+            onSensorError()
+        }
     }
 
     override fun onStop() {
@@ -90,8 +97,11 @@ open class BaseChartFragment : Fragment() {
         return LineData(lineDataSet1, lineDataSet2, lineDataSet3)
     }
 
-    protected fun setActivityTitle(fragmentTitle: String) {
-        activity?.title = fragmentTitle
+    protected fun setActivityTitle() {
+        arguments?.getInt(SENSOR_TYPE_ARG_NAME, 0)?.let { sensorType ->
+            val fragmentTitle = getFragmentTitle(sensorType)
+            activity?.title = fragmentTitle
+        }
     }
 
     protected open fun createDataSet(dataSetColor: Int, label: String) = LineDataSet(ArrayList(), label).apply {
