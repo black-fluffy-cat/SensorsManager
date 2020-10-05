@@ -22,5 +22,6 @@
     <string name="zChartLabel">Z: %1$s</string>
     <string name="lightChartLabel">Lux: %1$s</string>
     <string name="distanceChartLabel">Distance: %1$s</string>
+    <string name="error">Error</string>
 
 </resources>

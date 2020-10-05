@@ -34,10 +34,7 @@ class HeartbeatFragment : BaseChartFragment() {
     }
 
     override fun setupView() {
-        arguments?.getInt(SENSOR_TYPE_ARG_NAME, 0)?.let { sensorType ->
-            val fragmentTitle = getFragmentTitle(sensorType)
-            setActivityTitle(fragmentTitle)
-        }
+        setActivityTitle()
         heartbeatChart.data = lineData
     }
 

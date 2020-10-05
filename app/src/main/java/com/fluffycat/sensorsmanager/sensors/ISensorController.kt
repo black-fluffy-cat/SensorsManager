@@ -8,7 +8,7 @@ interface ISensorController {
     val sensorCurrentData: MutableLiveData<SensorEvent>
     val additionalData: MutableLiveData<Int>
 
-    fun startReceivingData()
+    fun startReceivingData(): Boolean
     fun stopReceivingData()
     fun onSensorDataReceived(event: SensorEvent)
     fun getSensorInfo(): String

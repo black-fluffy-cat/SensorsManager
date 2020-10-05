@@ -15,8 +15,7 @@ open class SensorController(private val sensorManager: SensorManager, private va
 
     protected open val sensorListener: UniversalSensorListener by lazy { UniversalSensorListener(this) }
 
-    // TODO return that registering failed
-    override fun startReceivingData() {
+    override fun startReceivingData(): Boolean {
         val sensor = sensorManager.getDefaultSensor(sensorType)
         val registerStatus = sensorManager.registerListener(sensorListener, sensor, SensorManager.SENSOR_DELAY_GAME)
         if (registerStatus) {
@@ -24,6 +23,7 @@ open class SensorController(private val sensorManager: SensorManager, private va
         } else {
             Log.d(tag, "Registering sensor failed, sensorManager: $sensorManager, registerStatus: $registerStatus")
         }
+        return registerStatus
     }
 
     override fun stopReceivingData() {
