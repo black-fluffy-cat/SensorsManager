@@ -25,3 +25,9 @@ fun LogFlurryEvent(message: String) {
 
 fun doesSensorExist(context: Context, sensorType: Int): Boolean =
     (context.getSystemService(Context.SENSOR_SERVICE) as SensorManager).getDefaultSensor(sensorType) != null
+
+infix fun String.ifIsEmpty(value: String): String = if (isEmpty()) value else this
+
+infix fun String.ifNotEmpty(value: () -> Unit) {
+    if (this.isNotEmpty()) value.invoke()
+}

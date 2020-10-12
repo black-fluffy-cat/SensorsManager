@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.fluffycat.sensorsmanager.R
 import com.fluffycat.sensorsmanager.SensorsManagerApplication
+import com.fluffycat.sensorsmanager.notification.NotificationManagerBuilder
 import com.fluffycat.sensorsmanager.preferences.DISTANCE_FEET_VALUE
 import com.fluffycat.sensorsmanager.preferences.DISTANCE_METERS_VALUE
 import com.fluffycat.sensorsmanager.preferences.PreferencesManager
@@ -24,6 +25,7 @@ class SettingsFragment : Fragment() {
 
     private val valuesArray = arrayOf("METERS", "FEET")
     private val preferencesManager: PreferencesManager = SensorsManagerApplication.instance.preferencesManager
+    private var flag = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         setActivityTitle()
@@ -46,6 +48,16 @@ class SettingsFragment : Fragment() {
 
         chooseDistanceUnitLabel.setOnClickListener {
             createAlertDialog()
+        }
+
+        notifyNotificationLabel.setOnClickListener {
+            context?.let { cxt ->
+                if (flag)
+                    NotificationManagerBuilder().notifyMainNotification(cxt)
+                else
+                    NotificationManagerBuilder().notifyServiceNotification(cxt)
+                flag = !flag
+            }
         }
     }
 
