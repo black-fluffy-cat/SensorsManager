@@ -3,7 +3,7 @@
     package="com.fluffycat.sensorsmanager">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.BODY_SENSORS" />
 
     <application
@@ -23,7 +23,8 @@
         </activity>
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-7809340407306359~1391620179"/>
+            android:value="ca-app-pub-7809340407306359~1391620179" />
+        <service android:name="com.fluffycat.sensorsmanager.services.CollectingDataService" />
     </application>
 
 </manifest>

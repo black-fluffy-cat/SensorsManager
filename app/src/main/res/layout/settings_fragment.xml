@@ -56,4 +56,27 @@
         app:layout_constraintStart_toStartOf="@+id/chooseDistanceUnitLabel"
         app:layout_constraintTop_toBottomOf="@+id/chooseDistanceUnitLabel" />
 
+    <TextView
+        android:id="@+id/startServiceLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Start CollectingDataService"
+        android:textColor="@color/colorAccent2"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="@+id/notifyNotificationLabel"
+        app:layout_constraintStart_toStartOf="@+id/notifyNotificationLabel"
+        app:layout_constraintTop_toBottomOf="@+id/notifyNotificationLabel" />
+
+    <TextView
+        android:id="@+id/serviceValuesLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="CollectingDataService values will appear here"
+        android:textColor="@color/colorAccent2"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/startServiceLabel"
+        app:layout_constraintStart_toStartOf="@+id/startServiceLabel"
+        app:layout_constraintTop_toBottomOf="@+id/startServiceLabel" />
 </androidx.constraintlayout.widget.ConstraintLayout>

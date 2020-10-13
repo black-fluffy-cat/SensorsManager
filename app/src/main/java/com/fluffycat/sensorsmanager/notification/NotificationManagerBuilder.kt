@@ -75,12 +75,20 @@ class NotificationManagerBuilder {
         NotificationManagerCompat.from(context).notify(NOTIFICATION_MAIN_ID, mainNotification)
     }
 
-    fun getServiceNotification(context: Context, contentTitle: String = "Service is running in background",
+    fun cancelMainNotification(context: Context) {
+        NotificationManagerCompat.from(context).cancel(NOTIFICATION_MAIN_ID)
+    }
+
+    fun getServiceNotification(context: Context, contentTitle: String = "",
                                contentText: String = "", subText: String = "") = createCollectingServiceNotification(context, contentTitle, contentText, subText)
 
-    fun notifyServiceNotification(context: Context, contentTitle: String = "",
+    fun notifyServiceNotification(context: Context, contentTitle: String = "Service is running in background",
                                   contentText: String = "", subText: String = "") {
         val serviceNotification = getServiceNotification(context, contentTitle, contentText, subText)
         NotificationManagerCompat.from(context).notify(NOTIFICATION_SERVICE_ID, serviceNotification)
+    }
+
+    fun cancelServiceNotification(context: Context) {
+        NotificationManagerCompat.from(context).cancel(NOTIFICATION_SERVICE_ID)
     }
 }

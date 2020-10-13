@@ -10,7 +10,7 @@ import com.fluffycat.sensorsmanager.utils.tag
 open class UniversalSensorListener(private val dataCollector: ISensorController) : SensorEventListener {
 
     override fun onSensorChanged(event: SensorEvent) {
-        Log.d(tag, "onSensorChanged")
+//        Log.d(tag, "onSensorChanged")
         dataCollector.onSensorDataReceived(event)
     }
 

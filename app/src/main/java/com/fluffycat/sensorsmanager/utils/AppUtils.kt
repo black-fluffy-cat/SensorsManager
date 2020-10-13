@@ -14,7 +14,7 @@ fun showToast(context: Context, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
 
-val Any.tag: String get() = this.javaClass.simpleName.take(LOG_TAG_MAX_LENGTH)
+val Any.tag: String get() = this.javaClass.simpleName.take(LOG_TAG_MAX_LENGTH) ifIsEmpty "TAG"
 
 fun getLicencesInfoString() =
     "Icon made by srip, cursor-creative, flat-icons, freepik, smashicons from www.flaticon.com"
