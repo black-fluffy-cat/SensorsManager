@@ -38,6 +38,7 @@ class ValuesConverter(private val preferencesManager: PreferencesManager =
 
 
     fun roundValue(value: Float, decimalPlaces: Int = 3): Float {
+        if (decimalPlaces < 0 || decimalPlaces > 7) return value
         val decimalHelperValue = 10.0.pow(decimalPlaces)
         return ((value * decimalHelperValue).roundToInt()) / decimalHelperValue.toFloat()
     }
