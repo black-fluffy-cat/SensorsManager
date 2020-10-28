@@ -72,13 +72,28 @@ open class BaseChartFragment : Fragment() {
         mainChartSensorInfoLabel.text = sensorController?.getSensorInfo()
     }
 
-    private fun onSensorError() {
+    open fun onSensorError() {
         mainChart.description = Description().apply { text = "Sensor error occurred" }
         mainChartSensorInfoLabel.text = getString(R.string.error)
     }
 
+    open fun isPermissionGranted(context: Context) = true
+    open fun requestNeededPermission() {
+        /* no-op */
+    }
+
     override fun onStart() {
         super.onStart()
+        context?.apply {
+            if (isPermissionGranted(this)) {
+                startReceivingData()
+            } else {
+                requestNeededPermission()
+            }
+        }
+    }
+
+    private fun startReceivingData() {
         val registeringSuccessful = sensorController?.startReceivingData()
         if (registeringSuccessful != true) {
             onSensorError()
