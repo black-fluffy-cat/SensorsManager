@@ -1,6 +1,7 @@
 package com.fluffycat.sensorsmanager.fragments
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.SensorEvent
 import android.hardware.SensorManager
@@ -12,6 +13,7 @@ import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.lifecycle.Observer
 import com.fluffycat.sensorsmanager.R
 import com.fluffycat.sensorsmanager.utils.HEART_RATE_REQUEST_CODE
+import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import kotlinx.android.synthetic.main.heartbeat_fragment.*
@@ -20,10 +22,24 @@ class HeartbeatFragment : BaseChartFragment() {
 
     override val layoutResource: Int = R.layout.heartbeat_fragment
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        if ((checkSelfPermission(activity!!, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED)
-            && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+    override fun isPermissionGranted(context: Context) = isBodySensorsPermissionGranted(context)
+    override fun requestNeededPermission() = requestBodySensorsPermission()
+
+    private fun isBodySensorsPermissionGranted(context: Context) =
+        (checkSelfPermission(context, Manifest.permission.BODY_SENSORS) == PackageManager.PERMISSION_GRANTED)
+                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH
+
+    private fun requestBodySensorsPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
             requestPermissions(arrayOf(Manifest.permission.BODY_SENSORS), HEART_RATE_REQUEST_CODE)
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        context?.let { cxt ->
+            if (!isBodySensorsPermissionGranted(cxt)) {
+                requestBodySensorsPermission()
+            }
         }
 
         sensorController?.additionalData?.observe(this, Observer { additionalCode ->
@@ -31,6 +47,10 @@ class HeartbeatFragment : BaseChartFragment() {
         })
 
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onSensorError() {
+        heartbeatChart?.description = Description().apply { text = "Sensor error occurred" }
     }
 
     override fun setupView() {
