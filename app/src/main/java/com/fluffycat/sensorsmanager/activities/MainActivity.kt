@@ -1,6 +1,7 @@
 package com.fluffycat.sensorsmanager.activities
 
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -8,6 +9,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.fluffycat.sensorsmanager.BuildConfig
 import com.fluffycat.sensorsmanager.R
+import com.fluffycat.sensorsmanager.ad.AdManager
 import com.fluffycat.sensorsmanager.fragments.BaseChartFragment
 import com.fluffycat.sensorsmanager.fragments.SENSOR_TYPE_ARG_NAME
 import com.fluffycat.sensorsmanager.navigation_view.MyNavigationItemSelectedListener
@@ -19,7 +21,6 @@ import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.InterstitialAd
 import com.google.android.gms.ads.MobileAds
-import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -27,11 +28,29 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val CURRENT_FRAGMENT_SAVED_STATE = "currentFragment"
+        private const val CLICKS_BEFORE_AD = 3
     }
 
     private var currentFragment: String = ""
     private lateinit var adRequest: AdRequest
     private lateinit var mInterstitialAd: InterstitialAd
+    private val adManager = AdManager()
+    private var menuClicks = 0
+
+    fun onDrawerItemSelected(fragment: Fragment) {
+        switchFragment(fragment)
+
+        if (++menuClicks == CLICKS_BEFORE_AD) {
+            menuClicks = 0
+            if (mInterstitialAd.isLoaded) {
+                LogFlurryEvent("Showing mInterstitialAd")
+                mInterstitialAd.show()
+            } else {
+                LogFlurryEvent("mInterstitialAd not loaded yet")
+                Log.d("ABAB", "The interstitial wasn't loaded yet.")
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +87,7 @@ class MainActivity : AppCompatActivity() {
     private fun initAds() {
         MobileAds.initialize(this) { }
 
-        adRequest = AdRequest.Builder().build()
+        adRequest = adManager.createAdRequest()
         createAndLoadMainBannerAd()
         createAndLoadMainInterstitialAd()
     }
@@ -84,18 +103,10 @@ class MainActivity : AppCompatActivity() {
                     loadAd(adRequest)
                 }
             }
-            adUnitId = getIntersitialAdUnitId(BuildConfig.DEBUG)
+            adUnitId = adManager.getInterstitialAdUnitId(BuildConfig.DEBUG)
             loadAd(adRequest)
         }
     }
-
-    @Suppress("SameParameterValue")
-    private fun getIntersitialAdUnitId(isDebug: Boolean): String =
-        if (isDebug) {
-            "ca-app-pub-3940256099942544/1033173712"
-        } else {
-            "ca-app-pub-7809340407306359/4753873001"
-        }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -171,8 +182,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNavigationViewListener() {
-        val navigationView = findViewById<NavigationView>(R.id.mainActivityNavigationView)
-        navigationView.setNavigationItemSelectedListener(
-                MyNavigationItemSelectedListener(::switchFragment, mInterstitialAd))
+        mainActivityNavigationView.setNavigationItemSelectedListener(MyNavigationItemSelectedListener(this))
     }
 }
