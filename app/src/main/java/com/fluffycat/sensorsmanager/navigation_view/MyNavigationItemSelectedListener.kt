@@ -1,24 +1,18 @@
 package com.fluffycat.sensorsmanager.navigation_view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import com.fluffycat.sensorsmanager.R
+import com.fluffycat.sensorsmanager.activities.MainActivity
 import com.fluffycat.sensorsmanager.fragments.*
 import com.fluffycat.sensorsmanager.sensors.*
-import com.fluffycat.sensorsmanager.utils.LogFlurryEvent
-import com.google.android.gms.ads.InterstitialAd
 import com.google.android.material.navigation.NavigationView
 
-private const val CLICKS_BEFORE_AD = 3
 
-class MyNavigationItemSelectedListener(
-        private val switchFragment: (fragment: Fragment) -> Unit,
-        private val mInterstitialAd: InterstitialAd) :
+class MyNavigationItemSelectedListener(private val mainActivity: MainActivity) :
     NavigationView.OnNavigationItemSelectedListener {
 
-    private var menuClicks = 0
 
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
         val sensorType = createSensorType(menuItem.itemId)
@@ -27,18 +21,8 @@ class MyNavigationItemSelectedListener(
         val args = Bundle()
         args.putInt(SENSOR_TYPE_ARG_NAME, sensorType)
         fragment.arguments = args
-        switchFragment(fragment)
+        mainActivity.onDrawerItemSelected(fragment)
 
-        if (++menuClicks == CLICKS_BEFORE_AD) {
-            menuClicks = 0
-            if (mInterstitialAd.isLoaded) {
-                LogFlurryEvent("Showing mInterstitialAd")
-                mInterstitialAd.show()
-            } else {
-                LogFlurryEvent("mInterstitialAd not loaded yet")
-                Log.d("ABAB", "The interstitial wasn't loaded yet.")
-            }
-        }
         return true
     }
 
