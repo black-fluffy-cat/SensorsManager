@@ -151,33 +151,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNavigationView() {
-        if (!doesSensorExist(this, ACCELEROMETER_SENSOR_TYPE)) {
-            mainActivityNavigationView.menu.removeItem(R.id.accelerometerMenuItem)
+        sensorTypeAndItsItemInMenu.forEach {
+            if (!doesSensorExist(this, it.first)) {
+                mainActivityNavigationView.menu.removeItem(it.second)
+            }
         }
-        if (!doesSensorExist(this, GYROSCOPE_SENSOR_TYPE)) {
-            mainActivityNavigationView.menu.removeItem(R.id.gyroscopeMenuItem)
-        }
-        if (!doesSensorExist(this, HEART_RATE_SENSOR_TYPE)) {
-            mainActivityNavigationView.menu.removeItem(R.id.heartbeatSensorMenuItem)
-        }
-        if (!doesSensorExist(this, LINEAR_ACCELERATION_SENSOR_TYPE)) {
-            mainActivityNavigationView.menu.removeItem(R.id.linearAccelerationSensorMenuItem)
-        }
-        if (!doesSensorExist(this, LIGHT_SENSOR_TYPE)) {
-            mainActivityNavigationView.menu.removeItem(R.id.lightSensorMenuItem)
-        }
-        if (!doesSensorExist(this, MAGNETIC_FIELD_SENSOR_TYPE)) {
-            mainActivityNavigationView.menu.removeItem(R.id.magneticFieldSensorMenuItem)
-        }
-        if (!doesSensorExist(this, ROTATION_VECTOR_SENSOR_TYPE)) {
-            mainActivityNavigationView.menu.removeItem(R.id.rotationVectorMenuItem)
-        }
-        if (!doesSensorExist(this, PROXIMITY_SENSOR_TYPE)) {
-            mainActivityNavigationView.menu.removeItem(R.id.proximitySensorMenuItem)
-        }
-
         setupNavigationViewListener()
     }
+
+    private val sensorTypeAndItsItemInMenu = listOf(
+            ACCELEROMETER_SENSOR_TYPE to R.id.accelerometerMenuItem,
+            GYROSCOPE_SENSOR_TYPE to R.id.gyroscopeMenuItem,
+            HEART_RATE_SENSOR_TYPE to R.id.heartbeatSensorMenuItem,
+            LINEAR_ACCELERATION_SENSOR_TYPE to R.id.linearAccelerationSensorMenuItem,
+            LIGHT_SENSOR_TYPE to R.id.lightSensorMenuItem,
+            MAGNETIC_FIELD_SENSOR_TYPE to R.id.magneticFieldSensorMenuItem,
+            ROTATION_VECTOR_SENSOR_TYPE to R.id.rotationVectorMenuItem,
+            PROXIMITY_SENSOR_TYPE to R.id.proximitySensorMenuItem
+    )
 
     private fun setupNavigationViewListener() {
         mainActivityNavigationView.setNavigationItemSelectedListener(MyNavigationItemSelectedListener(this))
