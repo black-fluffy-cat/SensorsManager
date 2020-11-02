@@ -28,28 +28,25 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val CURRENT_FRAGMENT_SAVED_STATE = "currentFragment"
-        private const val CLICKS_BEFORE_AD = 3
     }
 
     private var currentFragment: String = ""
     private lateinit var adRequest: AdRequest
     private lateinit var mInterstitialAd: InterstitialAd
     private val adManager = AdManager()
-    private var menuClicks = 0
+    private val interstitialAdCallback: () -> Unit = {
+        if (mInterstitialAd.isLoaded) {
+            LogFlurryEvent("Showing mInterstitialAd")
+            mInterstitialAd.show()
+        } else {
+            LogFlurryEvent("mInterstitialAd not loaded yet")
+            Log.d("ABAB", "The interstitial wasn't loaded yet.")
+        }
+    }
 
     fun onDrawerItemSelected(fragment: Fragment) {
         switchFragment(fragment)
-
-        if (++menuClicks == CLICKS_BEFORE_AD) {
-            menuClicks = 0
-            if (mInterstitialAd.isLoaded) {
-                LogFlurryEvent("Showing mInterstitialAd")
-                mInterstitialAd.show()
-            } else {
-                LogFlurryEvent("mInterstitialAd not loaded yet")
-                Log.d("ABAB", "The interstitial wasn't loaded yet.")
-            }
-        }
+        adManager.onMenuItemClicked()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,6 +103,7 @@ class MainActivity : AppCompatActivity() {
             adUnitId = adManager.getInterstitialAdUnitId(BuildConfig.DEBUG)
             loadAd(adRequest)
         }
+        adManager.registerInterstitialAdCallback(interstitialAdCallback)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
