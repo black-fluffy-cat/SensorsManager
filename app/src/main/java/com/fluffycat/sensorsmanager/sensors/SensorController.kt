@@ -8,12 +8,12 @@ import androidx.lifecycle.MutableLiveData
 import com.fluffycat.sensorsmanager.listeners.UniversalSensorListener
 import com.fluffycat.sensorsmanager.utils.tag
 
-open class SensorController(private val sensorManager: SensorManager, private val sensorType: Int) : ISensorController {
+class SensorController(private val sensorManager: SensorManager, private val sensorType: Int) : ISensorController {
 
     override val sensorCurrentData = MutableLiveData<SensorEvent>()
     override val additionalData = MutableLiveData<Int>()
 
-    protected open val sensorListener: UniversalSensorListener by lazy { UniversalSensorListener(this) }
+    private val sensorListener: UniversalSensorListener by lazy { UniversalSensorListener(this) }
 
     override fun startReceivingData(): Boolean {
         val sensor = sensorManager.getDefaultSensor(sensorType)
