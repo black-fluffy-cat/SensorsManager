@@ -10,8 +10,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import com.fluffycat.sensorsmanager.BuildConfig
 import com.fluffycat.sensorsmanager.R
 import com.fluffycat.sensorsmanager.SensorsManagerApplication
 import com.fluffycat.sensorsmanager.converter.ValuesConverter
@@ -59,36 +61,43 @@ class SettingsFragment : Fragment() {
             createAlertDialog()
         }
 
-        notifyNotificationLabel.setOnClickListener {
-            context?.let { cxt ->
-                if (flag)
-                    NotificationManagerBuilder().notifyMainNotification(cxt)
-                else
-                    NotificationManagerBuilder().notifyServiceNotification(cxt)
-                flag = !flag
-            }
-        }
-
-        startServiceLabel?.setOnClickListener {
-            Log.d(tag, "mService is: $mService")
-            activity?.apply {
-                if (flag) {
-                    CollectingDataService.start(applicationContext)
-                    bindToCollectingDataService()
-                } else {
-                    unbindService(connection)
-                    CollectingDataService.stop(applicationContext)
+        if (BuildConfig.DEBUG) {
+            serviceValuesLabel?.isVisible = true
+            notifyNotificationLabel?.isVisible = true
+            notifyNotificationLabel?.setOnClickListener {
+                context?.let { cxt ->
+                    if (flag)
+                        NotificationManagerBuilder().notifyMainNotification(cxt)
+                    else
+                        NotificationManagerBuilder().notifyServiceNotification(cxt)
+                    flag = !flag
                 }
-                flag = !flag
+            }
+
+            startServiceLabel?.isVisible = true
+            startServiceLabel?.setOnClickListener {
+                Log.d(tag, "mService is: $mService")
+                activity?.apply {
+                    if (flag) {
+                        CollectingDataService.start(applicationContext)
+                        bindToCollectingDataService()
+                    } else {
+                        unbindService(connection)
+                        CollectingDataService.stop(applicationContext)
+                    }
+                    flag = !flag
+                }
             }
         }
     }
 
     private fun bindToCollectingDataService() {
-        Log.d(tag, "Calling bindService, ${activity!!.bindService(
-                CollectingDataService.getServiceIntent(activity!!.applicationContext),
-                connection,
-                Context.BIND_AUTO_CREATE)}")
+        Log.d(tag, "Calling bindService, ${
+            activity!!.bindService(
+                    CollectingDataService.getServiceIntent(activity!!.applicationContext),
+                    connection,
+                    Context.BIND_AUTO_CREATE)
+        }")
 
     }
 
@@ -123,9 +132,9 @@ class SettingsFragment : Fragment() {
                 averageY += it.second
                 averageZ += it.third
             }
-            averageX = valuesConverter.roundValue(averageX/5, 8)
-            averageY = valuesConverter.roundValue(averageY/5, 8)
-            averageZ = valuesConverter.roundValue(averageZ/5, 8)
+            averageX = valuesConverter.roundValue(averageX / 5, 8)
+            averageY = valuesConverter.roundValue(averageY / 5, 8)
+            averageZ = valuesConverter.roundValue(averageZ / 5, 8)
 
             serviceValuesLabel?.text = "$averageX $averageY $averageZ"
         }
