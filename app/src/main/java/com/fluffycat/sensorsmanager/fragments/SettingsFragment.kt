@@ -31,10 +31,11 @@ import kotlinx.android.synthetic.main.settings_fragment.*
 class SettingsFragment : Fragment() {
 
     companion object {
-        const val TAG = "SettingsFragmentTAG"
+        private const val METERS = "METERS"
+        private const val FEET = "FEET"
+        private val valuesArray = arrayOf(METERS, FEET)
     }
 
-    private val valuesArray = arrayOf("METERS", "FEET")
     private val preferencesManager: PreferencesManager = SensorsManagerApplication.instance.preferencesManager
     private var flag = true
 
@@ -93,12 +94,9 @@ class SettingsFragment : Fragment() {
 
     private fun bindToCollectingDataService() {
         Log.d(tag, "Calling bindService, ${
-            activity!!.bindService(
-                    CollectingDataService.getServiceIntent(activity!!.applicationContext),
-                    connection,
+            activity!!.bindService(CollectingDataService.getServiceIntent(activity!!.applicationContext), connection,
                     Context.BIND_AUTO_CREATE)
         }")
-
     }
 
     private fun createAlertDialog() {
@@ -106,8 +104,8 @@ class SettingsFragment : Fragment() {
         alertDialogBuilder.setTitle("Select sensor")
         alertDialogBuilder.setSingleChoiceItems(valuesArray, -1) { dialog, item ->
             when (valuesArray[item]) {
-                "METERS" -> preferencesManager.saveChosenDistanceUnit(DISTANCE_METERS_VALUE)
-                "FEET" -> preferencesManager.saveChosenDistanceUnit(DISTANCE_FEET_VALUE)
+                METERS -> preferencesManager.saveChosenDistanceUnit(DISTANCE_METERS_VALUE)
+                FEET -> preferencesManager.saveChosenDistanceUnit(DISTANCE_FEET_VALUE)
             }
             dialog.dismiss()
         }
