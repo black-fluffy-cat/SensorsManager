@@ -8,6 +8,11 @@ import com.fluffycat.sensorsmanager.utils.tag
 import com.flurry.android.FlurryAgent
 import com.flurry.android.FlurryPerformance
 
+
+// TODO Switch to Navigation components
+// TODO Extract drawer code from MainActivity
+// TODO Refactor CollectingDataService
+// TODO Integrate with SonarCloud
 class SensorsManagerApplication : Application() {
 
     companion object {
