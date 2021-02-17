@@ -44,7 +44,7 @@ class NotificationManagerBuilder {
     private fun createNotification(context: Context, intent: Intent, channelId: String,
                                    contentTitle: String, contentText: String, subText: String) =
         NotificationCompat.Builder(context, channelId).apply {
-            setContentTitle(contentTitle ifIsEmpty "SensorManager application is running")
+            setContentTitle(contentTitle ifIsEmpty "SensorManagers application is running")
             contentText ifNotEmpty { setContentText(contentText) }
             subText ifNotEmpty { setSubText(subText) }
             setOngoing(true)
