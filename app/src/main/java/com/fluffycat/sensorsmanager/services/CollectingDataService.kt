@@ -8,13 +8,17 @@ import android.os.Binder
 import android.os.IBinder
 import android.util.Log
 import androidx.lifecycle.LifecycleService
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import com.fluffycat.sensorsmanager.notification.NotificationManagerBuilder
 import com.fluffycat.sensorsmanager.sensors.ACCELEROMETER_SENSOR_TYPE
 import com.fluffycat.sensorsmanager.sensors.ISensorController
 import com.fluffycat.sensorsmanager.sensors.SensorController
+import com.fluffycat.sensorsmanager.utils.BufferedMutableSharedFlow
 import com.fluffycat.sensorsmanager.utils.tag
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
 
 class CollectingDataService : LifecycleService() {
@@ -23,13 +27,14 @@ class CollectingDataService : LifecycleService() {
     private val notificationManagerBuilder = NotificationManagerBuilder()
 
     private var sensorController: ISensorController? = null
-    private var sensorManager: SensorManager? = null
 
-    val eventValues = MutableLiveData<Triple<Float, Float, Float>>()
+    private val eventValues = BufferedMutableSharedFlow<Triple<Float, Float, Float>?>()
+
+    fun observeEventValues(): SharedFlow<Triple<Float, Float, Float>?> = eventValues
 
     inner class LocalBinder(val service: CollectingDataService) : Binder()
 
-    override fun onBind(intent: Intent): IBinder? {
+    override fun onBind(intent: Intent): IBinder {
         Log.d(tag, "onBind")
         super.onBind(intent)
         return LocalBinder(this)
@@ -39,18 +44,20 @@ class CollectingDataService : LifecycleService() {
         isRunning.set(true)
         super.onCreate()
         Log.d(tag, "onCreate")
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager?
-        sensorManager?.let { manager ->
-            sensorController = SensorController(manager, ACCELEROMETER_SENSOR_TYPE)
-            sensorController?.sensorCurrentData?.observe(this, Observer { sensorEvent ->
-                onDataChanged(sensorEvent)
-            })
-            sensorController?.startReceivingData()
-        }
-        if (sensorManager == null) {
+        (getSystemService(Context.SENSOR_SERVICE) as SensorManager?)?.let { sensorManager ->
+            setupSensorController(sensorManager)
+        } ?: run {
             Log.d(tag, "SensorManager is null, stopping service")
             stopSelf()
         }
+    }
+
+    private fun setupSensorController(manager: SensorManager): Boolean? {
+        sensorController = SensorController(manager, ACCELEROMETER_SENSOR_TYPE)
+        CoroutineScope(Dispatchers.IO).launch {
+            sensorController?.observeSensorCurrentData()?.collect { event -> if (event != null) onDataChanged(event) }
+        }
+        return sensorController?.startReceivingData()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -62,7 +69,7 @@ class CollectingDataService : LifecycleService() {
 
     private fun onDataChanged(event: SensorEvent) {
 //        Log.d(tag, "onDataChanged, values: ${event.values[0]}, ${event.values[1]}, ${event.values[2]}")
-        eventValues.value = Triple(event.values[0], event.values[1], event.values[2])
+        eventValues.tryEmit(Triple(event.values[0], event.values[1], event.values[2]))
     }
 
     override fun onDestroy() {
@@ -79,7 +86,7 @@ class CollectingDataService : LifecycleService() {
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 //                context.startForegroundService(getServiceIntent(context))
 //            } else {
-                context.startService(getServiceIntent(context))
+            context.startService(getServiceIntent(context))
 //            }
         }
 

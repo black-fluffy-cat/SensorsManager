@@ -2,18 +2,15 @@ package com.fluffycat.sensorsmanager.sensors
 
 import android.hardware.SensorEvent
 import android.media.*
-import androidx.lifecycle.MutableLiveData
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.fluffycat.sensorsmanager.utils.BufferedMutableSharedFlow
 import kotlin.math.max
 
 class MicrophoneController : ISensorController {
 
-    override val sensorCurrentData = MutableLiveData<SensorEvent>()
-    override val additionalData = MutableLiveData<Int>()
+    override val sensorCurrentData = BufferedMutableSharedFlow<SensorEvent?>()
+    override val additionalData = BufferedMutableSharedFlow<Int?>()
 
-    val microphoneCurrentData = MutableLiveData<Double>()
+    val microphoneCurrentData = BufferedMutableSharedFlow<Double?>()
 
     private var threadMicReader: ThreadMicReader? = null
 
@@ -37,9 +34,7 @@ class MicrophoneController : ISensorController {
     }
 
     fun onSensorDataReceived(sum: Double) {
-        CoroutineScope(Dispatchers.Main).launch {
-            microphoneCurrentData.value = sum
-        }
+        microphoneCurrentData.tryEmit(sum)
     }
 
     override fun getSensorInfo(): String = "Microphone"

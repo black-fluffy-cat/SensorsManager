@@ -10,7 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.fluffycat.sensorsmanager.R
 import com.fluffycat.sensorsmanager.converter.ValuesConverter
 import com.fluffycat.sensorsmanager.sensors.*
@@ -20,6 +20,8 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.android.synthetic.main.chart_fragment.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 
 const val SENSOR_TYPE_ARG_NAME = "sensorType"
 
@@ -41,6 +43,13 @@ open class BaseChartFragment : Fragment() {
             onSensorError()
         }
         Log.d("ABAB", "context: $context, smanager: $sensorManager")
+
+        lifecycleScope.launchWhenResumed {
+            sensorController?.observeSensorCurrentData()?.collect { event ->
+                Log.d("ABAB", "observeSensorCurrentData collect, $event")
+                if (event != null) onDataChanged(event)
+            }
+        }
         return inflater.inflate(layoutResource, container, false)
     }
 
@@ -55,15 +64,11 @@ open class BaseChartFragment : Fragment() {
         else -> ""
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setActivityTitle()
         setupView()
-
-        // TODO Can I observe it here and forget about it?
-        sensorController?.sensorCurrentData?.observe(this, Observer { sensorEvent ->
-            onDataChanged(sensorEvent)
-        })
     }
 
     protected open fun setupView() {

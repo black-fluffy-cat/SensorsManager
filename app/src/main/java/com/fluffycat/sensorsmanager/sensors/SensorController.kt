@@ -4,14 +4,14 @@ import android.hardware.SensorEvent
 import android.hardware.SensorManager
 import android.os.Build
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import com.fluffycat.sensorsmanager.listeners.UniversalSensorListener
+import com.fluffycat.sensorsmanager.utils.BufferedMutableSharedFlow
 import com.fluffycat.sensorsmanager.utils.tag
 
 class SensorController(private val sensorManager: SensorManager, private val sensorType: Int) : ISensorController {
 
-    override val sensorCurrentData = MutableLiveData<SensorEvent>()
-    override val additionalData = MutableLiveData<Int>()
+    override val sensorCurrentData = BufferedMutableSharedFlow<SensorEvent?>()
+    override val additionalData = BufferedMutableSharedFlow<Int?>()
 
     private val sensorListener: UniversalSensorListener by lazy { UniversalSensorListener(this) }
 
@@ -32,11 +32,12 @@ class SensorController(private val sensorManager: SensorManager, private val sen
     }
 
     override fun onSensorDataReceived(event: SensorEvent) {
-        sensorCurrentData.value = event
+        Log.d("ABAB", "onSensorDataReceived, $event")
+        sensorCurrentData.tryEmit(event)
     }
 
     override fun onAdditionalDataChanged(accuracy: Int) {
-        additionalData.value = accuracy
+        additionalData.tryEmit(accuracy)
     }
 
     override fun getSensorInfo(): String {

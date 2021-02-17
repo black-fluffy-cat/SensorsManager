@@ -1,12 +1,16 @@
 package com.fluffycat.sensorsmanager.sensors
 
 import android.hardware.SensorEvent
-import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 
 interface ISensorController {
 
-    val sensorCurrentData: MutableLiveData<SensorEvent>
-    val additionalData: MutableLiveData<Int>
+    val sensorCurrentData: MutableSharedFlow<SensorEvent?>
+    val additionalData: MutableSharedFlow<Int?>
+
+    fun observeSensorCurrentData(): SharedFlow<SensorEvent?> = sensorCurrentData
+    fun observeAdditionalData(): SharedFlow<Int?> = additionalData
 
     fun startReceivingData(): Boolean
     fun stopReceivingData()

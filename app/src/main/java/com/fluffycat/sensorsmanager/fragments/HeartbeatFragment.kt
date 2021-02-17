@@ -10,13 +10,14 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat.checkSelfPermission
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.fluffycat.sensorsmanager.R
 import com.fluffycat.sensorsmanager.utils.HEART_RATE_REQUEST_CODE
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import kotlinx.android.synthetic.main.heartbeat_fragment.*
+import kotlinx.coroutines.flow.collect
 
 class HeartbeatFragment : BaseChartFragment() {
 
@@ -42,9 +43,9 @@ class HeartbeatFragment : BaseChartFragment() {
             }
         }
 
-        sensorController?.additionalData?.observe(this, Observer { additionalCode ->
-            onAdditionalDataChanged(additionalCode)
-        })
+        lifecycleScope.launchWhenResumed {
+            sensorController?.observeAdditionalData()?.collect { if (it != null) onAdditionalDataChanged(it) }
+        }
 
         super.onViewCreated(view, savedInstanceState)
     }

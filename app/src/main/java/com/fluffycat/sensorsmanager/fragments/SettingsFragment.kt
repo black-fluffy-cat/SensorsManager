@@ -12,7 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.fluffycat.sensorsmanager.BuildConfig
 import com.fluffycat.sensorsmanager.R
 import com.fluffycat.sensorsmanager.SensorsManagerApplication
@@ -27,6 +27,7 @@ import com.fluffycat.sensorsmanager.utils.getLicencesInfoString
 import com.fluffycat.sensorsmanager.utils.showToast
 import com.fluffycat.sensorsmanager.utils.tag
 import kotlinx.android.synthetic.main.settings_fragment.*
+import kotlinx.coroutines.flow.collect
 
 class SettingsFragment : Fragment() {
 
@@ -94,8 +95,8 @@ class SettingsFragment : Fragment() {
 
     private fun bindToCollectingDataService() {
         Log.d(tag, "Calling bindService, ${
-            activity!!.bindService(CollectingDataService.getServiceIntent(activity!!.applicationContext), connection,
-                    Context.BIND_AUTO_CREATE)
+            requireActivity().bindService(CollectingDataService.getServiceIntent(requireActivity().applicationContext),
+                    connection, Context.BIND_AUTO_CREATE)
         }")
     }
 
@@ -152,8 +153,9 @@ class SettingsFragment : Fragment() {
             val binder = service as CollectingDataService.LocalBinder
             mService = binder.service
             mBound = true
-            mService?.eventValues?.observe(this@SettingsFragment,
-                    Observer { onServiceDataChanged(it) })
+            lifecycleScope.launchWhenResumed {
+                mService?.observeEventValues()?.collect { it?.let { onServiceDataChanged(it) } }
+            }
         }
 
         override fun onBindingDied(name: ComponentName?) {
