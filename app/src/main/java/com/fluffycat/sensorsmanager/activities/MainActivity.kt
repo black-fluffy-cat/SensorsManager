@@ -16,6 +16,7 @@ import com.fluffycat.sensorsmanager.navigation_view.MyNavigationItemSelectedList
 import com.fluffycat.sensorsmanager.sensors.*
 import com.fluffycat.sensorsmanager.utils.LogFlurryEvent
 import com.fluffycat.sensorsmanager.utils.doesSensorExist
+import com.fluffycat.sensorsmanager.utils.tag
 import com.github.mikephil.charting.utils.Utils
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
@@ -40,7 +41,7 @@ class MainActivity : AppCompatActivity() {
             mInterstitialAd.show()
         } else {
             LogFlurryEvent("mInterstitialAd not loaded yet")
-            Log.d("ABAB", "The interstitial wasn't loaded yet.")
+            Log.d(tag, "The interstitial wasn't loaded yet.")
         }
     }
 

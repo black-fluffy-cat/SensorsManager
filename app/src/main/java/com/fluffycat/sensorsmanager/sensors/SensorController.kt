@@ -32,7 +32,6 @@ class SensorController(private val sensorManager: SensorManager, private val sen
     }
 
     override fun onSensorDataReceived(event: SensorEvent) {
-        Log.d("ABAB", "onSensorDataReceived, $event")
         sensorCurrentData.tryEmit(event)
     }
 

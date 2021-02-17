@@ -148,7 +148,7 @@ class SettingsFragment : Fragment() {
     private val connection = object : ServiceConnection {
 
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            Log.d("ABAB", "onServiceConnected, tag is: $tag")
+            Log.d(tag, "onServiceConnected, tag is: $tag")
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             val binder = service as CollectingDataService.LocalBinder
             mService = binder.service

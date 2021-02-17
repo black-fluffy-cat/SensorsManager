@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.hardware.SensorEvent
 import android.hardware.SensorManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +20,6 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.android.synthetic.main.chart_fragment.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 
 const val SENSOR_TYPE_ARG_NAME = "sensorType"
 
@@ -42,11 +40,9 @@ open class BaseChartFragment : Fragment() {
         } else {
             onSensorError()
         }
-        Log.d("ABAB", "context: $context, smanager: $sensorManager")
 
         lifecycleScope.launchWhenResumed {
             sensorController?.observeSensorCurrentData()?.collect { event ->
-                Log.d("ABAB", "observeSensorCurrentData collect, $event")
                 if (event != null) onDataChanged(event)
             }
         }
