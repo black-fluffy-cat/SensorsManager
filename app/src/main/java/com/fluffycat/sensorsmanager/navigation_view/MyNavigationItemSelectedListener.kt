@@ -10,7 +10,8 @@ import com.fluffycat.sensorsmanager.sensors.*
 import com.google.android.material.navigation.NavigationView
 
 
-class MyNavigationItemSelectedListener(private val mainActivity: MainActivity) :
+class MyNavigationItemSelectedListener(private val mainActivity: MainActivity,
+                                       private val sensorValueProvider: SensorValueProvider) :
     NavigationView.OnNavigationItemSelectedListener {
 
 
@@ -26,17 +27,8 @@ class MyNavigationItemSelectedListener(private val mainActivity: MainActivity) :
         return true
     }
 
-    private fun createSensorType(itemId: Int): Int = when (itemId) {
-        R.id.accelerometerMenuItem -> ACCELEROMETER_SENSOR_TYPE
-        R.id.gyroscopeMenuItem -> GYROSCOPE_SENSOR_TYPE
-        R.id.magneticFieldSensorMenuItem -> MAGNETIC_FIELD_SENSOR_TYPE
-        R.id.lightSensorMenuItem -> LIGHT_SENSOR_TYPE
-        R.id.heartbeatSensorMenuItem -> HEART_RATE_SENSOR_TYPE
-        R.id.linearAccelerationSensorMenuItem -> LINEAR_ACCELERATION_SENSOR_TYPE
-        R.id.proximitySensorMenuItem -> PROXIMITY_SENSOR_TYPE
-        R.id.rotationVectorMenuItem -> ROTATION_VECTOR_SENSOR_TYPE
-        else -> 0
-    }
+    private fun createSensorType(itemId: Int): Int =
+        sensorValueProvider.getMenuItemsAndCorrespondingSensors()[itemId] ?: 0
 
     private fun createProperFragment(itemId: Int): Fragment = when (itemId) {
         R.id.accelerometerMenuItem, R.id.gyroscopeMenuItem, R.id.magneticFieldSensorMenuItem,

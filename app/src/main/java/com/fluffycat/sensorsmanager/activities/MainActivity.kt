@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity() {
             Log.d(tag, "The interstitial wasn't loaded yet.")
         }
     }
+    private val sensorValueProvider = SensorValueProvider()
 
     fun onDrawerItemSelected(fragment: Fragment) {
         switchFragment(fragment)
@@ -152,26 +153,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNavigationView() {
-        sensorTypeAndItsItemInMenu.forEach {
-            if (!doesSensorExist(this, it.first)) {
-                mainActivityNavigationView.menu.removeItem(it.second)
+        sensorValueProvider.getMenuItemsAndCorrespondingSensors().forEach {
+            if (!doesSensorExist(this, it.key)) {
+                mainActivityNavigationView.menu.removeItem(it.value)
             }
         }
         setupNavigationViewListener()
     }
 
-    private val sensorTypeAndItsItemInMenu = listOf(
-            ACCELEROMETER_SENSOR_TYPE to R.id.accelerometerMenuItem,
-            GYROSCOPE_SENSOR_TYPE to R.id.gyroscopeMenuItem,
-            HEART_RATE_SENSOR_TYPE to R.id.heartbeatSensorMenuItem,
-            LINEAR_ACCELERATION_SENSOR_TYPE to R.id.linearAccelerationSensorMenuItem,
-            LIGHT_SENSOR_TYPE to R.id.lightSensorMenuItem,
-            MAGNETIC_FIELD_SENSOR_TYPE to R.id.magneticFieldSensorMenuItem,
-            ROTATION_VECTOR_SENSOR_TYPE to R.id.rotationVectorMenuItem,
-            PROXIMITY_SENSOR_TYPE to R.id.proximitySensorMenuItem
-    )
-
     private fun setupNavigationViewListener() {
-        mainActivityNavigationView.setNavigationItemSelectedListener(MyNavigationItemSelectedListener(this))
+        mainActivityNavigationView.setNavigationItemSelectedListener(
+                MyNavigationItemSelectedListener(this, sensorValueProvider))
     }
 }
