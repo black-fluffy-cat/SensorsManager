@@ -12,6 +12,7 @@ import com.fluffycat.sensorsmanager.notification.NotificationManagerBuilder
 import com.fluffycat.sensorsmanager.sensors.ACCELEROMETER_SENSOR_TYPE
 import com.fluffycat.sensorsmanager.sensors.ISensorController
 import com.fluffycat.sensorsmanager.sensors.SensorController
+import com.fluffycat.sensorsmanager.sensors.SensorValueCollector
 import com.fluffycat.sensorsmanager.utils.BufferedMutableSharedFlow
 import com.fluffycat.sensorsmanager.utils.tag
 import kotlinx.coroutines.CoroutineScope
@@ -27,6 +28,7 @@ class CollectingDataService : LifecycleService() {
     private val notificationManagerBuilder = NotificationManagerBuilder()
 
     private var sensorController: ISensorController? = null
+    private val sensorValueCollector = SensorValueCollector()
 
     private val eventValues = BufferedMutableSharedFlow<Triple<Float, Float, Float>?>()
 
@@ -45,9 +47,11 @@ class CollectingDataService : LifecycleService() {
         super.onCreate()
         Log.d(tag, "onCreate")
         (getSystemService(Context.SENSOR_SERVICE) as SensorManager?)?.let { sensorManager ->
-            setupSensorController(sensorManager)
+            val registeredSuccessfully = setupSensorController(sensorManager)
+            if (registeredSuccessfully != true) return@let null
+            else registeredSuccessfully
         } ?: run {
-            Log.d(tag, "SensorManager is null, stopping service")
+            Log.d(tag, "SensorManager is null or failed to register listener, stopping service")
             stopSelf()
         }
     }
@@ -63,13 +67,13 @@ class CollectingDataService : LifecycleService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(tag, "onStartCommand")
         notificationManagerBuilder.notifyServiceNotification(this)
-//        startForeground(NOTIFICATION_SERVICE_ID, notificationManagerBuilder.getServiceNotification(this))
         return super.onStartCommand(intent, flags, startId)
     }
 
     private fun onDataChanged(event: SensorEvent) {
-//        Log.d(tag, "onDataChanged, values: ${event.values[0]}, ${event.values[1]}, ${event.values[2]}")
-        eventValues.tryEmit(Triple(event.values[0], event.values[1], event.values[2]))
+        val valuesTriple = Triple(event.values[0], event.values[1], event.values[2])
+        eventValues.tryEmit(valuesTriple)
+        sensorValueCollector.addValues(valuesTriple)
     }
 
     override fun onDestroy() {

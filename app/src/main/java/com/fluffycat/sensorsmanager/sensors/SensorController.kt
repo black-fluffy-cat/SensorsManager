@@ -21,7 +21,7 @@ class SensorController(private val sensorManager: SensorManager, private val sen
         if (registerStatus) {
             Log.d(tag, "Started receiving data")
         } else {
-            Log.d(tag, "Registering sensor failed, sensorManager: $sensorManager, registerStatus: $registerStatus")
+            Log.e(tag, "Registering sensor failed, sensorManager: $sensorManager, registerStatus: $registerStatus")
         }
         return registerStatus
     }
