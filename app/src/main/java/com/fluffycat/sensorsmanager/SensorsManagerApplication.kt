@@ -11,8 +11,9 @@ import com.flurry.android.FlurryPerformance
 
 // TODO Switch to Navigation components
 // TODO Extract drawer code from MainActivity
-// TODO Refactor CollectingDataService
+// TODO Refactor CollectingDataService - start collecting on action received, not on onCreate
 // TODO Integrate with SonarCloud
+// TODO Add ViewModels
 class SensorsManagerApplication : Application() {
 
     companion object {
