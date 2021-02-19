@@ -64,6 +64,7 @@ class SettingsFragment : Fragment() {
         }
 
         if (BuildConfig.DEBUG) {
+            bindToCollectingDataService()
             serviceValuesLabel?.isVisible = true
             notifyNotificationLabel?.isVisible = true
             notifyNotificationLabel?.setOnClickListener {
@@ -98,6 +99,19 @@ class SettingsFragment : Fragment() {
             requireActivity().bindService(CollectingDataService.getServiceIntent(requireActivity().applicationContext),
                     connection, Context.BIND_AUTO_CREATE)
         }")
+    }
+
+    override fun onDestroyView() {
+        unbindFromCollectingDataService()
+        super.onDestroyView()
+    }
+
+    private fun unbindFromCollectingDataService() {
+        try {
+            activity?.apply { unbindService(connection) }
+        } catch (e: IllegalArgumentException) {
+            Log.e(tag, "Exception while unbinding from service")
+        }
     }
 
     private fun createAlertDialog() {

@@ -66,6 +66,7 @@ class CollectingDataService : LifecycleService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(tag, "onStartCommand")
+        //TODO Start collecting at command, not at onCreate
         notificationManagerBuilder.notifyServiceNotification(this)
         return super.onStartCommand(intent, flags, startId)
     }
