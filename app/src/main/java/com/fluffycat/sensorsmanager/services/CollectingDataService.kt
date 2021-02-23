@@ -25,11 +25,9 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 class CollectingDataService : LifecycleService() {
 
-    // TODO try to mock it
-    private val notificationManagerBuilder = NotificationManagerBuilder()
-
     private var sensorController: ISensorController? = null
     private val sensorValueCollector: SensorValueCollector by inject()
+    private val notificationManagerBuilder: NotificationManagerBuilder by inject()
 
     private val eventValues = BufferedMutableSharedFlow<Triple<Float, Float, Float>?>()
 

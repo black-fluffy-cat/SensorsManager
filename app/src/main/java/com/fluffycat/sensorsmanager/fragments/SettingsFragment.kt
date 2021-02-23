@@ -37,6 +37,7 @@ class SettingsFragment : Fragment() {
         private val valuesArray = arrayOf(METERS, FEET)
     }
 
+    private val notificationManagerBuilder: NotificationManagerBuilder by inject()
     private val preferencesManager: PreferencesManager by inject()
     private val valuesConverter: ValuesConverter by inject()
 
@@ -72,9 +73,9 @@ class SettingsFragment : Fragment() {
             notifyNotificationLabel?.setOnClickListener {
                 context?.let { cxt ->
                     if (flag)
-                        NotificationManagerBuilder().notifyMainNotification(cxt)
+                        notificationManagerBuilder.notifyMainNotification(cxt)
                     else
-                        NotificationManagerBuilder().notifyServiceNotification(cxt)
+                        notificationManagerBuilder.notifyServiceNotification(cxt)
                     flag = !flag
                 }
             }

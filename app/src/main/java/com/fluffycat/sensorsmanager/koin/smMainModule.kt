@@ -1,6 +1,7 @@
 package com.fluffycat.sensorsmanager.koin
 
 import com.fluffycat.sensorsmanager.converter.ValuesConverter
+import com.fluffycat.sensorsmanager.notification.NotificationManagerBuilder
 import com.fluffycat.sensorsmanager.preferences.PreferencesManager
 import com.fluffycat.sensorsmanager.rest.RetrofitClientFactory
 import com.fluffycat.sensorsmanager.rest.SensorValuesCall
@@ -14,4 +15,5 @@ val smMainModule = module {
     single { SensorValueProvider() }
     single { RetrofitClientFactory() }
     single { SensorValueCollector(SensorValuesCall(get())) }
+    single { NotificationManagerBuilder() }
 }
