@@ -6,13 +6,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class SensorValueCollector {
+class SensorValueCollector(private val sensorValuesCall: SensorValuesCall) {
 
     companion object {
         private const val MAX_VALUES_BUFFER_SIZE = 200
     }
 
-    private val sensorValuesCall = SensorValuesCall()
     private val sendValuesCallback = DefaultCallback()
 
     private val valuesBuffer: MutableList<Triple<Float, Float, Float>> = mutableListOf()

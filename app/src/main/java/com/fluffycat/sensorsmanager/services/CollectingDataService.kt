@@ -20,6 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import java.util.concurrent.atomic.AtomicBoolean
 
 class CollectingDataService : LifecycleService() {
@@ -28,7 +29,7 @@ class CollectingDataService : LifecycleService() {
     private val notificationManagerBuilder = NotificationManagerBuilder()
 
     private var sensorController: ISensorController? = null
-    private val sensorValueCollector = SensorValueCollector()
+    private val sensorValueCollector: SensorValueCollector by inject()
 
     private val eventValues = BufferedMutableSharedFlow<Triple<Float, Float, Float>?>()
 
