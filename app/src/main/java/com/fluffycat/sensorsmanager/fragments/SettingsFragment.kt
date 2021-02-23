@@ -15,7 +15,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.fluffycat.sensorsmanager.BuildConfig
 import com.fluffycat.sensorsmanager.R
-import com.fluffycat.sensorsmanager.SensorsManagerApplication
 import com.fluffycat.sensorsmanager.converter.ValuesConverter
 import com.fluffycat.sensorsmanager.notification.NotificationManagerBuilder
 import com.fluffycat.sensorsmanager.preferences.DISTANCE_FEET_VALUE
@@ -28,6 +27,7 @@ import com.fluffycat.sensorsmanager.utils.showToast
 import com.fluffycat.sensorsmanager.utils.tag
 import kotlinx.android.synthetic.main.settings_fragment.*
 import kotlinx.coroutines.flow.collect
+import org.koin.android.ext.android.inject
 
 class SettingsFragment : Fragment() {
 
@@ -37,7 +37,9 @@ class SettingsFragment : Fragment() {
         private val valuesArray = arrayOf(METERS, FEET)
     }
 
-    private val preferencesManager: PreferencesManager = SensorsManagerApplication.instance.preferencesManager
+    private val preferencesManager: PreferencesManager by inject()
+    private val valuesConverter: ValuesConverter by inject()
+
     private var flag = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -137,8 +139,6 @@ class SettingsFragment : Fragment() {
             var averageX = 0f
             var averageY = 0f
             var averageZ = 0f
-
-            val valuesConverter = ValuesConverter()
 
             valuesList.forEach {
                 averageX += it.first

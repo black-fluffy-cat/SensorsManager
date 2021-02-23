@@ -8,8 +8,7 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 
 // All sensors return Float type values
-class ValuesConverter(private val preferencesManager: PreferencesManager =
-                          SensorsManagerApplication.instance.preferencesManager) {
+class ValuesConverter(private val preferencesManager: PreferencesManager) {
 
 
     fun convertValueToChosenUnit(value: Float, sensor: Sensor?): Float = when (sensor?.type) {

@@ -20,12 +20,13 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.android.synthetic.main.chart_fragment.*
 import kotlinx.coroutines.flow.collect
+import org.koin.android.ext.android.inject
 
 const val SENSOR_TYPE_ARG_NAME = "sensorType"
 
 open class BaseChartFragment : Fragment() {
 
-    private val valuesConverter = ValuesConverter()
+    private val valuesConverter: ValuesConverter by inject()
 
     protected var sensorController: ISensorController? = null
     protected open val layoutResource = R.layout.chart_fragment

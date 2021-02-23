@@ -27,8 +27,6 @@ class SensorsManagerApplication : Application() {
         fun getContext(): Context = instance.applicationContext
     }
 
-    val preferencesManager by lazy { PreferencesManager() }
-
     override fun onCreate() {
         super.onCreate()
         instance = this
