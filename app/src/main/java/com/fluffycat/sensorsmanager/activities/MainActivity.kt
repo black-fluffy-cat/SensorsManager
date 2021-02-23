@@ -13,7 +13,8 @@ import com.fluffycat.sensorsmanager.ad.AdManager
 import com.fluffycat.sensorsmanager.fragments.BaseChartFragment
 import com.fluffycat.sensorsmanager.fragments.SENSOR_TYPE_ARG_NAME
 import com.fluffycat.sensorsmanager.navigation_view.MyNavigationItemSelectedListener
-import com.fluffycat.sensorsmanager.sensors.*
+import com.fluffycat.sensorsmanager.sensors.ACCELEROMETER_SENSOR_TYPE
+import com.fluffycat.sensorsmanager.sensors.SensorValueProvider
 import com.fluffycat.sensorsmanager.utils.LogFlurryEvent
 import com.fluffycat.sensorsmanager.utils.doesSensorExist
 import com.fluffycat.sensorsmanager.utils.tag
@@ -23,6 +24,7 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.InterstitialAd
 import com.google.android.gms.ads.MobileAds
 import kotlinx.android.synthetic.main.activity_main.*
+import org.koin.android.ext.android.inject
 
 
 class MainActivity : AppCompatActivity() {
@@ -44,7 +46,7 @@ class MainActivity : AppCompatActivity() {
             Log.d(tag, "The interstitial wasn't loaded yet.")
         }
     }
-    private val sensorValueProvider = SensorValueProvider()
+    private val sensorValueProvider: SensorValueProvider by inject()
 
     fun onDrawerItemSelected(fragment: Fragment) {
         switchFragment(fragment)
