@@ -3,6 +3,7 @@ package com.fluffycat.sensorsmanager.activities
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
@@ -32,6 +33,8 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val CURRENT_FRAGMENT_SAVED_STATE = "currentFragment"
     }
+
+    val mainViewModel: MainViewModel by viewModels()
 
     private var currentFragment: String = ""
     private lateinit var adRequest: AdRequest

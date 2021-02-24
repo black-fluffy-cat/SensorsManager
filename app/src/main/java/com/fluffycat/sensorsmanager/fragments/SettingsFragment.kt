@@ -12,9 +12,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.fluffycat.sensorsmanager.BuildConfig
 import com.fluffycat.sensorsmanager.R
+import com.fluffycat.sensorsmanager.activities.MainViewModel
 import com.fluffycat.sensorsmanager.converter.ValuesConverter
 import com.fluffycat.sensorsmanager.notification.NotificationManagerBuilder
 import com.fluffycat.sensorsmanager.preferences.DISTANCE_FEET_VALUE
@@ -40,6 +42,8 @@ class SettingsFragment : Fragment() {
     private val notificationManagerBuilder: NotificationManagerBuilder by inject()
     private val preferencesManager: PreferencesManager by inject()
     private val valuesConverter: ValuesConverter by inject()
+
+    private val mainViewModel: MainViewModel by activityViewModels()
 
     private var flag = true
 
