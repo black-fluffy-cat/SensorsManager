@@ -17,31 +17,25 @@ import androidx.lifecycle.lifecycleScope
 import com.fluffycat.sensorsmanager.BuildConfig
 import com.fluffycat.sensorsmanager.R
 import com.fluffycat.sensorsmanager.activities.MainViewModel
-import com.fluffycat.sensorsmanager.converter.ValuesConverter
+import com.fluffycat.sensorsmanager.values.ValuesConverter
 import com.fluffycat.sensorsmanager.notification.NotificationManagerBuilder
-import com.fluffycat.sensorsmanager.preferences.DISTANCE_FEET_VALUE
-import com.fluffycat.sensorsmanager.preferences.DISTANCE_METERS_VALUE
 import com.fluffycat.sensorsmanager.preferences.PreferencesManager
 import com.fluffycat.sensorsmanager.services.CollectingDataService
 import com.fluffycat.sensorsmanager.utils.LogFlurryEvent
 import com.fluffycat.sensorsmanager.utils.getLicencesInfoString
 import com.fluffycat.sensorsmanager.utils.showToast
 import com.fluffycat.sensorsmanager.utils.tag
+import com.fluffycat.sensorsmanager.values.UnitsProvider
 import kotlinx.android.synthetic.main.settings_fragment.*
 import kotlinx.coroutines.flow.collect
 import org.koin.android.ext.android.inject
 
 class SettingsFragment : Fragment() {
 
-    companion object {
-        private const val METERS = "METERS"
-        private const val FEET = "FEET"
-        private val valuesArray = arrayOf(METERS, FEET)
-    }
-
     private val notificationManagerBuilder: NotificationManagerBuilder by inject()
     private val preferencesManager: PreferencesManager by inject()
     private val valuesConverter: ValuesConverter by inject()
+    private val unitsProvider: UnitsProvider by inject()
 
     private val mainViewModel: MainViewModel by activityViewModels()
 
@@ -59,16 +53,7 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        licencesLabel.setOnClickListener {
-            activity?.let { activity ->
-                LogFlurryEvent("Clicked licences info")
-                showToast(activity, getLicencesInfoString())
-            }
-        }
-
-        chooseDistanceUnitLabel.setOnClickListener {
-            createAlertDialog()
-        }
+        setOnClickListeners()
 
         if (BuildConfig.DEBUG) {
             bindToCollectingDataService()
@@ -101,6 +86,15 @@ class SettingsFragment : Fragment() {
         }
     }
 
+    private fun setOnClickListeners() {
+        licencesLabel.setOnClickListener {
+            LogFlurryEvent("Clicked licences info")
+            activity?.let { showToast(it, getLicencesInfoString()) }
+        }
+
+        chooseDistanceUnitLabel.setOnClickListener { createChooseDistanceUnitDialog() }
+    }
+
     private fun bindToCollectingDataService() {
         Log.d(tag, "Calling bindService, ${
             requireActivity().bindService(CollectingDataService.getServiceIntent(requireActivity().applicationContext),
@@ -121,18 +115,18 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    private fun createAlertDialog() {
-        val alertDialogBuilder = AlertDialog.Builder(activity)
-        alertDialogBuilder.setTitle("Select sensor")
-        alertDialogBuilder.setSingleChoiceItems(valuesArray, -1) { dialog, item ->
-            when (valuesArray[item]) {
-                METERS -> preferencesManager.saveChosenDistanceUnit(DISTANCE_METERS_VALUE)
-                FEET -> preferencesManager.saveChosenDistanceUnit(DISTANCE_FEET_VALUE)
+    private fun createChooseDistanceUnitDialog() {
+        val availableUnits = unitsProvider.getAvailableDistanceUnits()
+        val availableUnitsStrings = availableUnits.map { it.toString() }.toTypedArray()
+        with(AlertDialog.Builder(activity)) {
+            setTitle("Select sensor")
+            setSingleChoiceItems(availableUnitsStrings, -1) { dialog, item ->
+                mainViewModel.saveChosenDistanceUnit(availableUnits[item])
+                dialog.dismiss()
             }
-            dialog.dismiss()
+            val dialog = create()
+            dialog.show()
         }
-        val alert = alertDialogBuilder.create()
-        alert.show()
     }
 
     private fun onServiceDataChanged(values: Triple<Float, Float, Float>) {

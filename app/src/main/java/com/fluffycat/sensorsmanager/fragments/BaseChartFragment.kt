@@ -11,7 +11,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.fluffycat.sensorsmanager.R
-import com.fluffycat.sensorsmanager.converter.ValuesConverter
+import com.fluffycat.sensorsmanager.values.ValuesConverter
 import com.fluffycat.sensorsmanager.sensors.*
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.YAxis

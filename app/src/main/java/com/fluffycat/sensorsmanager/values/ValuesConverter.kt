@@ -1,7 +1,6 @@
-package com.fluffycat.sensorsmanager.converter
+package com.fluffycat.sensorsmanager.values
 
 import android.hardware.Sensor
-import com.fluffycat.sensorsmanager.SensorsManagerApplication
 import com.fluffycat.sensorsmanager.preferences.*
 import com.fluffycat.sensorsmanager.sensors.*
 import kotlin.math.pow
@@ -42,7 +41,7 @@ class ValuesConverter(private val preferencesManager: PreferencesManager) {
         return ((value * decimalHelperValue).roundToInt()) / decimalHelperValue.toFloat()
     }
 
-    //  TODO where it have been and why it is gone
+    //  TODO where it was and why it is gone
     fun convertAngularVelocityValueToStringWithSymbol(angularVelocityInDegrees: Float): String =
         convertAngleValueToStringWithSymbol(angularVelocityInDegrees) + "/s"
 
@@ -54,23 +53,20 @@ class ValuesConverter(private val preferencesManager: PreferencesManager) {
     }
 
     private fun getCurrentChosenAngleUnitSymbol(): String = when (preferencesManager.readChosenAngleUnit()) {
-        ANGLE_DEGREE_VALUE -> "°"
-        ANGLE_RAD_VALUE -> "rad"
-        else -> "rad"
+        AngleUnit.DEGREE -> "°"
+        AngleUnit.RADIAN -> "rad"
     }
 
     private fun getCurrentChosenTemperatureUnitSymbol(): String =
         when (preferencesManager.readChosenTemperatureUnit()) {
-            TEMPERATURE_CELSIUS_VALUE -> "°C"
-            TEMPERATURE_KELVIN_VALUE -> "K"
-            TEMPERATURE_FAHRENHEIT_VALUE -> "°F"
-            else -> "°C"
+            TemperatureUnit.CELSIUS -> "°C"
+            TemperatureUnit.KELVIN -> "K"
+            TemperatureUnit.FAHRENHEIT -> "°F"
         }
 
     private fun getCurrentChosenDistanceUnitSymbol(): String = when (preferencesManager.readChosenDistanceUnit()) {
-        DISTANCE_METERS_VALUE -> "m"
-        DISTANCE_FEET_VALUE -> "ft"
-        else -> "m"
+        DistanceUnit.METERS -> "m"
+        DistanceUnit.FEET -> "ft"
     }
 
     private fun getMagneticFieldUnitSymbol(): String = "μT"
@@ -86,17 +82,15 @@ class ValuesConverter(private val preferencesManager: PreferencesManager) {
 
     private fun convertAngleValueToChosenUnit(angleInRadians: Float): Float =
         when (preferencesManager.readChosenAngleUnit()) {
-            ANGLE_DEGREE_VALUE -> convertRadiansToDegrees(angleInRadians)
-            ANGLE_RAD_VALUE -> angleInRadians
-            else -> angleInRadians
+            AngleUnit.DEGREE -> convertRadiansToDegrees(angleInRadians)
+            AngleUnit.RADIAN -> angleInRadians
         }
 
     private fun convertTemperatureValueToChosenUnit(temperatureInCelsius: Float): Float =
         when (preferencesManager.readChosenTemperatureUnit()) {
-            TEMPERATURE_CELSIUS_VALUE -> temperatureInCelsius
-            TEMPERATURE_KELVIN_VALUE -> convertCelsiusToKelvin(temperatureInCelsius)
-            TEMPERATURE_FAHRENHEIT_VALUE -> convertCelsiusToFahrenheit(temperatureInCelsius)
-            else -> temperatureInCelsius
+            TemperatureUnit.CELSIUS -> temperatureInCelsius
+            TemperatureUnit.KELVIN -> convertCelsiusToKelvin(temperatureInCelsius)
+            TemperatureUnit.FAHRENHEIT -> convertCelsiusToFahrenheit(temperatureInCelsius)
         }
 
     private fun convertDistanceValueToStringWithSymbol(distanceInMeters: Float): String {
@@ -110,9 +104,8 @@ class ValuesConverter(private val preferencesManager: PreferencesManager) {
 
     private fun convertDistanceValueToChosenUnit(distanceInMeters: Float): Float =
         when (preferencesManager.readChosenDistanceUnit()) {
-            DISTANCE_METERS_VALUE -> distanceInMeters
-            DISTANCE_FEET_VALUE -> convertMetersToFeet(distanceInMeters)
-            else -> distanceInMeters
+            DistanceUnit.METERS -> distanceInMeters
+            DistanceUnit.FEET -> convertMetersToFeet(distanceInMeters)
         }
 
     private fun convertRadiansToDegrees(angleInRadians: Float): Float =

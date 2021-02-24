@@ -3,22 +3,15 @@ package com.fluffycat.sensorsmanager.preferences
 import android.content.Context
 import android.content.SharedPreferences
 import com.fluffycat.sensorsmanager.SensorsManagerApplication
+import com.fluffycat.sensorsmanager.values.AngleUnit
+import com.fluffycat.sensorsmanager.values.DistanceUnit
+import com.fluffycat.sensorsmanager.values.TemperatureUnit
 
 private const val PREFERENCES_NAME = "PREFERENCES_NAME"
 
-private const val CHOSEN_ANGLE_UNIT_KEY = "CHOSEN_ANGLE_UNIT_KEY"
-private const val CHOSEN_TEMPERATURE_UNIT_KEY = "CHOSEN_TEMPERATURE_UNIT_KEY"
-private const val CHOSEN_DISTANCE_UNIT_KEY = "CHOSEN_DISTANCE_UNIT_KEY"
-
-const val ANGLE_DEGREE_VALUE = 1000
-const val ANGLE_RAD_VALUE = 1001
-
-const val TEMPERATURE_CELSIUS_VALUE = 1002
-const val TEMPERATURE_KELVIN_VALUE = 1003
-const val TEMPERATURE_FAHRENHEIT_VALUE = 1004
-
-const val DISTANCE_METERS_VALUE = 1005
-const val DISTANCE_FEET_VALUE = 1006
+private const val ANGLE_UNIT_KEY = "ANGLE_UNIT_KEY"
+private const val TEMPERATURE_UNIT_KEY = "TEMPERATURE_UNIT_KEY"
+private const val DISTANCE_UNIT_KEY = "DISTANCE_UNIT_KEY"
 
 class PreferencesManager {
 
@@ -28,22 +21,32 @@ class PreferencesManager {
     }
 
     fun saveChosenAngleUnit(value: Int) {
-        getSharedPreferences().edit().putInt(CHOSEN_ANGLE_UNIT_KEY, value).apply()
+        getSharedPreferences().edit().putInt(ANGLE_UNIT_KEY, value).apply()
     }
 
-    fun readChosenAngleUnit(): Int = getSharedPreferences().getInt(CHOSEN_ANGLE_UNIT_KEY, ANGLE_RAD_VALUE)
+    fun readChosenAngleUnit(): AngleUnit {
+        val defValue = AngleUnit.RADIAN.toString()
+        val prefsValue = getSharedPreferences().getString(ANGLE_UNIT_KEY, defValue)
+        return AngleUnit.valueOf(prefsValue ?: defValue)
+    }
 
     fun saveChosenTemperatureUnit(value: Int) {
-        getSharedPreferences().edit().putInt(CHOSEN_TEMPERATURE_UNIT_KEY, value).apply()
+        getSharedPreferences().edit().putInt(TEMPERATURE_UNIT_KEY, value).apply()
     }
 
-    fun readChosenTemperatureUnit(): Int =
-        getSharedPreferences().getInt(CHOSEN_TEMPERATURE_UNIT_KEY, TEMPERATURE_CELSIUS_VALUE)
-
-    fun saveChosenDistanceUnit(value: Int) {
-        getSharedPreferences().edit().putInt(CHOSEN_DISTANCE_UNIT_KEY, value).apply()
+    fun readChosenTemperatureUnit(): TemperatureUnit {
+        val defValue = TemperatureUnit.CELSIUS.toString()
+        val prefsValue = getSharedPreferences().getString(TEMPERATURE_UNIT_KEY, defValue)
+        return TemperatureUnit.valueOf(prefsValue ?: defValue)
     }
 
-    fun readChosenDistanceUnit(): Int =
-        getSharedPreferences().getInt(CHOSEN_DISTANCE_UNIT_KEY, DISTANCE_METERS_VALUE)
+    fun saveChosenDistanceUnit(unit: DistanceUnit) {
+        getSharedPreferences().edit().putString(DISTANCE_UNIT_KEY, unit.toString()).apply()
+    }
+
+    fun readChosenDistanceUnit(): DistanceUnit {
+        val defValue = DistanceUnit.METERS.toString()
+        val prefsValue = getSharedPreferences().getString(DISTANCE_UNIT_KEY, defValue)
+        return DistanceUnit.valueOf(prefsValue ?: defValue)
+    }
 }
