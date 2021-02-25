@@ -33,20 +33,6 @@ open class BaseChartFragment : Fragment() {
     protected lateinit var lineData: LineData
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val sensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager?
-        val sensorType = arguments?.getParcelable<SensorType>(SENSOR_TYPE_ARG_NAME)
-        if (sensorType != null && sensorManager != null) {
-            sensorController = SensorController(sensorManager, sensorType)
-            lineData = createLineData()
-        } else {
-            onSensorError()
-        }
-
-        lifecycleScope.launchWhenResumed {
-            sensorController?.observeSensorCurrentData()?.collect { event ->
-                if (event != null) onDataChanged(event)
-            }
-        }
         return inflater.inflate(layoutResource, container, false)
     }
 
@@ -65,7 +51,23 @@ open class BaseChartFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setActivityTitle()
-        setupView()
+
+        val sensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager?
+        val sensorType = arguments?.getParcelable(SENSOR_TYPE_ARG_NAME) ?: SensorType.Accelerometer
+        if (sensorManager != null) {
+            sensorController = SensorController(sensorManager, sensorType)
+            lineData = createLineData()
+            setupView()
+        } else {
+            onSensorError()
+        }
+
+        lifecycleScope.launchWhenResumed {
+            sensorController?.observeSensorCurrentData()?.collect { event ->
+                if (event != null) onDataChanged(event)
+            }
+        }
+
     }
 
     protected open fun setupView() {
