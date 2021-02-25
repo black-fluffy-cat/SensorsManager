@@ -17,29 +17,24 @@ import androidx.lifecycle.lifecycleScope
 import com.fluffycat.sensorsmanager.BuildConfig
 import com.fluffycat.sensorsmanager.R
 import com.fluffycat.sensorsmanager.activities.MainViewModel
-import com.fluffycat.sensorsmanager.values.ValuesConverter
-import com.fluffycat.sensorsmanager.notification.NotificationManagerBuilder
-import com.fluffycat.sensorsmanager.preferences.PreferencesManager
 import com.fluffycat.sensorsmanager.services.CollectingDataService
 import com.fluffycat.sensorsmanager.utils.LogFlurryEvent
 import com.fluffycat.sensorsmanager.utils.getLicencesInfoString
 import com.fluffycat.sensorsmanager.utils.showToast
 import com.fluffycat.sensorsmanager.utils.tag
 import com.fluffycat.sensorsmanager.values.UnitsProvider
+import com.fluffycat.sensorsmanager.values.ValuesConverter
 import kotlinx.android.synthetic.main.settings_fragment.*
 import kotlinx.coroutines.flow.collect
 import org.koin.android.ext.android.inject
 
 class SettingsFragment : Fragment() {
 
-    private val notificationManagerBuilder: NotificationManagerBuilder by inject()
-    private val preferencesManager: PreferencesManager by inject()
     private val valuesConverter: ValuesConverter by inject()
     private val unitsProvider: UnitsProvider by inject()
 
     private val mainViewModel: MainViewModel by activityViewModels()
-
-    private var flag = true
+    private var flag: Boolean = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         setActivityTitle()
@@ -56,32 +51,24 @@ class SettingsFragment : Fragment() {
         setOnClickListeners()
 
         if (BuildConfig.DEBUG) {
-            bindToCollectingDataService()
-            serviceValuesLabel?.isVisible = true
-            notifyNotificationLabel?.isVisible = true
-            notifyNotificationLabel?.setOnClickListener {
-                context?.let { cxt ->
-                    if (flag)
-                        notificationManagerBuilder.notifyMainNotification(cxt)
-                    else
-                        notificationManagerBuilder.notifyServiceNotification(cxt)
-                    flag = !flag
-                }
-            }
+            setupDebugOptions()
+        }
+    }
 
-            startServiceLabel?.isVisible = true
-            startServiceLabel?.setOnClickListener {
-                Log.d(tag, "mService is: $mService")
-                activity?.apply {
-                    if (flag) {
-                        CollectingDataService.start(applicationContext)
-                        bindToCollectingDataService()
-                    } else {
-                        unbindService(connection)
-                        CollectingDataService.stop(applicationContext)
-                    }
-                    flag = !flag
+    private fun setupDebugOptions() {
+        serviceValuesLabel?.isVisible = true
+        startServiceLabel?.isVisible = true
+        startServiceLabel?.setOnClickListener {
+            Log.d(tag, "mService is: $mService")
+            activity?.apply {
+                if (flag) {
+                    CollectingDataService.startCollectingData(applicationContext)
+                    bindToCollectingDataService()
+                } else {
+                    unbindService(connection)
+                    CollectingDataService.stop(applicationContext)
                 }
+                flag = !flag
             }
         }
     }
@@ -119,7 +106,7 @@ class SettingsFragment : Fragment() {
         val availableUnits = unitsProvider.getAvailableDistanceUnits()
         val availableUnitsStrings = availableUnits.map { it.toString() }.toTypedArray()
         with(AlertDialog.Builder(activity)) {
-            setTitle("Select sensor")
+            setTitle("Select unit")
             setSingleChoiceItems(availableUnitsStrings, -1) { dialog, item ->
                 mainViewModel.saveChosenDistanceUnit(availableUnits[item])
                 dialog.dismiss()

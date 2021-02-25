@@ -1,5 +1,6 @@
 package com.fluffycat.sensorsmanager.services
 
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.hardware.SensorEvent
@@ -7,7 +8,7 @@ import android.hardware.SensorManager
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
-import androidx.lifecycle.LifecycleService
+import com.fluffycat.sensorsmanager.notification.NOTIFICATION_SERVICE_ID
 import com.fluffycat.sensorsmanager.notification.NotificationManagerBuilder
 import com.fluffycat.sensorsmanager.sensors.ACCELEROMETER_SENSOR_TYPE
 import com.fluffycat.sensorsmanager.sensors.ISensorController
@@ -17,19 +18,20 @@ import com.fluffycat.sensorsmanager.utils.BufferedMutableSharedFlow
 import com.fluffycat.sensorsmanager.utils.tag
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
-import java.util.concurrent.atomic.AtomicBoolean
 
-class CollectingDataService : LifecycleService() {
+class CollectingDataService : Service() {
 
     private var sensorController: ISensorController? = null
     private val sensorValueCollector: SensorValueCollector by inject()
     private val notificationManagerBuilder: NotificationManagerBuilder by inject()
 
     private val eventValues = BufferedMutableSharedFlow<Triple<Float, Float, Float>?>()
+    private val isWorking = MutableStateFlow(false)
 
     fun observeEventValues(): SharedFlow<Triple<Float, Float, Float>?> = eventValues
 
@@ -37,21 +39,37 @@ class CollectingDataService : LifecycleService() {
 
     override fun onBind(intent: Intent): IBinder {
         Log.d(tag, "onBind")
-        super.onBind(intent)
         return LocalBinder(this)
     }
 
     override fun onCreate() {
-        isRunning.set(true)
         super.onCreate()
         Log.d(tag, "onCreate")
-        (getSystemService(Context.SENSOR_SERVICE) as SensorManager?)?.let { sensorManager ->
-            val registeredSuccessfully = setupSensorController(sensorManager)
-            if (registeredSuccessfully != true) return@let null
-            else registeredSuccessfully
-        } ?: run {
-            Log.d(tag, "SensorManager is null or failed to register listener, stopping service")
-            stopSelf()
+        startForeground(NOTIFICATION_SERVICE_ID, notificationManagerBuilder.getServiceNotification(this))
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d(tag, "onStartCommand")
+        when (intent?.action) {
+            START_COLLECTING_DATA -> onStartCollectingData()
+            STOP_COLLECTING_SERVICE -> stopSelf()
+        }
+        return super.onStartCommand(intent, flags, startId)
+    }
+
+    private fun onStartCollectingData() {
+        if (!isWorking.value) {
+            (getSystemService(Context.SENSOR_SERVICE) as SensorManager?)?.let { sensorManager ->
+                val registeredSuccessfully = setupSensorController(sensorManager)
+                if (registeredSuccessfully != true) return@let null
+                else {
+                    isWorking.value = true
+                    registeredSuccessfully
+                }
+            } ?: run {
+                Log.d(tag, "SensorManager is null or failed to register listener, stopping service")
+                stopSelf()
+            }
         }
     }
 
@@ -61,13 +79,6 @@ class CollectingDataService : LifecycleService() {
             sensorController?.observeSensorCurrentData()?.collect { event -> if (event != null) onDataChanged(event) }
         }
         return sensorController?.startReceivingData()
-    }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d(tag, "onStartCommand")
-        //TODO Start collecting at command, not at onCreate
-        notificationManagerBuilder.notifyServiceNotification(this)
-        return super.onStartCommand(intent, flags, startId)
     }
 
     private fun onDataChanged(event: SensorEvent) {
@@ -80,27 +91,26 @@ class CollectingDataService : LifecycleService() {
         Log.d(tag, "onDestroy")
         notificationManagerBuilder.cancelServiceNotification(this)
         sensorController?.stopReceivingData()
-        isRunning.set(false)
+        isWorking.value = false
         super.onDestroy()
     }
 
-    companion object {
-        fun start(context: Context) {
-            Log.d(CollectingDataService::class.simpleName, "startService")
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                context.startForegroundService(getServiceIntent(context))
-//            } else {
-            context.startService(getServiceIntent(context))
-//            }
+    companion object : ServiceStarter {
+        private const val START_COLLECTING_DATA = "START_COLLECTING_DATA"
+        private const val STOP_COLLECTING_SERVICE = "STOP_COLLECTING_SERVICE"
+
+        override fun getServiceClass() = CollectingDataService::class.java
+
+        fun startCollectingData(context: Context) {
+            startWithAction(context, START_COLLECTING_DATA)
         }
 
-        fun stop(context: Context) {
-            Log.d(CollectingDataService::class.simpleName, "stopService")
-            context.stopService(getServiceIntent(context))
+        @Suppress("SameParameterValue")
+        private fun startWithAction(context: Context, intentAction: String) {
+            val intent = getServiceIntent(context).apply { action = intentAction }
+            start(context, intent)
         }
 
-        fun getServiceIntent(context: Context) = Intent(context, CollectingDataService::class.java)
-
-        val isRunning = AtomicBoolean(false)
+        fun stop(context: Context) = start(context, STOP_COLLECTING_SERVICE)
     }
 }

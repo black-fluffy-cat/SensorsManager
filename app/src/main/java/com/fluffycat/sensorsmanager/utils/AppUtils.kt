@@ -2,6 +2,7 @@ package com.fluffycat.sensorsmanager.utils
 
 import android.content.Context
 import android.hardware.SensorManager
+import android.os.Build
 import android.widget.Toast
 import com.flurry.android.FlurryAgent
 
@@ -31,3 +32,5 @@ infix fun String.ifIsEmpty(value: String): String = if (isEmpty()) value else th
 infix fun String.ifNotEmpty(value: () -> Unit) {
     if (this.isNotEmpty()) value.invoke()
 }
+
+fun isAndroid8OrHigher() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
