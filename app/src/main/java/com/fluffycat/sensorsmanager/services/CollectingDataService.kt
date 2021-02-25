@@ -13,12 +13,10 @@ import com.fluffycat.sensorsmanager.sensors.ISensorController
 import com.fluffycat.sensorsmanager.sensors.SensorControllerProvider
 import com.fluffycat.sensorsmanager.sensors.SensorType
 import com.fluffycat.sensorsmanager.sensors.SensorValueCollector
-import com.fluffycat.sensorsmanager.utils.BufferedMutableSharedFlow
 import com.fluffycat.sensorsmanager.utils.tag
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -30,10 +28,7 @@ class CollectingDataService : Service() {
     private val notificationManagerBuilder: NotificationManagerBuilder by inject()
     private val sensorControllerProvider: SensorControllerProvider by inject()
 
-    private val eventValues = BufferedMutableSharedFlow<Triple<Float, Float, Float>?>()
     private val isWorking = MutableStateFlow(false)
-
-    fun observeEventValues(): SharedFlow<Triple<Float, Float, Float>?> = eventValues
 
     inner class LocalBinder(val service: CollectingDataService) : Binder()
 
@@ -79,7 +74,6 @@ class CollectingDataService : Service() {
 
     private fun onDataChanged(event: SensorEvent) {
         val valuesTriple = Triple(event.values[0], event.values[1], event.values[2])
-        eventValues.tryEmit(valuesTriple)
         sensorValueCollector.addValues(valuesTriple)
     }
 
