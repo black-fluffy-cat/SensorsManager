@@ -8,7 +8,8 @@ import com.fluffycat.sensorsmanager.listeners.UniversalSensorListener
 import com.fluffycat.sensorsmanager.utils.BufferedMutableSharedFlow
 import com.fluffycat.sensorsmanager.utils.tag
 
-class SensorController(private val sensorManager: SensorManager, private val sensorType: SensorType) : ISensorController {
+class SensorController(private val sensorManager: SensorManager?, private val sensorType: SensorType) :
+    ISensorController {
 
     override val sensorCurrentData = BufferedMutableSharedFlow<SensorEvent?>()
     override val additionalData = BufferedMutableSharedFlow<Int?>()
@@ -16,6 +17,11 @@ class SensorController(private val sensorManager: SensorManager, private val sen
     private val sensorListener: UniversalSensorListener by lazy { UniversalSensorListener(this) }
 
     override fun startReceivingData(): Boolean {
+        if (sensorManager == null) {
+            Log.e(tag, "sensorManager is null")
+            return false
+        }
+
         val sensor = sensorManager.getDefaultSensor(sensorType.type)
         val registerStatus = sensorManager.registerListener(sensorListener, sensor, SensorManager.SENSOR_DELAY_GAME)
         if (registerStatus) {
@@ -27,7 +33,7 @@ class SensorController(private val sensorManager: SensorManager, private val sen
     }
 
     override fun stopReceivingData() {
-        sensorManager.unregisterListener(sensorListener)
+        sensorManager?.unregisterListener(sensorListener)
         Log.d(tag, "Stopped receiving data")
     }
 
@@ -40,7 +46,7 @@ class SensorController(private val sensorManager: SensorManager, private val sen
     }
 
     override fun getSensorInfo(): String {
-        val sensor = sensorManager.getDefaultSensor(sensorType.type)
+        val sensor = sensorManager?.getDefaultSensor(sensorType.type)
         var infoString = ""
         sensor?.apply {
             infoString += "$name\n"

@@ -4,14 +4,13 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.hardware.SensorEvent
-import android.hardware.SensorManager
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
 import com.fluffycat.sensorsmanager.notification.NOTIFICATION_SERVICE_ID
 import com.fluffycat.sensorsmanager.notification.NotificationManagerBuilder
 import com.fluffycat.sensorsmanager.sensors.ISensorController
-import com.fluffycat.sensorsmanager.sensors.SensorController
+import com.fluffycat.sensorsmanager.sensors.SensorControllerProvider
 import com.fluffycat.sensorsmanager.sensors.SensorType
 import com.fluffycat.sensorsmanager.sensors.SensorValueCollector
 import com.fluffycat.sensorsmanager.utils.BufferedMutableSharedFlow
@@ -29,6 +28,7 @@ class CollectingDataService : Service() {
     private var sensorController: ISensorController? = null
     private val sensorValueCollector: SensorValueCollector by inject()
     private val notificationManagerBuilder: NotificationManagerBuilder by inject()
+    private val sensorControllerProvider: SensorControllerProvider by inject()
 
     private val eventValues = BufferedMutableSharedFlow<Triple<Float, Float, Float>?>()
     private val isWorking = MutableStateFlow(false)
@@ -59,22 +59,18 @@ class CollectingDataService : Service() {
 
     private fun onStartCollectingData() {
         if (!isWorking.value) {
-            (getSystemService(Context.SENSOR_SERVICE) as SensorManager?)?.let { sensorManager ->
-                val registeredSuccessfully = setupSensorController(sensorManager)
-                if (registeredSuccessfully != true) return@let null
-                else {
-                    isWorking.value = true
-                    registeredSuccessfully
-                }
-            } ?: run {
+            val registeredSuccessfully = setupSensorController()
+            if (registeredSuccessfully != true) {
                 Log.d(tag, "SensorManager is null or failed to register listener, stopping service")
                 stopSelf()
+            } else {
+                isWorking.value = true
             }
         }
     }
 
-    private fun setupSensorController(manager: SensorManager): Boolean? {
-        sensorController = SensorController(manager, SensorType.Accelerometer)
+    private fun setupSensorController(): Boolean? {
+        sensorController = sensorControllerProvider.getSensorController(SensorType.Accelerometer)
         CoroutineScope(Dispatchers.IO).launch {
             sensorController?.observeSensorCurrentData()?.collect { event -> if (event != null) onDataChanged(event) }
         }

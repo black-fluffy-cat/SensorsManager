@@ -3,7 +3,6 @@ package com.fluffycat.sensorsmanager.fragments
 import android.content.Context
 import android.graphics.Color
 import android.hardware.SensorEvent
-import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,8 +10,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.fluffycat.sensorsmanager.R
+import com.fluffycat.sensorsmanager.sensors.ISensorController
+import com.fluffycat.sensorsmanager.sensors.SensorControllerProvider
+import com.fluffycat.sensorsmanager.sensors.SensorType
 import com.fluffycat.sensorsmanager.values.ValuesConverter
-import com.fluffycat.sensorsmanager.sensors.*
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
@@ -27,6 +28,7 @@ const val SENSOR_TYPE_ARG_NAME = "sensorType"
 open class BaseChartFragment : Fragment() {
 
     private val valuesConverter: ValuesConverter by inject()
+    private val sensorControllerProvider: SensorControllerProvider by inject()
 
     protected var sensorController: ISensorController? = null
     protected open val layoutResource = R.layout.chart_fragment
@@ -52,15 +54,10 @@ open class BaseChartFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setActivityTitle()
 
-        val sensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager?
         val sensorType = arguments?.getParcelable(SENSOR_TYPE_ARG_NAME) ?: SensorType.Accelerometer
-        if (sensorManager != null) {
-            sensorController = SensorController(sensorManager, sensorType)
-            lineData = createLineData()
-            setupView()
-        } else {
-            onSensorError()
-        }
+        sensorController = sensorControllerProvider.getSensorController(sensorType)
+        lineData = createLineData()
+        setupView()
 
         lifecycleScope.launchWhenResumed {
             sensorController?.observeSensorCurrentData()?.collect { event ->
