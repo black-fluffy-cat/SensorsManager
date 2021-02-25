@@ -34,7 +34,7 @@ open class BaseChartFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val sensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager?
-        val sensorType = arguments?.getInt(SENSOR_TYPE_ARG_NAME, 0)
+        val sensorType = arguments?.getParcelable<SensorType>(SENSOR_TYPE_ARG_NAME)
         if (sensorType != null && sensorManager != null) {
             sensorController = SensorController(sensorManager, sensorType)
             lineData = createLineData()
@@ -50,15 +50,15 @@ open class BaseChartFragment : Fragment() {
         return inflater.inflate(layoutResource, container, false)
     }
 
-    private fun getFragmentTitle(sensorType: Int): String = when (sensorType) {
-        ACCELEROMETER_SENSOR_TYPE -> getString(R.string.accelerometer)
-        GYROSCOPE_SENSOR_TYPE -> getString(R.string.gyroscope)
-        LIGHT_SENSOR_TYPE -> getString(R.string.light)
-        LINEAR_ACCELERATION_SENSOR_TYPE -> getString(R.string.linearAcceleration)
-        MAGNETIC_FIELD_SENSOR_TYPE -> getString(R.string.magnetic_field)
-        PROXIMITY_SENSOR_TYPE -> getString(R.string.proximity)
-        HEART_RATE_SENSOR_TYPE -> getString(R.string.heartbeat)
-        else -> ""
+    private fun getFragmentTitle(sensorType: SensorType): String = when (sensorType) {
+        SensorType.Accelerometer -> getString(R.string.accelerometer)
+        SensorType.Gyroscope -> getString(R.string.gyroscope)
+        SensorType.Light -> getString(R.string.light)
+        SensorType.LinearAcceleration -> getString(R.string.linearAcceleration)
+        SensorType.MagneticField -> getString(R.string.magnetic_field)
+        SensorType.Proximity -> getString(R.string.proximity)
+        SensorType.HeartRate -> getString(R.string.heartbeat)
+        SensorType.RotationVector -> getString(R.string.rotationVector)
     }
 
 
@@ -115,7 +115,7 @@ open class BaseChartFragment : Fragment() {
     }
 
     protected fun setActivityTitle() {
-        arguments?.getInt(SENSOR_TYPE_ARG_NAME, 0)?.let { sensorType ->
+        arguments?.getParcelable<SensorType>(SENSOR_TYPE_ARG_NAME)?.let { sensorType ->
             val fragmentTitle = getFragmentTitle(sensorType)
             activity?.title = fragmentTitle
         }

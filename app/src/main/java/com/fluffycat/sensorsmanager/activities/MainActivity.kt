@@ -14,8 +14,8 @@ import com.fluffycat.sensorsmanager.ad.AdManager
 import com.fluffycat.sensorsmanager.fragments.BaseChartFragment
 import com.fluffycat.sensorsmanager.fragments.SENSOR_TYPE_ARG_NAME
 import com.fluffycat.sensorsmanager.navigation_view.MyNavigationItemSelectedListener
-import com.fluffycat.sensorsmanager.sensors.ACCELEROMETER_SENSOR_TYPE
-import com.fluffycat.sensorsmanager.sensors.SensorValueProvider
+import com.fluffycat.sensorsmanager.sensors.SensorType
+import com.fluffycat.sensorsmanager.sensors.SensorTypeProvider
 import com.fluffycat.sensorsmanager.utils.LogFlurryEvent
 import com.fluffycat.sensorsmanager.utils.doesSensorExist
 import com.fluffycat.sensorsmanager.utils.tag
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
             Log.d(tag, "The interstitial wasn't loaded yet.")
         }
     }
-    private val sensorValueProvider: SensorValueProvider by inject()
+    private val sensorTypeProvider: SensorTypeProvider by inject()
 
     fun onDrawerItemSelected(fragment: Fragment) {
         switchFragment(fragment)
@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             val fragment = BaseChartFragment()
             val args = Bundle()
-            args.putInt(SENSOR_TYPE_ARG_NAME, ACCELEROMETER_SENSOR_TYPE)
+            args.putInt(SENSOR_TYPE_ARG_NAME, SensorType.Accelerometer.type)
             fragment.arguments = args
             switchFragment(fragment)
         }
@@ -158,9 +158,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNavigationView() {
-        sensorValueProvider.getMenuItemsAndCorrespondingSensors().forEach {
+        sensorTypeProvider.getMenuItemsAndCorrespondingSensors().forEach {
             if (!doesSensorExist(this, it.key)) {
-                mainActivityNavigationView.menu.removeItem(it.value)
+                mainActivityNavigationView.menu.removeItem(it.value.type)
             }
         }
         setupNavigationViewListener()
@@ -168,6 +168,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupNavigationViewListener() {
         mainActivityNavigationView.setNavigationItemSelectedListener(
-                MyNavigationItemSelectedListener(this, sensorValueProvider))
+                MyNavigationItemSelectedListener(this, sensorTypeProvider))
     }
 }

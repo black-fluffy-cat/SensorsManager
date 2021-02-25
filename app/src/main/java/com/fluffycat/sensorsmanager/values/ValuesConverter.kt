@@ -11,26 +11,26 @@ class ValuesConverter(private val preferencesManager: PreferencesManager) {
 
 
     fun convertValueToChosenUnit(value: Float, sensor: Sensor?): Float = when (sensor?.type) {
-        ACCELEROMETER_SENSOR_TYPE -> convertDistanceValueToChosenUnit(value)
-        GYROSCOPE_SENSOR_TYPE -> convertAngleValueToChosenUnit(value)
-        HEART_RATE_SENSOR_TYPE -> value
-        LIGHT_SENSOR_TYPE -> value
-        LINEAR_ACCELERATION_SENSOR_TYPE -> convertDistanceValueToChosenUnit(value)
-        MAGNETIC_FIELD_SENSOR_TYPE -> value
-        PROXIMITY_SENSOR_TYPE -> value
-        ROTATION_VECTOR_SENSOR_TYPE -> value
+        SensorType.Accelerometer.type -> convertDistanceValueToChosenUnit(value)
+        SensorType.Gyroscope.type -> convertAngleValueToChosenUnit(value)
+        SensorType.Light.type -> value
+        SensorType.LinearAcceleration.type -> convertDistanceValueToChosenUnit(value)
+        SensorType.MagneticField.type -> value
+        SensorType.Proximity.type -> value
+        SensorType.HeartRate.type -> value
+        SensorType.RotationVector.type -> value
         else -> value
     }
 
     fun convertValueToStringWithSymbol(value: Float, sensor: Sensor?): String = when (sensor?.type) {
-        ACCELEROMETER_SENSOR_TYPE -> convertAccelerationValueToStringWithSymbol(value)
-        GYROSCOPE_SENSOR_TYPE -> convertAngleValueToStringWithSymbol(value)
-        HEART_RATE_SENSOR_TYPE -> value.toString()
-        LIGHT_SENSOR_TYPE -> "Lux: $value"
-        LINEAR_ACCELERATION_SENSOR_TYPE -> convertDistanceValueToStringWithSymbol(value)
-        MAGNETIC_FIELD_SENSOR_TYPE -> convertMagneticFieldValueToStringWithSymbol(value)
-        PROXIMITY_SENSOR_TYPE -> "$value cm"
-        ROTATION_VECTOR_SENSOR_TYPE -> value.toString()
+        SensorType.Accelerometer.type -> convertAccelerationValueToStringWithSymbol(value)
+        SensorType.Gyroscope.type -> convertAngleValueToStringWithSymbol(value)
+        SensorType.Light.type -> "Lux: $value"
+        SensorType.LinearAcceleration.type -> convertDistanceValueToStringWithSymbol(value)
+        SensorType.MagneticField.type -> convertMagneticFieldValueToStringWithSymbol(value)
+        SensorType.Proximity.type -> "$value cm"
+        SensorType.HeartRate.type -> value.toString()
+        SensorType.RotationVector.type -> value.toString()
         else -> value.toString()
     }
 

@@ -10,9 +10,9 @@ import android.os.IBinder
 import android.util.Log
 import com.fluffycat.sensorsmanager.notification.NOTIFICATION_SERVICE_ID
 import com.fluffycat.sensorsmanager.notification.NotificationManagerBuilder
-import com.fluffycat.sensorsmanager.sensors.ACCELEROMETER_SENSOR_TYPE
 import com.fluffycat.sensorsmanager.sensors.ISensorController
 import com.fluffycat.sensorsmanager.sensors.SensorController
+import com.fluffycat.sensorsmanager.sensors.SensorType
 import com.fluffycat.sensorsmanager.sensors.SensorValueCollector
 import com.fluffycat.sensorsmanager.utils.BufferedMutableSharedFlow
 import com.fluffycat.sensorsmanager.utils.tag
@@ -74,7 +74,7 @@ class CollectingDataService : Service() {
     }
 
     private fun setupSensorController(manager: SensorManager): Boolean? {
-        sensorController = SensorController(manager, ACCELEROMETER_SENSOR_TYPE)
+        sensorController = SensorController(manager, SensorType.Accelerometer)
         CoroutineScope(Dispatchers.IO).launch {
             sensorController?.observeSensorCurrentData()?.collect { event -> if (event != null) onDataChanged(event) }
         }

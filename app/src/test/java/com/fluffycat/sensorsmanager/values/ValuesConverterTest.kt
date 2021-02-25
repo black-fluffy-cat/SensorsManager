@@ -14,7 +14,8 @@ class ValuesConverterTest {
 
     @ParameterizedTest
     @MethodSource("numericValuesParams")
-    fun `convertValueToChosenUnit should return proper numeric value`(sensorType: Int, distanceUnit: DistanceUnit,
+    fun `convertValueToChosenUnit should return proper numeric value`(sensorType: SensorType,
+                                                                      distanceUnit: DistanceUnit,
                                                                       angleUnit: AngleUnit, input: Float,
                                                                       expectedOutput: Float) {
         val mockSensor = createMockSensor(sensorType)
@@ -25,7 +26,7 @@ class ValuesConverterTest {
 
     @ParameterizedTest
     @MethodSource("stringValuesParams")
-    fun `convertValueToChosenUnit should return proper string value`(sensorType: Int, distanceUnit: DistanceUnit,
+    fun `convertValueToChosenUnit should return proper string value`(sensorType: SensorType, distanceUnit: DistanceUnit,
                                                                      angleUnit: AngleUnit, input: Float,
                                                                      expectedOutput: String) {
         val mockSensor = createMockSensor(sensorType)
@@ -53,42 +54,42 @@ class ValuesConverterTest {
             whenever(readChosenAngleUnit()).thenReturn(angleUnit)
         }
 
-    private fun createMockSensor(sensorType: Int) = mock(Sensor::class.java).apply {
-        whenever(type).thenReturn(sensorType)
+    private fun createMockSensor(sensorType: SensorType) = mock(Sensor::class.java).apply {
+        whenever(type).thenReturn(sensorType.type)
     }
 
     @Suppress("UNUSED")
     private companion object {
 
-        fun sensorTypes() = SensorValueProvider().getExistingSensors()
+        fun sensorTypes() = SensorTypeProvider().getExistingSensors()
 
         @JvmStatic
         fun numericValuesParams() = listOf(
-                Arguments.of(ACCELEROMETER_SENSOR_TYPE, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, 1.0f),
-                Arguments.of(ACCELEROMETER_SENSOR_TYPE, DistanceUnit.FEET, AngleUnit.DEGREE, 1.0f, 3.28084f),
-                Arguments.of(GYROSCOPE_SENSOR_TYPE, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, 57.29578f),
-                Arguments.of(GYROSCOPE_SENSOR_TYPE, DistanceUnit.METERS, AngleUnit.RADIAN, 1.0f, 1.0f),
-                Arguments.of(HEART_RATE_SENSOR_TYPE, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, 1.0f),
-                Arguments.of(LIGHT_SENSOR_TYPE, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, 1.0f),
-                Arguments.of(LINEAR_ACCELERATION_SENSOR_TYPE, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, 1.0f),
-                Arguments.of(LINEAR_ACCELERATION_SENSOR_TYPE, DistanceUnit.FEET, AngleUnit.DEGREE, 1.0f, 3.28084f),
-                Arguments.of(MAGNETIC_FIELD_SENSOR_TYPE, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, 1.0f),
-                Arguments.of(PROXIMITY_SENSOR_TYPE, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, 1.0f),
-                Arguments.of(ROTATION_VECTOR_SENSOR_TYPE, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, 1.0f))
+                Arguments.of(SensorType.Accelerometer, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, 1.0f),
+                Arguments.of(SensorType.Accelerometer, DistanceUnit.FEET, AngleUnit.DEGREE, 1.0f, 3.28084f),
+                Arguments.of(SensorType.Gyroscope, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, 57.29578f),
+                Arguments.of(SensorType.Gyroscope, DistanceUnit.METERS, AngleUnit.RADIAN, 1.0f, 1.0f),
+                Arguments.of(SensorType.HeartRate, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, 1.0f),
+                Arguments.of(SensorType.Light, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, 1.0f),
+                Arguments.of(SensorType.LinearAcceleration, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, 1.0f),
+                Arguments.of(SensorType.LinearAcceleration, DistanceUnit.FEET, AngleUnit.DEGREE, 1.0f, 3.28084f),
+                Arguments.of(SensorType.MagneticField, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, 1.0f),
+                Arguments.of(SensorType.Proximity, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, 1.0f),
+                Arguments.of(SensorType.RotationVector, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, 1.0f))
 
         @JvmStatic
         fun stringValuesParams() = listOf(
-                Arguments.of(ACCELEROMETER_SENSOR_TYPE, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, "1.0 m/s²"),
-                Arguments.of(ACCELEROMETER_SENSOR_TYPE, DistanceUnit.FEET, AngleUnit.DEGREE, 1.0f, "3.28084 ft/s²"),
-                Arguments.of(GYROSCOPE_SENSOR_TYPE, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, "57.29578 °"),
-                Arguments.of(GYROSCOPE_SENSOR_TYPE, DistanceUnit.METERS, AngleUnit.RADIAN, 1.0f, "1.0 rad"),
-                Arguments.of(HEART_RATE_SENSOR_TYPE, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, "1.0"),
-                Arguments.of(LIGHT_SENSOR_TYPE, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, "Lux: 1.0"),
-                Arguments.of(LINEAR_ACCELERATION_SENSOR_TYPE, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, "1.0 m"),
-                Arguments.of(LINEAR_ACCELERATION_SENSOR_TYPE, DistanceUnit.FEET, AngleUnit.DEGREE, 1.0f, "3.28084 ft"),
-                Arguments.of(MAGNETIC_FIELD_SENSOR_TYPE, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, "1.0 μT"),
-                Arguments.of(PROXIMITY_SENSOR_TYPE, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, "1.0 cm"),
-                Arguments.of(ROTATION_VECTOR_SENSOR_TYPE, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, "1.0"))
+                Arguments.of(SensorType.Accelerometer, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, "1.0 m/s²"),
+                Arguments.of(SensorType.Accelerometer, DistanceUnit.FEET, AngleUnit.DEGREE, 1.0f, "3.28084 ft/s²"),
+                Arguments.of(SensorType.Gyroscope, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, "57.29578 °"),
+                Arguments.of(SensorType.Gyroscope, DistanceUnit.METERS, AngleUnit.RADIAN, 1.0f, "1.0 rad"),
+                Arguments.of(SensorType.HeartRate, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, "1.0"),
+                Arguments.of(SensorType.Light, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, "Lux: 1.0"),
+                Arguments.of(SensorType.LinearAcceleration, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, "1.0 m"),
+                Arguments.of(SensorType.LinearAcceleration, DistanceUnit.FEET, AngleUnit.DEGREE, 1.0f, "3.28084 ft"),
+                Arguments.of(SensorType.MagneticField, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, "1.0 μT"),
+                Arguments.of(SensorType.Proximity, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, "1.0 cm"),
+                Arguments.of(SensorType.RotationVector, DistanceUnit.METERS, AngleUnit.DEGREE, 1.0f, "1.0"))
 
         @JvmStatic
         fun roundedValuesParams() = listOf(

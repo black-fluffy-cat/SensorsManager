@@ -11,7 +11,7 @@ import com.google.android.material.navigation.NavigationView
 
 
 class MyNavigationItemSelectedListener(private val mainActivity: MainActivity,
-                                       private val sensorValueProvider: SensorValueProvider) :
+                                       private val sensorTypeProvider: SensorTypeProvider) :
     NavigationView.OnNavigationItemSelectedListener {
 
 
@@ -20,15 +20,15 @@ class MyNavigationItemSelectedListener(private val mainActivity: MainActivity,
         val fragment = createProperFragment(menuItem.itemId)
 
         val args = Bundle()
-        args.putInt(SENSOR_TYPE_ARG_NAME, sensorType)
+        args.putParcelable(SENSOR_TYPE_ARG_NAME, sensorType)
         fragment.arguments = args
         mainActivity.onDrawerItemSelected(fragment)
 
         return true
     }
 
-    private fun createSensorType(itemId: Int): Int =
-        sensorValueProvider.getMenuItemsAndCorrespondingSensors()[itemId] ?: 0
+    private fun createSensorType(itemId: Int): SensorType =
+        sensorTypeProvider.getMenuItemsAndCorrespondingSensors()[itemId] ?: SensorType.Accelerometer
 
     private fun createProperFragment(itemId: Int): Fragment = when (itemId) {
         R.id.accelerometerMenuItem, R.id.gyroscopeMenuItem, R.id.magneticFieldSensorMenuItem,
