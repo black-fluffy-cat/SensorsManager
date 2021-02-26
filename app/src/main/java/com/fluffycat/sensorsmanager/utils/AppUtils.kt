@@ -17,9 +17,10 @@ fun showToast(context: Context, message: String) {
 
 val Any.tag: String get() = this.javaClass.simpleName.take(LOG_TAG_MAX_LENGTH) ifIsEmpty "TAG"
 
-fun getLicencesInfoString() =
+fun getLicensesInfoString() =
     "Icon made by srip, cursor-creative, flat-icons, freepik, smashicons from www.flaticon.com"
 
+@Suppress("FunctionName")
 fun LogFlurryEvent(message: String) {
     FlurryAgent.logEvent(message)
 }

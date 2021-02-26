@@ -17,7 +17,7 @@ import com.fluffycat.sensorsmanager.sensors.SensorControllerProvider
 import com.fluffycat.sensorsmanager.sensors.SensorType
 import com.fluffycat.sensorsmanager.services.CollectingDataService
 import com.fluffycat.sensorsmanager.utils.LogFlurryEvent
-import com.fluffycat.sensorsmanager.utils.getLicencesInfoString
+import com.fluffycat.sensorsmanager.utils.getLicensesInfoString
 import com.fluffycat.sensorsmanager.utils.showToast
 import com.fluffycat.sensorsmanager.values.UnitsProvider
 import com.fluffycat.sensorsmanager.values.ValuesConverter
@@ -60,9 +60,9 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setOnClickListeners() {
-        licencesLabel.setOnClickListener {
-            LogFlurryEvent("Clicked licences info")
-            activity?.let { showToast(it, getLicencesInfoString()) }
+        licensesLabel.setOnClickListener {
+            LogFlurryEvent("Clicked licenses info")
+            activity?.let { showToast(it, getLicensesInfoString()) }
         }
 
         chooseDistanceUnitLabel.setOnClickListener { createChooseDistanceUnitDialog() }
