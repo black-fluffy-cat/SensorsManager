@@ -3,9 +3,7 @@ package com.fluffycat.sensorsmanager.fragments
 import android.app.AlertDialog
 import android.hardware.SensorEvent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -24,6 +22,7 @@ import com.fluffycat.sensorsmanager.values.ValuesConverter
 import kotlinx.android.synthetic.main.settings_fragment.*
 import kotlinx.coroutines.flow.collect
 import org.koin.android.ext.android.inject
+import java.util.concurrent.atomic.AtomicBoolean
 
 class SettingsFragment : Fragment() {
 
@@ -31,32 +30,25 @@ class SettingsFragment : Fragment() {
         private const val NEEDED_SAMPLES = 5
     }
 
-    private var valuesList = mutableListOf<Triple<Float, Float, Float>>()
+    private val valuesList = mutableListOf<SensorEvent>()
 
     private val valuesConverter: ValuesConverter by inject()
     private val unitsProvider: UnitsProvider by inject()
     private val sensorControllerProvider: SensorControllerProvider by inject()
 
     private val mainViewModel: MainViewModel by activityViewModels()
-    private var flag: Boolean = true
+    private val flag = AtomicBoolean(true)
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setActivityTitle()
-        return inflater.inflate(R.layout.settings_fragment, container, false)
+        setOnClickListeners()
+
+        if (BuildConfig.DEBUG) setupDebugOptions()
     }
 
     private fun setActivityTitle() {
         activity?.title = getString(R.string.settings)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        setOnClickListeners()
-
-        if (BuildConfig.DEBUG) {
-            setupDebugOptions()
-        }
     }
 
     private fun setOnClickListeners() {
@@ -64,7 +56,6 @@ class SettingsFragment : Fragment() {
             LogFlurryEvent("Clicked licenses info")
             activity?.let { showToast(it, getLicensesInfoString()) }
         }
-
         chooseDistanceUnitLabel.setOnClickListener { createChooseDistanceUnitDialog() }
     }
 
@@ -72,18 +63,17 @@ class SettingsFragment : Fragment() {
         serviceValuesLabel?.isVisible = true
         startServiceLabel?.isVisible = true
         startServiceLabel?.setOnClickListener {
-            activity?.apply {
-                lifecycleScope.launchWhenResumed {
-                    sensorControllerProvider.getSensorController(SensorType.Accelerometer).observeSensorCurrentData()
-                        .collect { it?.let { onServiceDataChanged(it) } }
-                }
-                if (flag) {
-                    CollectingDataService.startCollectingData(applicationContext)
-                } else {
-                    CollectingDataService.stop(applicationContext)
-                }
-                flag = !flag
-            }
+            observeSensorData()
+            if (flag.get()) context?.let { CollectingDataService.startCollectingData(it) }
+            else context?.let { CollectingDataService.stop(it) }
+            flag.set(!flag.get())
+        }
+    }
+
+    private fun observeSensorData() {
+        lifecycleScope.launchWhenResumed {
+            sensorControllerProvider.getSensorController(SensorType.Accelerometer).observeSensorCurrentData()
+                .collect { it?.let { onSensorDataChanged(it) } }
         }
     }
 
@@ -101,27 +91,28 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    private fun onServiceDataChanged(event: SensorEvent) {
-        val valuesTriple = Triple(event.values[0], event.values[1], event.values[2])
+    private fun onSensorDataChanged(event: SensorEvent) {
         if (valuesList.size < NEEDED_SAMPLES) {
-            valuesList.add(valuesTriple)
+            valuesList.add(event)
         } else {
             valuesList.removeAt(0)
-            valuesList.add(valuesTriple)
+            valuesList.add(event)
             var averageX = 0f
             var averageY = 0f
             var averageZ = 0f
 
             valuesList.forEach {
-                averageX += it.first
-                averageY += it.second
-                averageZ += it.third
+                averageX += it.values[0]
+                averageY += it.values[1]
+                averageZ += it.values[2]
             }
+
             averageX = valuesConverter.roundValue(averageX / 5, 8)
             averageY = valuesConverter.roundValue(averageY / 5, 8)
             averageZ = valuesConverter.roundValue(averageZ / 5, 8)
 
-            serviceValuesLabel?.text = "$averageX $averageY $averageZ"
+            val labelText = "$averageX $averageY $averageZ"
+            serviceValuesLabel?.text = labelText
         }
     }
 }
