@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.fluffycat.sensorsmanager.R
+import com.fluffycat.sensorsmanager.databinding.ChartFragmentBinding
 import com.fluffycat.sensorsmanager.sensors.ISensorController
 import com.fluffycat.sensorsmanager.sensors.SensorControllerProvider
 import com.fluffycat.sensorsmanager.sensors.SensorType
@@ -19,8 +20,6 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import kotlinx.android.synthetic.main.chart_fragment.*
-import kotlinx.coroutines.flow.collect
 import org.koin.android.ext.android.inject
 
 const val SENSOR_TYPE_ARG_NAME = "sensorType"
@@ -29,6 +28,8 @@ open class BaseChartFragment : Fragment() {
 
     private val valuesConverter: ValuesConverter by inject()
     private val sensorControllerProvider: SensorControllerProvider by inject()
+
+    private var chartBinding: ChartFragmentBinding? = null
 
     protected var sensorController: ISensorController? = null
     protected open val layoutResource = R.layout.chart_fragment
@@ -67,15 +68,23 @@ open class BaseChartFragment : Fragment() {
 
     }
 
+    override fun onDestroyView() {
+        chartBinding = null
+        super.onDestroyView()
+    }
+
     protected open fun setupView() {
-        mainChart.data = lineData
-        mainChart.description = Description().apply { text = "" }
-        mainChartSensorInfoLabel.text = sensorController?.getSensorInfo()
+        val binding = ChartFragmentBinding.bind(requireView()).also { chartBinding = it }
+        binding.mainChart.data = lineData
+        binding.mainChart.description = Description().apply { text = "" }
+        binding.mainChartSensorInfoLabel.text = sensorController?.getSensorInfo()
     }
 
     open fun onSensorError() {
-        mainChart.description = Description().apply { text = "Sensor error occurred" }
-        mainChartSensorInfoLabel.text = getString(R.string.error)
+        chartBinding?.let { binding ->
+            binding.mainChart.description = Description().apply { text = "Sensor error occurred" }
+            binding.mainChartSensorInfoLabel.text = getString(R.string.error)
+        }
     }
 
     open fun isPermissionGranted(context: Context) = true
@@ -127,6 +136,8 @@ open class BaseChartFragment : Fragment() {
     }
 
     open fun onDataChanged(event: SensorEvent) {
+        val binding = chartBinding ?: return
+
         val convertedValues = event.values.copyOf().apply {
             forEachIndexed { index, value ->
                 this[index] = valuesConverter.convertValueToChosenUnit(value, event.sensor)
@@ -149,23 +160,24 @@ open class BaseChartFragment : Fragment() {
             }
 
             notifyDataChanged()
-            mainChart.notifyDataSetChanged()
-            mainChart.setVisibleXRangeMaximum(500F)
-            mainChart.moveViewTo(entryCount.toFloat(), 0F, YAxis.AxisDependency.RIGHT)
+            binding.mainChart.notifyDataSetChanged()
+            binding.mainChart.setVisibleXRangeMaximum(500F)
+            binding.mainChart.moveViewTo(entryCount.toFloat(), 0F, YAxis.AxisDependency.RIGHT)
         }
     }
 
     private fun setupLabelsTexts(labelTexts: MutableList<String>) {
+        val binding = chartBinding ?: return
         labelTexts.getOrNull(0)?.let { text ->
-            mainChartXValueInfoLabel?.text = getString(R.string.xChartLabel, text)
+            binding.mainChartXValueInfoLabel.text = getString(R.string.xChartLabel, text)
         }
 
         labelTexts.getOrNull(1)?.let { text ->
-            mainChartYValueInfoLabel?.text = getString(R.string.yChartLabel, text)
+            binding.mainChartYValueInfoLabel.text = getString(R.string.yChartLabel, text)
         }
 
         labelTexts.getOrNull(2)?.let { text ->
-            mainChartZValueInfoLabel?.text = getString(R.string.zChartLabel, text)
+            binding.mainChartZValueInfoLabel.text = getString(R.string.zChartLabel, text)
         }
     }
 }
