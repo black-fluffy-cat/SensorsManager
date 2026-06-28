@@ -46,37 +46,18 @@ class SensorController(private val sensorManager: SensorManager?, private val se
     }
 
     override fun getSensorInfo(): String {
-        val sensor = sensorManager?.getDefaultSensor(sensorType.type)
-        var infoString = ""
-        sensor?.apply {
-            infoString += "$name\n"
-//                infoString += "fifoReservedEventCount $fifoReservedEventCount\n"
-//                infoString += "fifoMaxEventCount $fifoMaxEventCount\n"
-            infoString += "Maximum range: $maximumRange\n"
-//                infoString += "minDelay: $minDelay\n"
-            infoString += "Power: $power\n"
-            infoString += "Resolution: $resolution\n"
-            infoString += "Type: $type\n"
-            infoString += "Vendor: $vendor\n"
-            infoString += "Version: $version\n"
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-//                    infoString += "stringType: $stringType\n"
-            }
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                    infoString += "isWakeUpSensor: $isWakeUpSensor\n"
-//                    infoString += "reportingMode: $reportingMode\n"
-//                    infoString += "maxDelay: $maxDelay\n"
-            }
-
+        val sensor = sensorManager?.getDefaultSensor(sensorType.type) ?: return ""
+        return buildString {
+            append("${sensor.name}\n")
+            append("Maximum range: ${sensor.maximumRange}\n")
+            append("Power: ${sensor.power}\n")
+            append("Resolution: ${sensor.resolution}\n")
+            append("Type: ${sensor.type}\n")
+            append("Vendor: ${sensor.vendor}\n")
+            append("Version: ${sensor.version}\n")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                    infoString += "highestDirectReportRateLevel: $highestDirectReportRateLevel\n"
-                infoString += "Id: $id\n"
-//                    infoString += "isDynamicSensor: $isDynamicSensor\n"
-//                    infoString += "isAdditionalInfoSupported: $isAdditionalInfoSupported\n"
+                append("Id: ${sensor.id}\n")
             }
         }
-        return infoString
     }
 }
