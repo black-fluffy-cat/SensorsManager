@@ -3,7 +3,7 @@ package com.fluffycat.sensorsmanager.listeners
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import com.fluffycat.sensorsmanager.sensors.ISensorController
-import com.nhaarman.mockitokotlin2.verify
+import org.mockito.kotlin.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock

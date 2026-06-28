@@ -3,7 +3,7 @@ package com.fluffycat.sensorsmanager.values
 import android.hardware.Sensor
 import com.fluffycat.sensorsmanager.preferences.*
 import com.fluffycat.sensorsmanager.sensors.*
-import com.nhaarman.mockitokotlin2.whenever
+import org.mockito.kotlin.whenever
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
