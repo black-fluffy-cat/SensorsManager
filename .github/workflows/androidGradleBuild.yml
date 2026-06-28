@@ -2,19 +2,29 @@ name: Android Gradle Build
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ develop, 'feature/**' ]
   pull_request:
     branches: [ develop ]
+  workflow_dispatch:
 
 jobs:
   Unit_tests_and_build_by_Gradle:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Set up JDK 1.8
-      uses: actions/setup-java@v1
-      with:
-        java-version: 1.8
-    - name: Build with Gradle
-      run: ./gradlew build
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 11
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build with Gradle
+        run: ./gradlew assembleDebug testDebugUnitTest --stacktrace
