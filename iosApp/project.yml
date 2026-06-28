@@ -33,7 +33,10 @@ targets:
           cd "$SRCROOT/.."
           ./gradlew :shared:embedAndSignAppleFrameworkForXcode
     dependencies:
+      # The static shared.framework is linked from FRAMEWORK_SEARCH_PATHS and made
+      # available by the embedAndSignAppleFrameworkForXcode pre-build script; it is
+      # linked into the binary, not embedded as a bundle.
       - framework: shared.framework
-        embed: true
-        codeSign: true
+        link: true
+        embed: false
         implicit: true
