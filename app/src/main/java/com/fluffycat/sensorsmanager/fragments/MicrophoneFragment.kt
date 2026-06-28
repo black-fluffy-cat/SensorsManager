@@ -12,15 +12,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.fluffycat.sensorsmanager.R
+import com.fluffycat.sensorsmanager.databinding.MicrophoneFragmentBinding
 import com.fluffycat.sensorsmanager.sensors.MicrophoneController
 import com.fluffycat.sensorsmanager.utils.REQUEST_RECORD_AUDIO_REQUEST_CODE
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import kotlinx.android.synthetic.main.microphone_fragment.*
-import kotlinx.coroutines.flow.collect
-import java.util.*
 
 class MicrophoneFragment : Fragment() {
 
@@ -31,6 +29,8 @@ class MicrophoneFragment : Fragment() {
     private val microphoneController: MicrophoneController = MicrophoneController()
     private val lineData: LineData
 
+    private var binding: MicrophoneFragmentBinding? = null
+
     init {
         val lineDataSet1: LineDataSet = createDataSet(Color.CYAN, chartTitle)
         lineData = LineData(lineDataSet1)
@@ -38,7 +38,7 @@ class MicrophoneFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         setActivityTitle()
-        return inflater.inflate(R.layout.microphone_fragment, container, false)
+        return MicrophoneFragmentBinding.inflate(inflater, container, false).also { binding = it }.root
     }
 
     private fun setActivityTitle() {
@@ -61,8 +61,15 @@ class MicrophoneFragment : Fragment() {
             }
         }
 
-        microphoneChart.data = lineData
-        microphoneSensorInfoLabel.text = microphoneController.getSensorInfo()
+        binding?.apply {
+            microphoneChart.data = lineData
+            microphoneSensorInfoLabel.text = microphoneController.getSensorInfo()
+        }
+    }
+
+    override fun onDestroyView() {
+        binding = null
+        super.onDestroyView()
     }
 
     @Suppress("SameParameterValue")
@@ -92,16 +99,17 @@ class MicrophoneFragment : Fragment() {
     }
 
     private fun onDataChanged(soundSum: Double) {
+        val binding = binding ?: return
         val value = soundSum.toFloat()
-        microphoneXValueInfoLabel.text = "Sound power: $value"
+        binding.microphoneXValueInfoLabel.text = "Sound power: $value"
 
         lineData.apply {
             addEntry(Entry(getDataSetByIndex(0).entryCount.toFloat(), value), 0)
 
             notifyDataChanged()
-            microphoneChart.notifyDataSetChanged()
-            microphoneChart.setVisibleXRangeMaximum(100F)
-            microphoneChart.moveViewTo(entryCount.toFloat(), 0F, YAxis.AxisDependency.RIGHT)
+            binding.microphoneChart.notifyDataSetChanged()
+            binding.microphoneChart.setVisibleXRangeMaximum(100F)
+            binding.microphoneChart.moveViewTo(entryCount.toFloat(), 0F, YAxis.AxisDependency.RIGHT)
         }
     }
 }

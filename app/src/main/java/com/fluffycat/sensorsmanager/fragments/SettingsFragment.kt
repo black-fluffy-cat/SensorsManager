@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.fluffycat.sensorsmanager.BuildConfig
 import com.fluffycat.sensorsmanager.R
 import com.fluffycat.sensorsmanager.activities.MainViewModel
+import com.fluffycat.sensorsmanager.databinding.SettingsFragmentBinding
 import com.fluffycat.sensorsmanager.sensors.SensorControllerProvider
 import com.fluffycat.sensorsmanager.sensors.SensorType
 import com.fluffycat.sensorsmanager.services.CollectingDataService
@@ -19,8 +20,6 @@ import com.fluffycat.sensorsmanager.utils.getLicensesInfoString
 import com.fluffycat.sensorsmanager.utils.showToast
 import com.fluffycat.sensorsmanager.values.UnitsProvider
 import com.fluffycat.sensorsmanager.values.ValuesConverter
-import kotlinx.android.synthetic.main.settings_fragment.*
-import kotlinx.coroutines.flow.collect
 import org.koin.android.ext.android.inject
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -39,12 +38,20 @@ class SettingsFragment : Fragment() {
     private val mainViewModel: MainViewModel by activityViewModels()
     private val flag = AtomicBoolean(true)
 
+    private var binding: SettingsFragmentBinding? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = SettingsFragmentBinding.bind(view)
         setActivityTitle()
         setOnClickListeners()
 
         if (BuildConfig.DEBUG) setupDebugOptions()
+    }
+
+    override fun onDestroyView() {
+        binding = null
+        super.onDestroyView()
     }
 
     private fun setActivityTitle() {
@@ -52,17 +59,17 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setOnClickListeners() {
-        licensesLabel.setOnClickListener {
+        binding?.licensesLabel?.setOnClickListener {
             LogFlurryEvent("Clicked licenses info")
             activity?.let { showToast(it, getLicensesInfoString()) }
         }
-        chooseDistanceUnitLabel.setOnClickListener { createChooseDistanceUnitDialog() }
+        binding?.chooseDistanceUnitLabel?.setOnClickListener { createChooseDistanceUnitDialog() }
     }
 
     private fun setupDebugOptions() {
-        serviceValuesLabel?.isVisible = true
-        startServiceLabel?.isVisible = true
-        startServiceLabel?.setOnClickListener {
+        binding?.serviceValuesLabel?.isVisible = true
+        binding?.startServiceLabel?.isVisible = true
+        binding?.startServiceLabel?.setOnClickListener {
             observeSensorData()
             if (flag.get()) context?.let { CollectingDataService.startCollectingData(it) }
             else context?.let { CollectingDataService.stop(it) }
@@ -112,7 +119,7 @@ class SettingsFragment : Fragment() {
             averageZ = valuesConverter.roundValue(averageZ / 5, 8)
 
             val labelText = "$averageX $averageY $averageZ"
-            serviceValuesLabel?.text = labelText
+            binding?.serviceValuesLabel?.text = labelText
         }
     }
 }

@@ -6,11 +6,11 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.fluffycat.sensorsmanager.BuildConfig
 import com.fluffycat.sensorsmanager.R
 import com.fluffycat.sensorsmanager.ad.AdManager
+import com.fluffycat.sensorsmanager.databinding.ActivityMainBinding
 import com.fluffycat.sensorsmanager.fragments.BaseChartFragment
 import com.fluffycat.sensorsmanager.fragments.SENSOR_TYPE_ARG_NAME
 import com.fluffycat.sensorsmanager.navigation_view.MyNavigationItemSelectedListener
@@ -20,11 +20,12 @@ import com.fluffycat.sensorsmanager.utils.LogFlurryEvent
 import com.fluffycat.sensorsmanager.utils.doesSensorExist
 import com.fluffycat.sensorsmanager.utils.tag
 import com.github.mikephil.charting.utils.Utils
-import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.InterstitialAd
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
-import kotlinx.android.synthetic.main.activity_main.*
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import org.koin.android.ext.android.inject
 
 
@@ -36,14 +37,17 @@ class MainActivity : AppCompatActivity() {
 
     val mainViewModel: MainViewModel by viewModels()
 
+    private lateinit var binding: ActivityMainBinding
+
     private var currentFragment: String = ""
     private lateinit var adRequest: AdRequest
-    private lateinit var mInterstitialAd: InterstitialAd
+    private var mInterstitialAd: InterstitialAd? = null
     private val adManager = AdManager()
     private val interstitialAdCallback: () -> Unit = {
-        if (mInterstitialAd.isLoaded) {
+        val interstitialAd = mInterstitialAd
+        if (interstitialAd != null) {
             LogFlurryEvent("Showing mInterstitialAd")
-            mInterstitialAd.show()
+            interstitialAd.show(this)
         } else {
             LogFlurryEvent("mInterstitialAd not loaded yet")
             Log.d(tag, "The interstitial wasn't loaded yet.")
@@ -58,7 +62,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initAds()
         Utils.init(this) // For first chart to have proper lines size
@@ -85,7 +90,7 @@ class MainActivity : AppCompatActivity() {
         LogFlurryEvent("switchFragment to $tag")
         currentFragment = fragment.tag ?: ""
         supportFragmentManager.beginTransaction().replace(R.id.navDrawerFragmentContainer, fragment, tag).commit()
-        mainDrawerLayout.closeDrawer(mainActivityNavigationView)
+        binding.mainDrawerLayout.closeDrawer(binding.mainActivityNavigationView)
     }
 
     private fun initAds() {
@@ -97,19 +102,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createAndLoadMainBannerAd() {
-        adMainBannerView.loadAd(adRequest)
+        binding.adMainBannerView.loadAd(adRequest)
     }
 
     private fun createAndLoadMainInterstitialAd() {
-        mInterstitialAd = InterstitialAd(this).apply {
-            adListener = object : AdListener() {
-                override fun onAdClosed() {
-                    loadAd(adRequest)
-                }
-            }
-            adUnitId = adManager.getInterstitialAdUnitId(BuildConfig.DEBUG)
-            loadAd(adRequest)
-        }
+        InterstitialAd.load(
+                this,
+                adManager.getInterstitialAdUnitId(BuildConfig.DEBUG),
+                adRequest,
+                object : InterstitialAdLoadCallback() {
+                    override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                        mInterstitialAd = interstitialAd.apply {
+                            fullScreenContentCallback = object : FullScreenContentCallback() {
+                                override fun onAdDismissedFullScreenContent() {
+                                    mInterstitialAd = null
+                                    createAndLoadMainInterstitialAd()
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                        mInterstitialAd = null
+                    }
+                })
         adManager.registerInterstitialAdCallback(interstitialAdCallback)
     }
 
@@ -140,17 +156,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleToolbarHomeClick() {
-        mainDrawerLayout.apply {
-            if (isDrawerOpen(mainActivityNavigationView)) {
-                closeDrawer(mainActivityNavigationView)
+        binding.mainDrawerLayout.apply {
+            if (isDrawerOpen(binding.mainActivityNavigationView)) {
+                closeDrawer(binding.mainActivityNavigationView)
             } else {
-                openDrawer(mainActivityNavigationView)
+                openDrawer(binding.mainActivityNavigationView)
             }
         }
     }
 
     private fun setupDrawerViewListener() {
-        val drawerLayout = findViewById<DrawerLayout>(R.id.mainDrawerLayout)
+        val drawerLayout = binding.mainDrawerLayout
         ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close).apply {
             drawerLayout.addDrawerListener(this)
             syncState()
@@ -160,14 +176,14 @@ class MainActivity : AppCompatActivity() {
     private fun setupNavigationView() {
         sensorTypeProvider.getMenuItemsAndCorrespondingSensors().forEach {
             if (!doesSensorExist(this, it.key)) {
-                mainActivityNavigationView.menu.removeItem(it.value.type)
+                binding.mainActivityNavigationView.menu.removeItem(it.value.type)
             }
         }
         setupNavigationViewListener()
     }
 
     private fun setupNavigationViewListener() {
-        mainActivityNavigationView.setNavigationItemSelectedListener(
+        binding.mainActivityNavigationView.setNavigationItemSelectedListener(
                 MyNavigationItemSelectedListener(this, sensorTypeProvider))
     }
 }

@@ -4,7 +4,7 @@ import android.hardware.Sensor
 import android.os.Build
 import android.os.Parcelable
 import com.fluffycat.sensorsmanager.R
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 enum class SensorType(val type: Int) : Parcelable {

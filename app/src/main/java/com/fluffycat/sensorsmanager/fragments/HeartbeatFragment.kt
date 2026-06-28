@@ -12,16 +12,17 @@ import android.view.View
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.lifecycle.lifecycleScope
 import com.fluffycat.sensorsmanager.R
+import com.fluffycat.sensorsmanager.databinding.HeartbeatFragmentBinding
 import com.fluffycat.sensorsmanager.utils.HEART_RATE_REQUEST_CODE
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
-import kotlinx.android.synthetic.main.heartbeat_fragment.*
-import kotlinx.coroutines.flow.collect
 
 class HeartbeatFragment : BaseChartFragment() {
 
     override val layoutResource: Int = R.layout.heartbeat_fragment
+
+    private var heartbeatBinding: HeartbeatFragmentBinding? = null
 
     override fun isPermissionGranted(context: Context) = isBodySensorsPermissionGranted(context)
     override fun requestNeededPermission() = requestBodySensorsPermission()
@@ -50,13 +51,19 @@ class HeartbeatFragment : BaseChartFragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
+    override fun onDestroyView() {
+        heartbeatBinding = null
+        super.onDestroyView()
+    }
+
     override fun onSensorError() {
-        heartbeatChart?.description = Description().apply { text = "Sensor error occurred" }
+        heartbeatBinding?.heartbeatChart?.description = Description().apply { text = "Sensor error occurred" }
     }
 
     override fun setupView() {
+        val binding = HeartbeatFragmentBinding.bind(requireView()).also { heartbeatBinding = it }
         setActivityTitle()
-        heartbeatChart.data = lineData
+        binding.heartbeatChart.data = lineData
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -66,25 +73,27 @@ class HeartbeatFragment : BaseChartFragment() {
     }
 
     override fun onDataChanged(event: SensorEvent) {
-        heartbeatFragmentText.text = event.values[0].toString()
+        val binding = heartbeatBinding ?: return
+        binding.heartbeatFragmentText.text = event.values[0].toString()
         lineData.apply {
             addEntry(Entry(getDataSetByIndex(0).entryCount.toFloat(), event.values[0]), 0)
 
             notifyDataChanged()
-            heartbeatChart.notifyDataSetChanged()
-            heartbeatChart.setVisibleXRangeMaximum(100F)
-            heartbeatChart.moveViewTo(entryCount.toFloat(), 0F, YAxis.AxisDependency.RIGHT)
+            binding.heartbeatChart.notifyDataSetChanged()
+            binding.heartbeatChart.setVisibleXRangeMaximum(100F)
+            binding.heartbeatChart.moveViewTo(entryCount.toFloat(), 0F, YAxis.AxisDependency.RIGHT)
         }
     }
 
     private fun onAdditionalDataChanged(additionalCode: Int) {
         Log.d(tag, "additionalCode: $additionalCode")
+        val binding = heartbeatBinding ?: return
         when (additionalCode) {
             SensorManager.SENSOR_STATUS_UNRELIABLE -> {
-                heartbeatFragmentAdditionalText.text = "Please put your finger on the sensor and wait for measurement"
+                binding.heartbeatFragmentAdditionalText.text = "Please put your finger on the sensor and wait for measurement"
             }
             else -> {
-                heartbeatFragmentAdditionalText.text = ""
+                binding.heartbeatFragmentAdditionalText.text = ""
             }
         }
     }
