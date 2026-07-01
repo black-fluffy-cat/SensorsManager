@@ -17,7 +17,6 @@ Application for getting data from available phone sensors and showing readings o
 - Kotlin Coroutines v1.4.2
 - Kotlin Flow (Coroutines) v1.4.2
 - com.github.PhilJay:MPAndroidChart v3.1.0
-- Flurry v12.3.0@aar
 - Retrofit2 v2.9.0
 
 ## [Latest builds](https://github.com/black-fluffy-cat/SensorsManager/releases)

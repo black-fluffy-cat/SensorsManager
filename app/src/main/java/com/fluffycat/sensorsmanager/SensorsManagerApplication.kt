@@ -6,8 +6,6 @@ import android.util.Log
 import com.fluffycat.sensorsmanager.koin.smMainModule
 import com.fluffycat.sensorsmanager.preferences.PreferencesManager
 import com.fluffycat.sensorsmanager.utils.tag
-import com.flurry.android.FlurryAgent
-import com.flurry.android.FlurryPerformance
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -32,22 +30,6 @@ class SensorsManagerApplication : Application() {
         instance = this
         Log.d(tag, "onCreate")
         launchKoin()
-        if (!BuildConfig.DEBUG) {
-            prepareFlurryMonitoring()
-        }
-    }
-
-    private fun prepareFlurryMonitoring() {
-        val flurryKey = "DJ5H5SH83XRTMC4D2GW3"
-
-        FlurryAgent.Builder()
-            .withDataSaleOptOut(false) //CCPA - the default value is false
-            .withCaptureUncaughtExceptions(true)
-            .withIncludeBackgroundSessionsInMetrics(true)
-            .withLogLevel(Log.VERBOSE)
-            .withPerformanceMetrics(FlurryPerformance.ALL)
-            .withLogEnabled(true)
-            .build(this, flurryKey)
     }
 
     private fun launchKoin() {

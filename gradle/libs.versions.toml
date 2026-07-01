@@ -15,7 +15,6 @@ material = "1.12.0"
 
 retrofit = "2.11.0"
 mpAndroidChart = "v3.1.0"
-flurry = "14.4.0"
 playServicesAds = "22.6.0"
 
 junit5 = "5.10.3"
@@ -48,7 +47,6 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 retrofit-converter-jackson = { module = "com.squareup.retrofit2:converter-jackson", version.ref = "retrofit" }
 
 mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpAndroidChart" }
-flurry-analytics = { module = "com.flurry.android:analytics", version.ref = "flurry" }
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playServicesAds" }
 
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit5" }
