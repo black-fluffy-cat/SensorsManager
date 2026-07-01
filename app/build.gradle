@@ -85,7 +85,6 @@ dependencies {
     implementation libs.retrofit
     implementation libs.retrofit.converter.jackson
 
-    implementation libs.flurry.analytics
     implementation libs.play.services.ads
 
     testImplementation libs.junit.jupiter.api

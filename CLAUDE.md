@@ -54,7 +54,6 @@ cd iosApp && xcodegen generate       # generate iosApp.xcodeproj
 - **Charts:** MPAndroidChart.
 - **Networking:** Retrofit + Jackson (`rest/`), used by the optional
   `CollectingDataService`.
-- **Analytics:** Flurry — initialised only in non-debug builds.
 - **Ads:** Google Mobile Ads (banner + interstitial via `InterstitialAd.load`).
 
 ## CI

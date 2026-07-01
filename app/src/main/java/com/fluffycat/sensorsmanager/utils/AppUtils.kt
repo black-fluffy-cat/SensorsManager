@@ -4,7 +4,6 @@ import android.content.Context
 import android.hardware.SensorManager
 import android.os.Build
 import android.widget.Toast
-import com.flurry.android.FlurryAgent
 
 const val HEART_RATE_REQUEST_CODE = 1
 const val REQUEST_RECORD_AUDIO_REQUEST_CODE = 2
@@ -19,11 +18,6 @@ val Any.tag: String get() = this.javaClass.simpleName.take(LOG_TAG_MAX_LENGTH) i
 
 fun getLicensesInfoString() =
     "Icon made by srip, cursor-creative, flat-icons, freepik, smashicons from www.flaticon.com"
-
-@Suppress("FunctionName")
-fun LogFlurryEvent(message: String) {
-    FlurryAgent.logEvent(message)
-}
 
 fun doesSensorExist(context: Context, sensorType: Int): Boolean =
     (context.getSystemService(Context.SENSOR_SERVICE) as SensorManager).getDefaultSensor(sensorType) != null

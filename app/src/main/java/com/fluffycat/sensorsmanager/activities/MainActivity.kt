@@ -16,7 +16,6 @@ import com.fluffycat.sensorsmanager.fragments.SENSOR_TYPE_ARG_NAME
 import com.fluffycat.sensorsmanager.navigation_view.MyNavigationItemSelectedListener
 import com.fluffycat.sensorsmanager.sensors.SensorType
 import com.fluffycat.sensorsmanager.sensors.SensorTypeProvider
-import com.fluffycat.sensorsmanager.utils.LogFlurryEvent
 import com.fluffycat.sensorsmanager.utils.doesSensorExist
 import com.fluffycat.sensorsmanager.utils.tag
 import com.github.mikephil.charting.utils.Utils
@@ -46,10 +45,8 @@ class MainActivity : AppCompatActivity() {
     private val interstitialAdCallback: () -> Unit = {
         val interstitialAd = mInterstitialAd
         if (interstitialAd != null) {
-            LogFlurryEvent("Showing mInterstitialAd")
             interstitialAd.show(this)
         } else {
-            LogFlurryEvent("mInterstitialAd not loaded yet")
             Log.d(tag, "The interstitial wasn't loaded yet.")
         }
     }
@@ -71,8 +68,6 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setupNavigationView()
         setCurrentFragment(savedInstanceState)
-
-        LogFlurryEvent("MainActivity onCreate")
     }
 
     private fun setCurrentFragment(savedInstanceState: Bundle?) {
@@ -87,7 +82,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun switchFragment(fragment: Fragment) {
         val tag: String = fragment::class.java.simpleName
-        LogFlurryEvent("switchFragment to $tag")
         currentFragment = fragment.tag ?: ""
         supportFragmentManager.beginTransaction().replace(R.id.navDrawerFragmentContainer, fragment, tag).commit()
         binding.mainDrawerLayout.closeDrawer(binding.mainActivityNavigationView)
