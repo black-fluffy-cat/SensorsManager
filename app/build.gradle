@@ -36,8 +36,24 @@ android {
         buildConfig true
     }
 
+    signingConfigs {
+        release {
+            def keystorePath = System.getenv("KEYSTORE_FILE")
+            if (keystorePath != null) {
+                storeFile file(keystorePath)
+                storePassword System.getenv("KEYSTORE_PASSWORD")
+                keyAlias System.getenv("KEY_ALIAS")
+                keyPassword System.getenv("KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
+            // Only sign when the keystore is provided via env (e.g. CI); otherwise build unsigned.
+            if (System.getenv("KEYSTORE_FILE") != null) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             resValue "string", "adMainBannerViewAdUnitId", "ca-app-pub-7809340407306359/8044658435"
