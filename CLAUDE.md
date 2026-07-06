@@ -65,10 +65,11 @@ cd iosApp && xcodegen generate       # generate iosApp.xcodeproj
   framework and the iOS app (via XcodeGen). Path-filtered to shared/iOS changes.
 - `.github/workflows/createDebugApk.yml` — builds and attaches a debug APK to a
   GitHub Release when a `*d` tag is pushed.
-- `.github/workflows/createReleaseAab.yml` — builds a signed release AAB (the
-  format Google Play requires) and attaches it to a GitHub Release when a tag is
-  pushed. Signing keystore and passwords come from the `KEYSTORE_BASE64`,
-  `KEYSTORE_PASSWORD`, `KEY_ALIAS` and `KEY_PASSWORD` repository secrets.
+- `.github/workflows/createReleaseArtifacts.yml` — builds a signed release AAB
+  (the format Google Play requires) and a signed release APK, and attaches both
+  to a GitHub Release when a tag is pushed. Signing keystore and passwords come
+  from the `KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS` and `KEY_PASSWORD`
+  repository secrets.
 
 ## Conventions
 
